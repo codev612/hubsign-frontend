@@ -23,7 +23,7 @@ export default function Signin() {
     return (
         <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
             <form className="flex flex-col items-center justify-center bg-forecolor p-10 gap-4 rounded-md">
-                <h1>Log in to eSign</h1>
+                <p style={{ fontSize: '2rem', fontWeight: 500 }}>Log in to eSign</p>
                 <p className="text-text mb-2">Enter your credentials to access your account</p>
                 <Input 
                 type="email" 
