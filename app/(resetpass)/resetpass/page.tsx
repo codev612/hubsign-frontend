@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from "react";
+import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Link } from "@nextui-org/link";
 import { Snippet } from "@nextui-org/snippet";
 import { Code } from "@nextui-org/code";
@@ -14,7 +14,8 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import { Button } from "@nextui-org/button";
 
-export default function Signin() {
+export default function Resetpass() {
+
     // visible password
     const [isVisible, setIsVisible] = useState(false);
 
@@ -34,11 +35,11 @@ export default function Signin() {
 
     return (
         <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-            <form className="flex flex-col items-center justify-center bg-forecolor p-10 gap-4 rounded-md" style={{ width: '382px' }}>
-                <p style={{ fontSize: '2rem', fontWeight: 500 }}>Log in to eSign</p>
-                <p className="text-text mb-2">Enter your credentials to access your account</p>
+            <form className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md" style={{ width: '382px' }}>
+                <p style={{ fontSize: '1.5rem', fontWeight: 500 }}>Reset Password</p>
+                <p className="text-text mb-2">Please provide the email address linked to your eSign account, and we will send instructions to reset your password</p>
                 <Input 
-                type="email" 
+                type="number" 
                 label="Email" 
                 variant={'bordered'} 
                 labelPlacement={'outside'} 
@@ -49,29 +50,9 @@ export default function Signin() {
                 onValueChange={setEmailValue}
                 required
                 />
-                <Input
-                label="Password"
-                variant="bordered"
-                placeholder="Enter your password"
-                labelPlacement={'outside'}
-                size="md"
-                endContent={
-                    <button className="focus:outline-none" type="button" onClick={toggleVisibility} aria-label="toggle password visibility">
-                    {isVisible ? (
-                        <VisibilityOffOutlinedIcon className="text-2xl text-default-400 pointer-events-none" />
-                    ) : (
-                        <VisibilityOutlinedIcon className="text-2xl text-default-400 pointer-events-none" />
-                    )}
-                    </button>
-                }
-                type={isVisible ? "text" : "password"}
-                description={<Link href="/resetpass"><p className="text-text">Forgot your password?</p></Link>}
-                />
-                <Button color="primary" fullWidth className="text-white" size="md">Log in</Button>
-                <div className="flex flex-col items-center justify-center">
-                    <Link href="/"><p className="text-text">Don't have an account?</p></Link>
-                    <Link href="/"><p>Signup for 30 days free trial</p></Link>
-                </div>
+                
+                <Link href="/checkinbox"><Button color="primary" fullWidth className="text-white" size="md">Send Verification Email</Button></Link>
+                <Link href="/signin"><Button variant="bordered" fullWidth className="text-text" size="md">Back to Log in</Button></Link>
             </form>
         {/* <div className="inline-block max-w-xl text-center justify-center bg-forecolor">
             <span className={title()}>Make&nbsp;</span>

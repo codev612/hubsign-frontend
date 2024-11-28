@@ -14,7 +14,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import { Button } from "@nextui-org/button";
 
-export default function Signin() {
+export default function Newpass() {
     // visible password
     const [isVisible, setIsVisible] = useState(false);
 
@@ -35,7 +35,7 @@ export default function Signin() {
     return (
         <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
             <form className="flex flex-col items-center justify-center bg-forecolor p-10 gap-4 rounded-md" style={{ width: '382px' }}>
-                <p style={{ fontSize: '2rem', fontWeight: 500 }}>Log in to eSign</p>
+                <p style={{ fontSize: '2rem', fontWeight: 500 }}>New Password</p>
                 <p className="text-text mb-2">Enter your credentials to access your account</p>
                 <Input 
                 type="email" 
