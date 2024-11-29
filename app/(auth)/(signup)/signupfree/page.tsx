@@ -33,27 +33,25 @@ export default function Signupfree() {
 
 
     return (
-        // <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-            <form className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg">
-                <p style={{ fontSize: '2rem', fontWeight: 500 }}>Signup to eSign and try for free for 30 days</p>
-                <p className="text-text mb-2">Enter your email to get started. No credit card required</p>
-                <Input 
-                type="email" 
-                label="Email" 
-                variant={'bordered'} 
-                labelPlacement={'outside'} 
-                placeholder="Enter your email" 
-                size="md"
-                isInvalid={isInvalid}
-                errorMessage="Please enter a valid email"
-                onValueChange={setEmailValue}
-                required
-                />
-                <Button color="primary" fullWidth className="text-white" size="md">Get Started</Button>
-                <div className="flex flex-col items-center justify-center">
-                    <div>By clicking the Get Started above, you agree to the <Link href="/"><p>Terms & Conditions</p></Link> and <Link href="/"><p>Privacy Policy</p></Link></div>
-                </div>
-            </form>
-        // </section>
+        <form className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg">
+            <p style={{ fontSize: '2rem', fontWeight: 500 }}>Signup to eSign and try for free for 30 days</p>
+            <p className="text-text mb-2">Enter your email to get started. No credit card required</p>
+            <Input 
+            type="email" 
+            label="Email" 
+            variant={'bordered'} 
+            labelPlacement={'outside'} 
+            placeholder="Enter your email" 
+            size="md"
+            isInvalid={isInvalid}
+            errorMessage="Please enter a valid email"
+            onValueChange={setEmailValue}
+            required
+            />
+            <Button color="primary" fullWidth className="text-white" size="md">Get Started</Button>
+            <div className="flex flex-col items-center justify-center">
+                <div>By clicking the Get Started above, you agree to the <Link href="/"><p>Terms & Conditions</p></Link> and <Link href="/"><p>Privacy Policy</p></Link></div>
+            </div>
+        </form>
     );
 }
