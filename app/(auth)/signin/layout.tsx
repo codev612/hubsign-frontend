@@ -7,7 +7,7 @@ export default function SigninLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <>
       <Navbar />
       <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow bg-background">
         <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -17,6 +17,6 @@ export default function SigninLayout({
         </section>
       </main>
       <Bottombar />
-    </div>
+    </>
   );
 }
