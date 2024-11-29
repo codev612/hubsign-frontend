@@ -69,8 +69,8 @@ export default function Signin() {
                 />
                 <Button color="primary" fullWidth className="text-white" size="md">Log in</Button>
                 <div className="flex flex-col items-center justify-center">
-                    <Link href="/"><p className="text-text">Don't have an account?</p></Link>
-                    <Link href="/"><p>Signup for 30 days free trial</p></Link>
+                    <Link href="/signupfree"><p className="text-text">Don't have an account?</p></Link>
+                    <Link href="/signupfree"><p>Signup for 30 days free trial</p></Link>
                 </div>
             </form>
         {/* <div className="inline-block max-w-xl text-center justify-center bg-forecolor">

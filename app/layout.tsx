@@ -44,11 +44,12 @@ export default function RootLayout({
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
           <div className="relative flex flex-col h-screen">
-            <Navbar />
+            {children}
+            {/* <Navbar />
             <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow bg-background">
               {children}
             </main>
-            <Bottombar />
+            <Bottombar /> */}
             {/* <footer className="w-full flex items-center justify-center py-3">
               <Link
                 isExternal
