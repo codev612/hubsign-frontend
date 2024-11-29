@@ -3,8 +3,9 @@
 import React, { ChangeEvent, KeyboardEvent, ClipboardEvent, useState } from "react";
 import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
+import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 
-export default function Checkinbox() {
+export default function Signupcheck() {
 
     const [code, setCode] = useState<string[]>(Array(6).fill("")); // Create an array with 6 empty strings
 
@@ -53,11 +54,12 @@ export default function Checkinbox() {
     };
 
     return (
-        <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-            <form onSubmit={handleSubmit} className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md" style={{ width: '382px' }}>
-                <p style={{ fontSize: '1.5rem', fontWeight: 500 }}>Check your inbox</p>
-                <p className="text-text mb-2">Please enter 6-digit code. Then create and confirm your new password.</p>
-                <div className="flex justify-around">
+        <form onSubmit={handleSubmit} className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg" >
+            <p style={{ fontSize: '1.5rem', fontWeight: 500 }}>Check your inbox</p>
+            <p className="text-text mb-2">We sent you a confirmation code to [email adress].</p>
+            <div className="flex flex-col">
+                <p>6-digit code</p>
+                <div className="flex justify-between w-full gap-1">
                     {code.map((digit, index) => (
                         <input
                             key={index}
@@ -68,17 +70,17 @@ export default function Checkinbox() {
                             onKeyDown={(event) => handleKeyDown(index, event)}
                             onPaste={(event) => handlePaste(event, index)}
                             maxLength={1}
-                            className="w-12 h-12 text-center text-xl border border-gray-300 rounded-md"
+                            className="w-16 h-12 text-center text-xl border border-gray-300 rounded-md"
                             required
                         />
                     ))}
                 </div>
-                <div className="flex">
-                    <p>Didn't get the code?</p>
-                    <Link>Resend the code</Link>
-                </div>
-                <Button type="submit" color="primary" fullWidth className="text-white" size="md">Verify</Button>
-            </form>
-        </section>
+            </div>
+            <div className="flex flex-col">
+                <p>Didn't get the code?<Link>Resend the code</Link></p>
+                <p>Wrong email?<Link href="/signupfree">Use a different email address</Link></p>
+            </div>
+            <Button type="submit" color="primary" fullWidth className="text-white" size="md">Next<ArrowForwardOutlinedIcon fontSize="small"/></Button>
+        </form>
     );
 }

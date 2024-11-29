@@ -45,7 +45,7 @@ export default function Signupstarted() {
 
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg">
+        <form onSubmit={handleSubmit} className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg" style={{ width: '24rem' }}>
             <p style={{ fontSize: '2rem', fontWeight: 500 }}>Let's get started</p>
             <p className="text-text mb-2">Add your info to make collaboration easy</p>
             <div className="flex justify-between gap-1 w-full">
