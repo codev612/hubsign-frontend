@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/navbar";
 import { Bottombar } from "@/components/bottombar";
 
-export default function RestPassLayout({
+export default function ResetPassLayout({
   children,
 }: {
   children: React.ReactNode;
