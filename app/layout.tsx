@@ -1,14 +1,14 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@nextui-org/link";
+// import { Link } from "@nextui-org/link";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import { Navbar } from "@/components/navbar";
-import { Bottombar } from "@/components/bottombar";
+// import { Navbar } from "@/components/navbar";
+// import { Bottombar } from "@/components/bottombar";
 
 export const metadata: Metadata = {
   title: {
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.png",
   },
 };
 

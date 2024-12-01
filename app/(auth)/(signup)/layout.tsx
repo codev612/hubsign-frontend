@@ -1,32 +1,33 @@
 import {
   Navbar as NextUINavbar,
   NavbarContent,
-  NavbarMenu,
-  NavbarMenuToggle,
+  // NavbarMenu,
+  // NavbarMenuToggle,
   NavbarBrand,
   NavbarItem,
-  NavbarMenuItem,
+  // NavbarMenuItem,
 } from "@nextui-org/navbar";
 import NextLink from "next/link";
 import { Input } from "@nextui-org/input";
 import { Kbd } from "@nextui-org/kbd";
+import { link as linkStyles } from "@nextui-org/theme";
+import clsx from "clsx";
+import Image from "next/image";
+
 import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
+  // TwitterIcon,
+  // GithubIcon,
+  // DiscordIcon,
+  // HeartFilledIcon,
   SearchIcon,
   Logo,
 } from "@/components/icons";
-import { link as linkStyles } from "@nextui-org/theme";
-import clsx from "clsx";
 
 export default function SignupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-
   const Bottombar = () => {
     const searchInput = (
       <Input
@@ -48,17 +49,14 @@ export default function SignupLayout({
         type="search"
       />
     );
-  
+
     return (
-      <NextUINavbar maxWidth="xl" position="sticky" className="bg-background">
+      <NextUINavbar className="bg-background" maxWidth="xl" position="sticky">
         <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
           <NavbarBrand as="li" className="gap-3 max-w-fit">
             <ul className="hidden lg:flex gap-4 justify-start ml-2">
               <NavbarItem className="border-2">
-                <NextLink
-                  className="text-text"
-                  href={'/'}
-                >
+                <NextLink className="text-text" href={"/"}>
                   © eSign, 2024, All rights reserved
                 </NextLink>
               </NavbarItem>
@@ -81,29 +79,27 @@ export default function SignupLayout({
             </ul>
           </NavbarBrand>
         </NavbarContent>
-  
+
         <NavbarContent
           className="hidden sm:flex basis-1/5 sm:basis-full"
           justify="end"
-        >
-          
-        </NavbarContent>
-  
+        />
+
         <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-            <ul className="hidden lg:flex justify-start ml-2">
-                <NavbarItem className="border-2">
-                    <NextLink
-                    className={clsx(
-                        linkStyles({ color: "foreground" }),
-                        "data-[active=true]:text-primary data-[active=true]:font-medium",
-                    )}
-                    color="foreground"
-                    href={'/'}
-                    >
-                    Terms of use
-                    </NextLink>
-                </NavbarItem>
-                {/* <NavbarItem>
+          <ul className="hidden lg:flex justify-start ml-2">
+            <NavbarItem className="border-2">
+              <NextLink
+                className={clsx(
+                  linkStyles({ color: "foreground" }),
+                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                )}
+                color="foreground"
+                href={"/"}
+              >
+                Terms of use
+              </NextLink>
+            </NavbarItem>
+            {/* <NavbarItem>
                     <NextLink
                     className={clsx(
                         linkStyles({ color: "foreground" }),
@@ -115,7 +111,7 @@ export default function SignupLayout({
                     Privacy Policy
                     </NextLink>
                 </NavbarItem> */}
-            </ul>
+          </ul>
         </NavbarContent>
       </NextUINavbar>
     );
@@ -142,22 +138,24 @@ export default function SignupLayout({
         type="search"
       />
     );
-  
+
     return (
-      <NextUINavbar maxWidth="xl" className="bg-background">
+      <NextUINavbar className="bg-background" maxWidth="xl">
         <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
           <NavbarBrand as="li" className="gap-3 max-w-fit">
-            <NextLink className="flex justify-start items-center gap-1" href="/">
+            <NextLink
+              className="flex justify-start items-center gap-1"
+              href="/"
+            >
               <Logo />
             </NextLink>
           </NavbarBrand>
         </NavbarContent>
-  
+
         <NavbarContent
           className="hidden sm:flex basis-1/5 sm:basis-full"
           justify="end"
-        >
-        </NavbarContent>
+        />
       </NextUINavbar>
     );
   };
@@ -171,12 +169,14 @@ export default function SignupLayout({
             {children}
           </div>
           {/* Image container to align the image to the right */}
-          <div className="flex-shrink-0 h-full" >
-            <img
-              src="/assets/img/mascot.png"
+          <div className="flex-shrink-0 h-full">
+            <Image
               alt="Mascot"
               className="h-full w-auto object-cover" // Ensures it takes full height and keeps its aspect ratio
+              height={700}
+              src="/assets/img/mascot.png"
               style={{ zIndex: 999 }}
+              width={582}
             />
           </div>
         </section>

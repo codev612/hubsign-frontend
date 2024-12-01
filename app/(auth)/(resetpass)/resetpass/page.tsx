@@ -1,60 +1,73 @@
-'use client'
+"use client";
 
-import React, { ChangeEvent, KeyboardEvent, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code";
-import { button as buttonStyles } from "@nextui-org/theme";
+// import { Snippet } from "@nextui-org/snippet";
+// import { Code } from "@nextui-org/code";
+// import { button as buttonStyles } from "@nextui-org/theme";
 
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
+// import { siteConfig } from "@/config/site";
+// import { title, subtitle } from "@/components/primitives";
+// import { GithubIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+// import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+// import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import { Button } from "@nextui-org/button";
 
 export default function Resetpass() {
+  // visible password
+  // const [isVisible, setIsVisible] = useState(false);
 
-    // visible password
-    const [isVisible, setIsVisible] = useState(false);
+  // const toggleVisibility = () => setIsVisible(!isVisible);
 
-    const toggleVisibility = () => setIsVisible(!isVisible);
+  // email format validation
+  const [value, setEmailValue] = useState("");
 
-    // email format validation
-    const [value, setEmailValue] = useState("");
+  const validateEmail = (value: string) =>
+    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
 
-    const validateEmail = (value: string) => value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+  const isInvalid = React.useMemo(() => {
+    if (value === "") return false;
 
-    const isInvalid = React.useMemo(() => {
-        if (value === "") return false;
-    
-        return validateEmail(value) ? false : true;
-      }, [value]);
+    return validateEmail(value) ? false : true;
+  }, [value]);
 
+  return (
+    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+      <form
+        className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md"
+        style={{ width: "382px" }}
+      >
+        <p style={{ fontSize: "1.5rem", fontWeight: 500 }}>Reset Password</p>
+        <p className="text-text mb-2">
+          Please provide the email address linked to your eSign account, and we
+          will send instructions to reset your password
+        </p>
+        <Input
+          required
+          errorMessage="Please enter a valid email"
+          isInvalid={isInvalid}
+          label="Email"
+          labelPlacement={"outside"}
+          placeholder="Enter your email"
+          size="md"
+          type="number"
+          variant={"bordered"}
+          onValueChange={setEmailValue}
+        />
 
-    return (
-        <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-            <form className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md" style={{ width: '382px' }}>
-                <p style={{ fontSize: '1.5rem', fontWeight: 500 }}>Reset Password</p>
-                <p className="text-text mb-2">Please provide the email address linked to your eSign account, and we will send instructions to reset your password</p>
-                <Input 
-                type="number" 
-                label="Email" 
-                variant={'bordered'} 
-                labelPlacement={'outside'} 
-                placeholder="Enter your email" 
-                size="md"
-                isInvalid={isInvalid}
-                errorMessage="Please enter a valid email"
-                onValueChange={setEmailValue}
-                required
-                />
-                
-                <Link href="/checkinbox"><Button color="primary" fullWidth className="text-white" size="md">Send Verification Email</Button></Link>
-                <Link href="/signin"><Button variant="bordered" fullWidth className="text-text" size="md">Back to Log in</Button></Link>
-            </form>
-        {/* <div className="inline-block max-w-xl text-center justify-center bg-forecolor">
+        <Link href="/checkinbox">
+          <Button fullWidth className="text-white" color="primary" size="md">
+            Send Verification Email
+          </Button>
+        </Link>
+        <Link href="/signin">
+          <Button fullWidth className="text-text" size="md" variant="bordered">
+            Back to Log in
+          </Button>
+        </Link>
+      </form>
+      {/* <div className="inline-block max-w-xl text-center justify-center bg-forecolor">
             <span className={title()}>Make&nbsp;</span>
             <span className={title({ color: "violet" })}>Signin&nbsp;</span>
             <br />
@@ -95,6 +108,6 @@ export default function Resetpass() {
             </span>
             </Snippet>
         </div> */}
-        </section>
-    );
+    </section>
+  );
 }
