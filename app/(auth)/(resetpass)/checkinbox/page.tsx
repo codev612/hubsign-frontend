@@ -3,8 +3,17 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Checkinbox() {
+  const searchParams = useSearchParams(); // Get search params
+  const email = searchParams.get("email"); // Retrieve the email from the query string
+
+  const router = useRouter();
+
+  const [state, setState] = useState("");
+
   const [code, setCode] = useState<string[]>(Array(6).fill("")); // Create an array with 6 empty strings
 
   const handleChange = (
@@ -55,12 +64,27 @@ export default function Checkinbox() {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const verificationCode = code.join(""); // Join the array to submit as a string
 
     console.log("Verification code submitted:", verificationCode);
-    // Submit code for verification
+
+    const response = await fetch("http://localhost:3000/api/verifycode", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: email, code: verificationCode }),
+    });
+
+    if (!response.ok) {
+      setState("Invalid code");
+      return;
+    } else {
+      // const data = await response.json();
+      router.push(`/newpass?email=${encodeURIComponent(email as string)}`);
+    }
   };
 
   return (
@@ -90,6 +114,7 @@ export default function Checkinbox() {
             />
           ))}
         </div>
+        <p className="text-error">{state}</p>
         <div className="flex">
           <p>{"Didn't get the code?"}</p>
           <Link>Resend the code</Link>

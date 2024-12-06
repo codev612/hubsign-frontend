@@ -10,8 +10,6 @@ import {
 import NextLink from "next/link";
 import { Input } from "@nextui-org/input";
 import { Kbd } from "@nextui-org/kbd";
-import { link as linkStyles } from "@nextui-org/theme";
-import clsx from "clsx";
 import Image from "next/image";
 
 import {
@@ -55,27 +53,21 @@ export default function SignupLayout({
         <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
           <NavbarBrand as="li" className="gap-3 max-w-fit">
             <ul className="hidden lg:flex gap-4 justify-start ml-2">
-              <NavbarItem className="border-2">
+              <NavbarItem style={{ fontSize: "12px" }}>
                 <NextLink className="text-text" href={"/"}>
                   © eSign, 2024, All rights reserved
                 </NextLink>
               </NavbarItem>
-              {/* <NavbarItem className="border-2">
-                <NextLink
-                  className="text-text"
-                  href={'/'}
-                >
+              <NavbarItem style={{ fontSize: "12px" }}>
+                <NextLink className="text-text" href={"/"}>
                   Terms of use
                 </NextLink>
               </NavbarItem>
-              <NavbarItem>
-                <NextLink
-                  className="text-text"
-                  href={'/'}
-                >
+              <NavbarItem style={{ fontSize: "12px" }}>
+                <NextLink className="text-text" href={"/"}>
                   Privacy Policy
                 </NextLink>
-              </NavbarItem> */}
+              </NavbarItem>
             </ul>
           </NavbarBrand>
         </NavbarContent>
@@ -85,7 +77,7 @@ export default function SignupLayout({
           justify="end"
         />
 
-        <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+        {/* <NavbarContent className="hidden lg:flex gap-4 justify-start ml-2" justify="end">
           <ul className="hidden lg:flex justify-start ml-2">
             <NavbarItem className="border-2">
               <NextLink
@@ -99,20 +91,20 @@ export default function SignupLayout({
                 Terms of use
               </NextLink>
             </NavbarItem>
-            {/* <NavbarItem>
-                    <NextLink
-                    className={clsx(
-                        linkStyles({ color: "foreground" }),
-                        "data-[active=true]:text-primary data-[active=true]:font-medium",
-                    )}
-                    color="foreground"
-                    href={'/'}
-                    >
-                    Privacy Policy
-                    </NextLink>
-                </NavbarItem> */}
+            <NavbarItem className="border-2">
+                <NextLink
+                className={clsx(
+                    linkStyles({ color: "foreground" }),
+                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                )}
+                color="foreground"
+                href={'/'}
+                >
+                Privacy Policy
+                </NextLink>
+            </NavbarItem>
           </ul>
-        </NavbarContent>
+        </NavbarContent> */}
       </NextUINavbar>
     );
   };

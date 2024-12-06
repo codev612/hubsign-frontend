@@ -110,7 +110,7 @@ export default function Signuppass() {
       style={{ width: "32rem" }}
     >
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>New Password</p>
-      <p className="text-text mb-2">
+      <p className="text-text mb-2 text-sm">
         Enter your credentials to access your account
       </p>
       <Input

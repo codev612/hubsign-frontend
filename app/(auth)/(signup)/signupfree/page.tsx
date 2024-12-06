@@ -32,12 +32,13 @@ export default function Signupfree() {
   const isInvalid = React.useMemo(() => {
     if (value === "") return false;
     localStorage.setItem("email", value);
+
     return validateEmail(value) ? false : true;
   }, [value]);
 
   useEffect(() => {
     setEmailValue(localStorage.getItem("email") || "");
-  }, [])
+  }, []);
 
   return (
     <form
@@ -48,7 +49,7 @@ export default function Signupfree() {
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>
         Signup to eSign and try for free for 30 days
       </p>
-      <p className="text-text mb-2">
+      <p className="text-text mb-2 text-sm">
         Enter your email to get started. No credit card required
       </p>
       <div className="flex flex-col w-full">
@@ -62,9 +63,9 @@ export default function Signupfree() {
           placeholder="Enter your email"
           size="md"
           type="email"
+          value={value}
           variant={"bordered"}
           onValueChange={setEmailValue}
-          value={value}
         />
         <p className="text-error">{state.message}</p>
       </div>

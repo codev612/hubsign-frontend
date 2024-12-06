@@ -4,10 +4,14 @@ import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
+import { useRouter } from "next/navigation";
 
 export default function Signupcheck() {
+  const router = useRouter();
+
   const [code, setCode] = useState<string[]>(Array(6).fill("")); // Create an array with 6 empty strings
   const [email, setEmail] = useState("");
+  const [state, setState] = useState("");
 
   const handleChange = (
     index: number,
@@ -57,28 +61,49 @@ export default function Signupcheck() {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const verificationCode = code.join(""); // Join the array to submit as a string
 
     console.log("Verification code submitted:", verificationCode);
+
+    const response = await fetch("http://localhost:3000/api/verifycode", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: localStorage.getItem("email"),
+        code: verificationCode,
+      }),
+    });
+
+    if (!response.ok) {
+      setState("Invalid code");
+
+      return;
+    } else {
+      // const data = await response.json();
+      router.push("/signupsuccess");
+    }
     // Submit code for verification
   };
 
   useEffect(() => {
-    setEmail( localStorage.getItem("email") || "");
-  }, [])
+    setEmail(localStorage.getItem("email") || "");
+  }, []);
 
   return (
     <form
       className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg"
       onSubmit={handleSubmit}
+      // style={{width:'381px'}}
     >
       <p style={{ fontSize: "1.5rem", fontWeight: 500 }}>Check your inbox</p>
-      <p className="text-text mb-2">
-      We sent you a confirmation code to {email}.
+      <p className="text-text mb-2 text-sm">
+        We sent you a confirmation code to {email}.
       </p>
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         <p>6-digit code</p>
         <div className="flex justify-between w-full gap-1">
           {code.map((digit, index) => (
@@ -96,11 +121,12 @@ export default function Signupcheck() {
             />
           ))}
         </div>
+        <p className="text-error">{state}</p>
       </div>
       <div className="flex flex-col">
         <p>
           {"Didn't get the code?"}
-          <Link>Resend the code</Link>
+          <Button type="submit">Resend the code</Button>
         </p>
         <p>
           Wrong email?

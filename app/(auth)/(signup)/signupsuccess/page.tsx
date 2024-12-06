@@ -15,7 +15,7 @@ export default function Signupsuccess() {
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>
         You are all set! Sign your first document
       </p>
-      <p className="text-text mb-2">
+      <p className="text-text mb-2 text-sm">
         Congrats! Your account is set up, and you can start using eSign.{" "}
       </p>
 

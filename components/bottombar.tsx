@@ -80,12 +80,12 @@ export const Bottombar = () => {
         justify="end"
       >
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          <NavbarItem className="border-2">
+          <NavbarItem className="border-1">
             <NextLink className="text-text" href={"/"}>
               Terms of use
             </NextLink>
           </NavbarItem>
-          <NavbarItem>
+          <NavbarItem className="border-1">
             <NextLink className="text-text" href={"/"}>
               Privacy Policy
             </NextLink>

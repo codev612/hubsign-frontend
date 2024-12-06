@@ -2,24 +2,18 @@
 
 import React, { useState } from "react";
 import { Link } from "@nextui-org/link";
-// import { Snippet } from "@nextui-org/snippet";
-// import { Code } from "@nextui-org/code";
-// import { button as buttonStyles } from "@nextui-org/theme";
-
-// import { siteConfig } from "@/config/site";
-// import { title, subtitle } from "@/components/primitives";
-// import { GithubIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
-// import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-// import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import { Button } from "@nextui-org/button";
+import { useFormState } from "react-dom";
+
+import { inputEmail } from "../action";
+
+const initialState = {
+  message: "",
+};
 
 export default function Resetpass() {
-  // visible password
-  // const [isVisible, setIsVisible] = useState(false);
-
-  // const toggleVisibility = () => setIsVisible(!isVisible);
-
+  const [state, formAction] = useFormState(inputEmail, initialState);
   // email format validation
   const [value, setEmailValue] = useState("");
 
@@ -35,6 +29,7 @@ export default function Resetpass() {
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <form
+        action={formAction}
         className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md"
         style={{ width: "382px" }}
       >
@@ -49,65 +44,29 @@ export default function Resetpass() {
           isInvalid={isInvalid}
           label="Email"
           labelPlacement={"outside"}
+          name="email"
           placeholder="Enter your email"
           size="md"
-          type="number"
+          type="text"
           variant={"bordered"}
           onValueChange={setEmailValue}
         />
-
-        <Link href="/checkinbox">
-          <Button fullWidth className="text-white" color="primary" size="md">
-            Send Verification Email
-          </Button>
-        </Link>
+        <p className="text-error">{state.message}</p>
+        <Button
+          fullWidth
+          className="text-white"
+          color="primary"
+          size="md"
+          type="submit"
+        >
+          Send Verification Email
+        </Button>
         <Link href="/signin">
           <Button fullWidth className="text-text" size="md" variant="bordered">
             Back to Log in
           </Button>
         </Link>
       </form>
-      {/* <div className="inline-block max-w-xl text-center justify-center bg-forecolor">
-            <span className={title()}>Make&nbsp;</span>
-            <span className={title({ color: "violet" })}>Signin&nbsp;</span>
-            <br />
-            <span className={title()}>
-            websites regardless of your design experience.
-            </span>
-            <div className={subtitle({ class: "mt-4" })}>
-            Beautiful, fast and modern React UI library.
-            </div>
-        </div>
-
-        <div className="flex gap-3">
-            <Link
-            isExternal
-            className={buttonStyles({
-                color: "primary",
-                radius: "full",
-                variant: "shadow",
-            })}
-            href={siteConfig.links.docs}
-            >
-            Documentation
-            </Link>
-            <Link
-            isExternal
-            className={buttonStyles({ variant: "bordered", radius: "full" })}
-            href={siteConfig.links.github}
-            >
-            <GithubIcon size={20} />
-            GitHub
-            </Link>
-        </div>
-
-        <div className="mt-8">
-            <Snippet hideCopyButton hideSymbol variant="bordered">
-            <span>
-                Get started by editing <Code color="primary">app/page.tsx</Code>
-            </span>
-            </Snippet>
-        </div> */}
     </section>
   );
 }
