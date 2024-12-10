@@ -5,7 +5,6 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 // import InputMask from "react-input-mask";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
-import { useFormState } from "react-dom";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
@@ -58,10 +57,8 @@ export default function Signupstarted() {
 
     if (!response.ok) {
       setState("Unexpected error. Try later");
-
       return;
     } else {
-      // const data = await response.json();
       router.push("/signupcheck");
     }
   };

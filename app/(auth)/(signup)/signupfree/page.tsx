@@ -28,7 +28,8 @@ export default function Signupfree() {
   const [value, setEmailValue] = useState("");
 
   const validateEmail = (value: string) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+    // value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+    value.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/);
 
   const isInvalid = React.useMemo(() => {
     if (value === "") return false;

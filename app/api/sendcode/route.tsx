@@ -46,14 +46,11 @@ export async function POST(req: Request) {
   try {
     const response = await mailerSend.email.send(emailParams);
 
-    console.log("Email sent successfully:", response);
-
     return NextResponse.json(
       { message: "Verification code sent" },
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error sending email:", error);
 
     return NextResponse.json(
       { error: "Unable to send email" },

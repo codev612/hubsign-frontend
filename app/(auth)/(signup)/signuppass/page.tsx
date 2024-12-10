@@ -1,64 +1,44 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-// import { Link } from "@nextui-org/link";
-// import { Snippet } from "@nextui-org/snippet";
-// import { Code } from "@nextui-org/code";
-// import { button as buttonStyles } from "@nextui-org/theme";
-// import { siteConfig } from "@/config/site";
-// import { title, subtitle } from "@/components/primitives";
-// import { GithubIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { Button } from "@nextui-org/button";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
-export default function Signuppass() {
-  //
-  const [password, setPassword] = useState("");
-
-  const [passState6, setPassState6] = useState(false);
-
-  const [passStateContain, setPassStateContain] = useState(false);
-
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [match, setMatch] = useState(false);
-
-  // State to control button enabled/disabled status
-  const [isPasswordValid, setIsPasswordValid] = useState(false);
-
-  useEffect(() => {
-    console.log(isPasswordValid)
-  }, [password])
+const Signuppass: React.FC = () => {
+  // State variables with TypeScript types
+  const router = useRouter();
+  const [password, setPassword] = useState<string>("");
+  const [passState6, setPassState6] = useState<boolean>(false);
+  const [passStateContain, setPassStateContain] = useState<boolean>(false);
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [match, setMatch] = useState<boolean>(false);
+  const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [state, setState] = useState<String>("");
 
   // Regex pattern for password validation
-  const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[<>])(?=\S)(.{4,})$/; // At least 6 characters, one uppercase, one lowercase, and no spaces
+  const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[<>])(?=\S)(.{6,})$/; // At least 4 characters, one uppercase, one lowercase, and specific character "+<>"
   const invalidCharPattern = /[<>]/; // Invalid characters: < and >
 
+  // Validate password length and content
   const validatePassword = (inputPassword: string) => {
-    // Check password length
-    if (password.length > 4) {
-      setPassState6(true);
-    } else {
-      setPassState6(false);
-    }
-
-    // Check for invalid characters
+    const lengthValid = inputPassword.length > 5;
+    setPassState6(lengthValid);
     setPassStateContain(!invalidCharPattern.test(inputPassword));
-
-    // Validate complete password with pattern
-    // const isValid = passwordPattern.test(inputPassword);
-    return inputPassword.length >= 4 && passStateContain;
+    return lengthValid && !invalidCharPattern.test(inputPassword);
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-
     const isMatch = value === confirmPassword;
-    setMatch(isMatch);
 
+    setMatch(isMatch);
     setPassword(value);
+    
     const isValid = validatePassword(value);
     setIsPasswordValid(isValid && isMatch); // Update the button status
   };
@@ -66,39 +46,39 @@ export default function Signuppass() {
   const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setConfirmPassword(value);
+
     const isMatch = value === password;
     setMatch(isMatch);
-    
+
     // Update valid state depending on password validation and match
     setIsPasswordValid(isMatch && validatePassword(password));
   };
 
-  // visible password
-  const [isVisible, setIsVisible] = useState(false);
-
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const PasswordDesc = () => (
+  // Password Description component
+  const PasswordDesc: React.FC = () => (
     <div>
       <div className="flex items-center gap-1">
         <input
           readOnly
           style={{
-            borderRadius: "50%", // Makes the input circular
-            width: "10px", // Width of the input dot
-            height: "10px", // Height of the input dot
+            borderRadius: "50%",
+            width: "10px",
+            height: "10px",
             backgroundColor: passState6 ? "blue" : "inherit",
           }}
         />
-        <p className="text-text">at least 6 characters</p>
+        <p className="text-text">at least 6 characters</p> {/* Changed to 6 characters as per regex */}
       </div>
+
       <div className="flex items-center gap-1">
         <input
           readOnly
           style={{
-            borderRadius: "50%", // Makes the input circular
-            width: "10px", // Width of the input dot
-            height: "10px", // Height of the input dot
+            borderRadius: "50%",
+            width: "10px",
+            height: "10px",
             backgroundColor: passStateContain ? "blue" : "inherit",
           }}
         />
@@ -107,19 +87,47 @@ export default function Signuppass() {
     </div>
   );
 
-  const MatchDesc = () => (
+  const MatchDesc: React.FC = () => (
     <p className="text-text">{match ? "Match" : "Not match"}</p>
   );
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const response = await fetch("/api/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: Cookies.get("email"),
+        firstname: Cookies.get("firstname"),
+        lastname: Cookies.get("lastname"),
+        phonenumber: Cookies.get("phonenumber"),
+        password: password,
+        token: Cookies.get("token"),
+      }),
+    });
+
+    if (!response.ok) {
+      setState("Invalid code");
+      return;
+    } else {
+      router.push("/signupsuccess"); // Navigate to the next step
+    }
+  }
 
   return (
     <form
       className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg w-full"
       style={{ width: "32rem" }}
+      onSubmit={handleSubmit}
     >
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>New Password</p>
       <p className="text-text mb-2 text-sm">
         Enter your credentials to access your account
       </p>
+
       <Input
         fullWidth
         description={<PasswordDesc />}
@@ -146,6 +154,7 @@ export default function Signuppass() {
         variant="bordered"
         onChange={handlePasswordChange}
       />
+
       <Input
         description={<MatchDesc />}
         endContent={
@@ -162,24 +171,29 @@ export default function Signuppass() {
             )}
           </button>
         }
-        label="Password"
+        label="Confirm Password"
         labelPlacement={"outside"}
-        placeholder="Enter your password"
+        placeholder="Confirm your password"
         size="md"
         type={isVisible ? "text" : "password"}
         value={confirmPassword}
         variant="bordered"
         onChange={handleConfirmPasswordChange}
       />
-      <Button 
-      fullWidth 
-      className="text-white" 
-      color="primary" 
-      size="md"
-      isDisabled={!isPasswordValid}
+      <p className="text-error">{state}</p>
+
+      <Button
+        fullWidth
+        className="text-white"
+        color="primary"
+        size="md"
+        isDisabled={!isPasswordValid}
+        type="submit"
       >
         Start using eSign
       </Button>
     </form>
   );
-}
+};
+
+export default Signuppass;
