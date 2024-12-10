@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { Link } from "@nextui-org/link";
 // import { Snippet } from "@nextui-org/snippet";
 // import { Code } from "@nextui-org/code";
@@ -25,45 +25,52 @@ export default function Signuppass() {
 
   const [match, setMatch] = useState(false);
 
+  // State to control button enabled/disabled status
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+
+  useEffect(() => {
+    console.log(isPasswordValid)
+  }, [password])
+
   // Regex pattern for password validation
-  const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[<>])(?=\S)(.{6,})$/; // At least 6 characters, one uppercase, one lowercase, and no spaces
+  const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[<>])(?=\S)(.{4,})$/; // At least 6 characters, one uppercase, one lowercase, and no spaces
   const invalidCharPattern = /[<>]/; // Invalid characters: < and >
 
   const validatePassword = (inputPassword: string) => {
     // Check password length
-    if (password.length >= 6) {
+    if (password.length > 4) {
       setPassState6(true);
     } else {
       setPassState6(false);
     }
 
     // Check for invalid characters
-    console.log(setPassStateContain(!invalidCharPattern.test(inputPassword)));
+    setPassStateContain(!invalidCharPattern.test(inputPassword));
 
-    // if (passwordPattern.test(inputPassword)) {
-    //     setPassStateContain(true)
-    //     // setErrorMessage(''); // Clear error message on valid password
-    // } else {
-    //     setPassStateContain(false)
-    //     // setErrorMessage('Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one of the special characters (< or >), and must not contain spaces.');
-    // }
+    // Validate complete password with pattern
+    // const isValid = passwordPattern.test(inputPassword);
+    return inputPassword.length >= 4 && passStateContain;
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
 
+    const isMatch = value === confirmPassword;
+    setMatch(isMatch);
+
     setPassword(value);
-    validatePassword(value);
+    const isValid = validatePassword(value);
+    setIsPasswordValid(isValid && isMatch); // Update the button status
   };
 
-  const handleConfirmPasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-
     setConfirmPassword(value);
-
-    value === password ? setMatch(true) : setMatch(false);
+    const isMatch = value === password;
+    setMatch(isMatch);
+    
+    // Update valid state depending on password validation and match
+    setIsPasswordValid(isMatch && validatePassword(password));
   };
 
   // visible password
@@ -164,7 +171,13 @@ export default function Signuppass() {
         variant="bordered"
         onChange={handleConfirmPasswordChange}
       />
-      <Button fullWidth className="text-white" color="primary" size="md">
+      <Button 
+      fullWidth 
+      className="text-white" 
+      color="primary" 
+      size="md"
+      isDisabled={!isPasswordValid}
+      >
         Start using eSign
       </Button>
     </form>

@@ -125,6 +125,7 @@ export default function Signupstarted() {
         // size="md"
         fullWidth
       />
+      <p className="text-error">{state}</p>
       <Button
         fullWidth
         className="text-white"

@@ -67,7 +67,7 @@ export default function Signupcheck() {
 
     console.log("Verification code submitted:", verificationCode);
 
-    const response = await fetch("http://localhost:3000/api/verifycode", {
+    const response = await fetch("/api/verifycode", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -80,11 +80,10 @@ export default function Signupcheck() {
 
     if (!response.ok) {
       setState("Invalid code");
-
       return;
     } else {
       // const data = await response.json();
-      router.push("/signupsuccess");
+      router.push("/signuppass");
     }
     // Submit code for verification
   };
