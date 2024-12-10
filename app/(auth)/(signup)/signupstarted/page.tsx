@@ -6,16 +6,16 @@ import { Button } from "@nextui-org/button";
 // import InputMask from "react-input-mask";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useFormState } from "react-dom";
-
-import { inputContactInfo } from "../action";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const initialState = {
   message: "",
 };
 
 export default function Signupstarted() {
-  const [state, formAction] = useFormState(inputContactInfo, initialState);
-
+  const router = useRouter()
+  const [state, setState] = useState("");
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
   const [phonenumber, setPhoneNumber] = useState("");
@@ -39,21 +39,45 @@ export default function Signupstarted() {
     }
 
     if (isMounted) {
-      localStorage.setItem(name, value); // Only save when mounted
+      Cookies.set(name, value); // Only save when mounted
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const response = await fetch('/api/sendcode', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: Cookies.get("email"),
+      }),
+    });
+
+    if (!response.ok) {
+      setState("Unexpected error. Try later");
+
+      return;
+    } else {
+      // const data = await response.json();
+      router.push("/signupcheck");
     }
   };
 
   useEffect(() => {
     setIsMounted(true); // Set mounted to true after the first render
 
-    setFirstName(localStorage.getItem("firstname") || "");
-    setLastName(localStorage.getItem("lastname") || "");
-    setPhoneNumber(localStorage.getItem("phonenumber") || "");
+    setFirstName(Cookies.get("firstname") || "");
+    setLastName(Cookies.get("lastname") || "");
+    setPhoneNumber(Cookies.get("phonenumber") || "");
   }, []);
 
   return (
     <form
-      action={formAction}
+      // action={formAction}
+      onSubmit={handleSubmit}
       className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg"
       style={{ width: "24rem" }}
     >

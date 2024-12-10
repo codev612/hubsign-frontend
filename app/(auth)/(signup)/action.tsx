@@ -23,51 +23,29 @@ const userInfo: UserInfo = {
 const verifyCode: String = "";
 
 export async function inputEmail(prevState: any, formData: FormData) {
-  //   const res = await fetch('https://...')
-  //   const json = await res.json()
 
-  //   if (!res.ok) {
-  // return { message: 'Please enter a valid email' }
-  //   }
-  userInfo.email = formData.get("email") as string;
-  console.log(userInfo.email);
+  const email = formData.get("email") as string;
 
-  if (userInfo.email === "") return redirect("/signupfree");
+  if (email === "") return redirect("/signupfree");
 
-  return redirect("/signupstarted");
-}
-
-export async function inputContactInfo(prevState: any, formData: FormData) {
-  //   const res = await fetch('https://...')
-  //   const json = await res.json()
-
-  //   if (!res.ok) {
-  // return { message: 'Please enter a valid email' }
-  //   }
-
-  userInfo.firstname = formData.get("firstname") as string;
-  userInfo.lastname = formData.get("lastname") as string;
-  userInfo.phonenumber = formData.get("phonenumber") as string;
-
-  if (userInfo.email === "") return redirect("/signupfree");
-
-  const response = await fetch(
-    "http://localhost:3000/api/sendverificationcode",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: userInfo.email, name: userInfo.firstname }),
+  const res = await fetch(`${process.env.SERVER_URL}/users/emailcheck`,{
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({ email: formData.get("email") }),
+  })
 
-  console.log(userInfo);
+  const json = await res.json();
+  console.log(res.status)
 
-  if (!response.ok) {
-    return { message: "Invalid email" };
+  switch (res.status) {
+    case 409:
+      return { message: 'Already exists' };
+    case 201:
+      userInfo.email = email;
+      return redirect("/signupstarted");
+    default:
+      return { message: 'Please enter a valid email' };
   }
-
-  // return redirect("/signupcheck");
-  return redirect("/signupcheck");
 }

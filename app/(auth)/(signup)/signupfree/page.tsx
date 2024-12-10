@@ -13,6 +13,7 @@ import { Input } from "@nextui-org/input";
 // import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import { Button } from "@nextui-org/button";
 import { useFormState } from "react-dom";
+import Cookies from "js-cookie";
 
 import { inputEmail } from "../action";
 
@@ -31,13 +32,13 @@ export default function Signupfree() {
 
   const isInvalid = React.useMemo(() => {
     if (value === "") return false;
-    localStorage.setItem("email", value);
+    Cookies.set("email", value);
 
     return validateEmail(value) ? false : true;
   }, [value]);
 
   useEffect(() => {
-    setEmailValue(localStorage.getItem("email") || "");
+    setEmailValue(Cookies.get("email") || "");
   }, []);
 
   return (
@@ -74,6 +75,7 @@ export default function Signupfree() {
         className="text-white"
         color="primary"
         size="md"
+        isDisabled={isInvalid}
         type="submit"
       >
         Get Started
