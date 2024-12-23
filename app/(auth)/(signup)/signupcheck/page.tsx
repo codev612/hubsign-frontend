@@ -7,12 +7,17 @@ import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Dot from "@/components/global/dot";
+import StateBoard from "@/components/global/stateboard";
 
 const Signupcheck: React.FC = () => {
   const router = useRouter();
   const [code, setCode] = useState<string[]>(Array(6).fill("")); // Create an array with 6 empty strings
   const [email, setEmail] = useState<string>("");
-  const [state, setState] = useState<string>("");
+  const [state, setState] = useState({
+    text:"",
+    state: "text-error",
+    bgColor: "bg-bgdanger"
+  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleChange = (
@@ -85,7 +90,7 @@ const Signupcheck: React.FC = () => {
   
       if (!response.ok) {
         setIsLoading(false);
-        setState("Invalid code");
+        setState({...state, text: "Invalid code", state:"text-error", bgColor:"bg-bgdanger"});
         return;
       } else {
         const data = await response.json();
@@ -97,11 +102,10 @@ const Signupcheck: React.FC = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      setState("Unexpected error. Try later");
+      setState({...state, text: "Unexpected error. Try later", state:"text-error", bgColor:"bg-bgdanger"});
     } finally {
       setIsLoading(false);
     }
-    
   };
 
   useEffect(() => {
@@ -127,13 +131,13 @@ const Signupcheck: React.FC = () => {
       const json = await response.json();
   
       if (!response.ok) {
-        setState(json.error);
+        setState({...state, text:json.error, state:"text-error", bgColor:"bg-bgdanger"});
         return;
       } else {
-        setState("Resent a confirmation code.")
+        setState({...state, text:"Resent a confirmation code.", state:"text-text", bgColor:"bg-info"})
       }
     } catch (error) {
-      setState("Unexpected error. Try later");
+      setState({...state, text:"Unexpected error. Try later", state:"text-error", bgColor:"bg-bgdanger"});
     } 
   }
 
@@ -165,9 +169,11 @@ const Signupcheck: React.FC = () => {
             />
           ))}
         </div>
-        <p className="text-error">{state}</p>
+        {/* <p className="text-error">{state}</p> */}
       </div>
-
+      <div className="flex flex-col w-full">
+        { state.text!=="" ? <StateBoard state={state.state} text={state.text} bgColor={state.bgColor} /> : "" }
+      </div>
       <div className="flex flex-col gap-0">
         <div className="m-0 p-0" style={{fontSize: "0.875rem"}}>
           {"Didn't get the code?"}

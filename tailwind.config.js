@@ -47,6 +47,8 @@ module.exports = {
             primary: "#2563EB",
             error: "#f31260",
             link: "#2563EB",
+            bgdanger: "#FCE9EA",
+            info: "#A1E2A1",
           },
         },
         dark: {},

@@ -8,6 +8,7 @@ import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Dot from "@/components/global/dot";
+import StateBoard from "@/components/global/stateboard";
 
 const Signuppass: React.FC = () => {
   // State variables with TypeScript types
@@ -19,7 +20,7 @@ const Signuppass: React.FC = () => {
   const [match, setMatch] = useState<boolean>(false);
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [state, setState] = useState<String>("");
+  const [state, setState] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Regex pattern for password validation
@@ -179,7 +180,7 @@ const Signuppass: React.FC = () => {
         variant="bordered"
         onChange={handleConfirmPasswordChange}
       />
-      <p className="text-error">{state}</p>
+      { state!=="" ? <StateBoard state="text-error" text={state} /> : "" }
 
       <Button
         isLoading={isLoading}

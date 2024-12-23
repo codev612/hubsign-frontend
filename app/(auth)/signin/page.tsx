@@ -10,6 +10,7 @@ import LoadingButton from "@/components/global/loadingbutton";
 import { siteConfig } from "@/config/site";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import StateBoard from "@/components/global/stateboard";
 
 export default function Signin() {
   const router = useRouter();
@@ -83,7 +84,7 @@ export default function Signin() {
           placeholder="Enter your email"
           size="md"
           type="email"
-          variant={"bordered"}
+          variant="bordered"
           onValueChange={setEmailValue}
         />
         <Input
@@ -113,7 +114,8 @@ export default function Signin() {
           type={isVisible ? "text" : "password"}
           variant="bordered"
         />
-        <p className="text-error mt-0" style={{fontSize:'12px', textAlign:'left'}}>{state}</p>
+        {/* <p className="text-error mt-0" style={{fontSize:'12px', textAlign:'left'}}>{state}</p> */}
+        {state!=="" ? <StateBoard state="text-error" text={state} /> : ""}
         <Link href="/resetpass">
           <p className="text-text test-start" style={{textAlign:'start'}}>{"Forgot your password?"}</p>
         </Link>
@@ -127,47 +129,6 @@ export default function Signin() {
           </Link>
         </div>
       </form>
-      {/* <div className="inline-block max-w-xl text-center justify-center bg-forecolor">
-            <span className={title()}>Make&nbsp;</span>
-            <span className={title({ color: "violet" })}>Signin&nbsp;</span>
-            <br />
-            <span className={title()}>
-            websites regardless of your design experience.
-            </span>
-            <div className={subtitle({ class: "mt-4" })}>
-            Beautiful, fast and modern React UI library.
-            </div>
-        </div>
-
-        <div className="flex gap-3">
-            <Link
-            isExternal
-            className={buttonStyles({
-                color: "primary",
-                radius: "full",
-                variant: "shadow",
-            })}
-            href={siteConfig.links.docs}
-            >
-            Documentation
-            </Link>
-            <Link
-            isExternal
-            className={buttonStyles({ variant: "bordered", radius: "full" })}
-            href={siteConfig.links.github}
-            >
-            <GithubIcon size={20} />
-            GitHub
-            </Link>
-        </div>
-
-        <div className="mt-8">
-            <Snippet hideCopyButton hideSymbol variant="bordered">
-            <span>
-                Get started by editing <Code color="primary">app/page.tsx</Code>
-            </span>
-            </Snippet>
-        </div> */}
     </section>
   );
 }

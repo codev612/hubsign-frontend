@@ -8,6 +8,7 @@ import { useFormState } from "react-dom";
 import Cookies from "js-cookie";
 import { inputEmail } from "../action";
 import LoadingButton from "@/components/global/loadingbutton";
+import StateBoard from "@/components/global/stateboard";
 
 const initialState = {
   message: "",
@@ -58,7 +59,7 @@ export default function Resetpass() {
           variant={"bordered"}
           onValueChange={setEmailValue}
         />
-        <p className="text-error">{state.message}</p>
+        { state.message!=="" ? <StateBoard state="text-error" text={state.message} /> : "" }
         <LoadingButton title="Send Verification Email" isLoading={isLoading}></LoadingButton>
         <Link href="/signin">
           <Button fullWidth className="text-text" size="md" variant="bordered">

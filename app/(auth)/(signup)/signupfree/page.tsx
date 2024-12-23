@@ -2,20 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { Link } from "@nextui-org/link";
-// import { Snippet } from "@nextui-org/snippet";
-// import { Code } from "@nextui-org/code";
-// import { button as buttonStyles } from "@nextui-org/theme";
-// import { siteConfig } from "@/config/site";
-// import { title, subtitle } from "@/components/primitives";
-// import { GithubIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
-// import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-// import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import { Button } from "@nextui-org/button";
 import { useFormState } from "react-dom";
 import Cookies from "js-cookie";
 import { inputEmail } from "../action";
 import LoadingButton from "@/components/global/loadingbutton";
+import StateBoard from "@/components/global/stateboard";
 
 const initialState = {
   message: "",
@@ -75,7 +67,7 @@ export default function Signupfree() {
           variant={"bordered"}
           onValueChange={setEmailValue}
         />
-        <p className="text-error">{state.message}</p>
+        { state.message!=="" ? <StateBoard state="text-error" text={state.message} /> : "" }
       </div>
       <LoadingButton title="Get Started" isLoading={isLoading}></LoadingButton>
 

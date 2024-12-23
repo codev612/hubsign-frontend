@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import Dot from "@/components/global/dot";
 // import LoadingButton from "@/components/global/loadingbutton";
+import StateBoard from "@/components/global/stateboard";
 
 export default function Signupstarted() {
 
@@ -138,7 +139,7 @@ export default function Signupstarted() {
         // size="md"
         fullWidth
       />
-      <p className="text-error">{state}</p>
+      { state!=="" ? <StateBoard state="text-error" text={state} /> : "" }
       {/* <LoadingButton title="Get Started" isLoading={isLoading}></LoadingButton> */}
       <Button
         isLoading={isLoading}

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import StateBoard from "@/components/global/stateboard";
 
 export default function Checkinbox() {
   const searchParams = useSearchParams(); // Get search params
@@ -14,7 +14,11 @@ export default function Checkinbox() {
 
   const router = useRouter();
 
-  const [state, setState] = useState<string>("");
+  const [state, setState] = useState({
+    state: "text-error",
+    bgColor: "bg-bgdanger",
+    text: ""
+  });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -89,7 +93,7 @@ export default function Checkinbox() {
       const json = await response.json();
 
       if (!response.ok) {
-        setState(json.error);
+        setState({...state, text:json.error, state:"text-error", bgColor: "bg-bgdanger"});
         setIsLoading(false);
         return;
       } else {
@@ -97,7 +101,7 @@ export default function Checkinbox() {
         router.push(`/newpass`);
       }
     } catch (error) {
-      setState("Unexpected error. Try later");
+      setState({...state, text:"Unexpected error. Try later", state:"text-error", bgColor:"bg-bgdanger"});
       setIsLoading(false);
     } finally {
       setIsLoading(false);
@@ -119,13 +123,13 @@ export default function Checkinbox() {
       const json = await response.json();
   
       if (!response.ok) {
-        setState(json.error);
+        setState({...state, text:json.error, state:"text-error", bgColor:"bg-bgdanger"});
         return;
       } else {
-        setState("Resent a confirmation code.")
+        setState({...state, text: "Resent a confirmation code.", state:"text-text", bgColor: "bg-info"})
       }
     } catch (error) {
-      setState("Unexpected error. Try later");
+      setState({...state, text: "Unexpected error. Try later", state:"text-error", bgColor: "bg-bgdanger"});
     } 
   }
 
@@ -156,7 +160,7 @@ export default function Checkinbox() {
             />
           ))}
         </div>
-        <p className="text-error">{state}</p>
+        { state.text!=="" ? <StateBoard state={state.state} text={state.text} bgColor={state.bgColor} /> : ""}
         <div className="text-sm">
           {"Didn't get the code? "}
           <Button 

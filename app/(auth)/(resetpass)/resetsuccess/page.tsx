@@ -2,16 +2,6 @@
 
 import React from "react";
 import { Link } from "@nextui-org/link";
-// import { Snippet } from "@nextui-org/snippet";
-// import { Code } from "@nextui-org/code";
-// import { button as buttonStyles } from "@nextui-org/theme";
-
-// import { siteConfig } from "@/config/site";
-// import { title, subtitle } from "@/components/primitives";
-// import { GithubIcon } from "@/components/icons";
-// import { Input } from "@nextui-org/input";
-// import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-// import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import { Button } from "@nextui-org/button";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 

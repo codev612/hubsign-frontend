@@ -17,6 +17,7 @@ import Cookies from "js-cookie";
 import { useRouter } from 'next/navigation';
 import { siteConfig } from "@/config/site";
 import Dot from "@/components/global/dot";
+import StateBoard from "@/components/global/stateboard";
 
 export default function Newpass() {
   //
@@ -171,7 +172,7 @@ export default function Newpass() {
           variant="bordered"
           onChange={handleConfirmPasswordChange}
         />
-        <p className="text-error">{state}</p>
+        { state!=="" ? <StateBoard state="text-error" text={state}/> : ""}
         <Button 
         isLoading={isLoading}
         fullWidth 
