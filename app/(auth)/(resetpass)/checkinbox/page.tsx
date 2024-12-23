@@ -1,14 +1,16 @@
 "use client";
 
-import React, { ChangeEvent, KeyboardEvent, useState } from "react";
+import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function Checkinbox() {
   const searchParams = useSearchParams(); // Get search params
-  const email = searchParams.get("email"); // Retrieve the email from the query string
+  const userToken = searchParams.get('uid');
+  const email = Cookies.get("email"); // Retrieve the email from the query string
 
   const router = useRouter();
 
@@ -64,26 +66,31 @@ export default function Checkinbox() {
     }
   };
 
+  useEffect(()=> {
+    Cookies.set("USER_TOKEN", userToken || "");
+  })
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const verificationCode = code.join(""); // Join the array to submit as a string
 
     console.log("Verification code submitted:", verificationCode);
 
-    const response = await fetch("http://localhost:3000/api/verifycode", {
+    const response = await fetch("/api/verifycode", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: email, code: verificationCode }),
+      body: JSON.stringify({ email: email, code: verificationCode, userToken }),
     });
 
     if (!response.ok) {
       setState("Invalid code");
+
       return;
     } else {
       // const data = await response.json();
-      router.push(`/newpass?email=${encodeURIComponent(email as string)}`);
+      router.push(`/newpass`);
     }
   };
 

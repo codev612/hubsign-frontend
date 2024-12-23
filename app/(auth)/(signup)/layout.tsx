@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -11,7 +12,6 @@ import NextLink from "next/link";
 import { Input } from "@nextui-org/input";
 import { Kbd } from "@nextui-org/kbd";
 import Image from "next/image";
-
 import {
   // TwitterIcon,
   // GithubIcon,
@@ -158,7 +158,7 @@ export default function SignupLayout({
       <main className="container mx-auto max-w-7xl px-6 flex-grow bg-background">
         <section className="flex flex-row items-center justify-between gap-1 py-1 md:py-1">
           <div className="inline-block max-w-lg text-start justify-start">
-            {children}
+            <Suspense>{children}</Suspense>
           </div>
           {/* Image container to align the image to the right */}
           <div className="flex-shrink-0 h-full">

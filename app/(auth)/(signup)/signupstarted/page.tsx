@@ -7,13 +7,18 @@ import { Button } from "@nextui-org/button";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const initialState = {
   message: "",
 };
 
 export default function Signupstarted() {
-  const router = useRouter()
+
+  const searchParams = useSearchParams(); // Get search params
+  const userToken = searchParams.get('uid');
+
+  const router = useRouter();
   const [state, setState] = useState("");
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
@@ -45,7 +50,7 @@ export default function Signupstarted() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const response = await fetch('/api/sendcode', {
+    const response = await fetch("/api/sendcode", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,6 +62,7 @@ export default function Signupstarted() {
 
     if (!response.ok) {
       setState("Unexpected error. Try later");
+
       return;
     } else {
       router.push("/signupcheck");
@@ -69,14 +75,15 @@ export default function Signupstarted() {
     setFirstName(Cookies.get("firstname") || "");
     setLastName(Cookies.get("lastname") || "");
     setPhoneNumber(Cookies.get("phonenumber") || "");
+    Cookies.set("USER_TOKEN", userToken || "");
   }, []);
 
   return (
     <form
       // action={formAction}
-      onSubmit={handleSubmit}
       className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg"
       style={{ width: "24rem" }}
+      onSubmit={handleSubmit}
     >
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>{"Let's get started"}</p>
       <p className="text-text mb-2 text-sm">

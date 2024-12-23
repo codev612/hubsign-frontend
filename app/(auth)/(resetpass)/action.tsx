@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { siteConfig } from "@/config/site";
+import Cookies from "js-cookie";
 
 // Define an interface for User Information
 interface UserInfo {
@@ -17,22 +19,34 @@ export async function inputEmail(prevState: any, formData: FormData) {
     return { message: "enter an email" };
 
   userInfo.email = formData.get("email") as string as string;
-
-  const response = await fetch(
-    "http://localhost:3000/api/sendverificationcode",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: formData.get("email") as string }),
+  const user = await fetch(`${siteConfig.links.server}/users/emailcheck`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({ email: formData.get("email") as string }),
+  });
+
+  const json = await user.json();
+
+  if(!json.password) {
+    return { message: "Not existing user" };
+  }
+
+  const response = await fetch("/api/sendcode", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email: formData.get("email") as string }),
+  });
+
+  const json1 = await response.json();
+  console.log(json1);
 
   if (!response.ok) return { message: "Invalid email" };
 
+  Cookies.set('USER_TOKEN', json.userToken);
   // Redirect to /checkinbox with the email as a query parameter
-  return redirect(
-    `/checkinbox?email=${encodeURIComponent(formData.get("email") as string)}`,
-  );
+  return redirect(`/checkinbox?uid=${json.userToken}`);
 }

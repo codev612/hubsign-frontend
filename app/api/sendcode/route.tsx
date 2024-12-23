@@ -1,8 +1,8 @@
 // app/api/sendVerificationCode/route.ts
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { NextResponse } from "next/server";
-
 import { verificationCodes } from "@/lib/shared";
+import jwt from "jsonwebtoken";
 
 const mailerSend = new MailerSend({
   apiKey: process.env.MAILERSEND_API_KEY || "",
@@ -45,13 +45,18 @@ export async function POST(req: Request) {
 
   try {
     const response = await mailerSend.email.send(emailParams);
+    console.log(response);
+    // Create a JWT
+    const token = jwt.sign({ email }, process.env.JWT_SECRET || "esign", {
+      expiresIn: "1h",
+    });
 
     return NextResponse.json(
       { message: "Verification code sent" },
       { status: 200 },
     );
   } catch (error) {
-
+    console.log(error);
     return NextResponse.json(
       { error: "Unable to send email" },
       { status: 500 },

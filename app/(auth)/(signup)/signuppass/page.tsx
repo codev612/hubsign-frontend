@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@nextui-org/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
@@ -27,8 +27,10 @@ const Signuppass: React.FC = () => {
   // Validate password length and content
   const validatePassword = (inputPassword: string) => {
     const lengthValid = inputPassword.length > 5;
+
     setPassState6(lengthValid);
     setPassStateContain(!invalidCharPattern.test(inputPassword));
+
     return lengthValid && !invalidCharPattern.test(inputPassword);
   };
 
@@ -38,16 +40,21 @@ const Signuppass: React.FC = () => {
 
     setMatch(isMatch);
     setPassword(value);
-    
+
     const isValid = validatePassword(value);
+
     setIsPasswordValid(isValid && isMatch); // Update the button status
   };
 
-  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const value = event.target.value;
+
     setConfirmPassword(value);
 
     const isMatch = value === password;
+
     setMatch(isMatch);
 
     // Update valid state depending on password validation and match
@@ -69,7 +76,8 @@ const Signuppass: React.FC = () => {
             backgroundColor: passState6 ? "blue" : "inherit",
           }}
         />
-        <p className="text-text">at least 6 characters</p> {/* Changed to 6 characters as per regex */}
+        <p className="text-text">at least 6 characters</p>{" "}
+        {/* Changed to 6 characters as per regex */}
       </div>
 
       <div className="flex items-center gap-1">
@@ -105,17 +113,19 @@ const Signuppass: React.FC = () => {
         lastname: Cookies.get("lastname"),
         phonenumber: Cookies.get("phonenumber"),
         password: password,
-        token: Cookies.get("token"),
+        userToken: Cookies.get("USER_TOKEN"),
       }),
     });
 
     if (!response.ok) {
-      setState("Invalid code");
+      setState("Signup failed");
+
       return;
     } else {
+      Cookies.remove("USER_TOKEN");
       router.push("/signupsuccess"); // Navigate to the next step
     }
-  }
+  };
 
   return (
     <form
@@ -186,8 +196,8 @@ const Signuppass: React.FC = () => {
         fullWidth
         className="text-white"
         color="primary"
-        size="md"
         isDisabled={!isPasswordValid}
+        size="md"
         type="submit"
       >
         Start using eSign

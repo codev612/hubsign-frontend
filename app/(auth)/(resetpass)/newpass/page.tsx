@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "@nextui-org/link";
 // import { Snippet } from "@nextui-org/snippet";
 // import { Code } from "@nextui-org/code";
@@ -13,18 +13,19 @@ import { Input } from "@nextui-org/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { Button } from "@nextui-org/button";
+import Cookies from "js-cookie";
+import { useRouter } from 'next/navigation';
+import { siteConfig } from "@/config/site";
 
 export default function Newpass() {
   //
+  const router = useRouter();
   const [password, setPassword] = useState("");
-
   const [passState6, setPassState6] = useState(false);
-
   const [passStateContain, setPassStateContain] = useState(false);
-
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [match, setMatch] = useState(false);
+  const [state, setState] = useState("");
 
   // Regex pattern for password validation
   // const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[<>])(?=\S)(.{6,})$/;// At least 6 characters, one uppercase, one lowercase, and no spaces
@@ -105,11 +106,33 @@ export default function Newpass() {
     <p className="text-text">{match ? "Match" : "Not match"}</p>
   );
 
+  const handleResetPass = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const response = await fetch(`${siteConfig.links.server}/users/resetpass`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userToken: Cookies.get("USER_TOKEN"), password: password }),
+    });
+
+    if (!response.ok) {
+      // setState("Invalid code");
+      setState("Reset failed");
+      return;
+    } else {
+      // const data = await response.json();
+      Cookies.remove("USER_TOKEN");
+      router.push(`/signin`);
+    }
+  }
+
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <form
         className="flex flex-col items-center justify-center bg-forecolor p-10 gap-4 rounded-md"
         style={{ width: "382px" }}
+        onSubmit={handleResetPass}
       >
         <p style={{ fontSize: "2rem", fontWeight: 500 }}>New Password</p>
         <p className="text-text mb-2">
@@ -165,7 +188,8 @@ export default function Newpass() {
           variant="bordered"
           onChange={handleConfirmPasswordChange}
         />
-        <Button fullWidth className="text-white" color="primary" size="md">
+        <p className="text-error">{state}</p>
+        <Button fullWidth className="text-white" color="primary" size="md" type="submit">
           Reset Password
         </Button>
         <div className="flex flex-col items-center justify-center">

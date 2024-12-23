@@ -13,12 +13,16 @@ const Signupcheck: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [state, setState] = useState<string>("");
 
-  const handleChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    index: number,
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
     const value = event.target.value;
 
     // Allow only one digit
     if (value.length <= 1 && /^[0-9]*$/.test(value)) {
       const newCode = [...code];
+
       newCode[index] = value;
       setCode(newCode);
 
@@ -29,19 +33,26 @@ const Signupcheck: React.FC = () => {
     }
   };
 
-  const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    event: KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (event.key === "Backspace" && !code[index] && index > 0) {
       // Focus previous input if backspace is pressed on empty input
       document.getElementById(`digit-${index - 1}`)?.focus();
     }
   };
 
-  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>, index: number) => {
+  const handlePaste = (
+    event: React.ClipboardEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     const pastedData = event.clipboardData.getData("text");
 
     // Check if pasted data is exactly 6 digits
     if (/^\d{6}$/.test(pastedData)) {
       const newCode = pastedData.split("").map((digit) => digit);
+
       setCode(newCode);
       document.getElementById(`digit-5`)?.focus(); // Focus last input
       event.preventDefault(); // Prevent default paste behavior
@@ -73,13 +84,14 @@ const Signupcheck: React.FC = () => {
     } else {
       const data = await response.json();
       const jwtToken = data.token; // Get the token
-      Cookies.set('token', jwtToken);
+
+      Cookies.set("ESIGN_TOKEN", jwtToken);
       router.push("/signuppass"); // Navigate to the next step
     }
   };
 
   useEffect(() => {
-    setEmail(localStorage.getItem("email") || "");
+    setEmail(Cookies.get("email") || "");
   }, []);
 
   return (

@@ -20,32 +20,27 @@ const userInfo: UserInfo = {
   password: "",
 };
 
-const verifyCode: String = "";
-
 export async function inputEmail(prevState: any, formData: FormData) {
-
   const email = formData.get("email") as string;
 
   if (email === "") return redirect("/signupfree");
-
-  const res = await fetch(`${process.env.SERVER_URL}/users/emailcheck`,{
+  const res = await fetch(`${process.env.SERVER_URL}/users/emailcheck`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email: formData.get("email") }),
-  })
+  });
 
-  const json = await res.json();
-  console.log(res.status)
+  const user = await res.json();
 
-  switch (res.status) {
-    case 409:
-      return { message: 'Already exists' };
-    case 201:
-      userInfo.email = email;
-      return redirect("/signupstarted");
-    default:
-      return { message: 'Please enter a valid email' };
+  console.log(user);
+
+  if (user.password) {
+    return { message: "Already exists" };
   }
+
+  userInfo.email = email;
+
+  return redirect(`/signupstarted?uid=${user.userToken}`);
 }

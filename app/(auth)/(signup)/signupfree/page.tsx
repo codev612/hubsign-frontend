@@ -75,8 +75,8 @@ export default function Signupfree() {
         fullWidth
         className="text-white"
         color="primary"
-        size="md"
         isDisabled={isInvalid}
+        size="md"
         type="submit"
       >
         Get Started
