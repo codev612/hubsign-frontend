@@ -37,7 +37,7 @@ export async function inputEmail(prevState: any, formData: FormData) {
   console.log(user);
 
   if (user.password) {
-    return { message: "Already exists" };
+    return { message: "Already exists", isLoading: false };
   }
 
   userInfo.email = email;

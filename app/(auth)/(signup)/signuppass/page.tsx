@@ -7,6 +7,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import Dot from "@/components/global/dot";
 
 const Signuppass: React.FC = () => {
   // State variables with TypeScript types
@@ -19,6 +20,7 @@ const Signuppass: React.FC = () => {
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [state, setState] = useState<String>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Regex pattern for password validation
   const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[<>])(?=\S)(.{6,})$/; // At least 4 characters, one uppercase, one lowercase, and specific character "+<>"
@@ -66,32 +68,8 @@ const Signuppass: React.FC = () => {
   // Password Description component
   const PasswordDesc: React.FC = () => (
     <div>
-      <div className="flex items-center gap-1">
-        <input
-          readOnly
-          style={{
-            borderRadius: "50%",
-            width: "10px",
-            height: "10px",
-            backgroundColor: passState6 ? "blue" : "inherit",
-          }}
-        />
-        <p className="text-text">at least 6 characters</p>{" "}
-        {/* Changed to 6 characters as per regex */}
-      </div>
-
-      <div className="flex items-center gap-1">
-        <input
-          readOnly
-          style={{
-            borderRadius: "50%",
-            width: "10px",
-            height: "10px",
-            backgroundColor: passStateContain ? "blue" : "inherit",
-          }}
-        />
-        <p className="text-text">{"1 not containing spaces and <,> case"}</p>
-      </div>
+      <Dot text="at least 6 characters" color={passState6 ? "blue" : "inherit"} textColor="text-text" />
+      <Dot text={"1 not containing spaces and <,> case"} color={passStateContain ? "blue" : "inherit"} textColor="text-text" />
     </div>
   );
 
@@ -102,28 +80,38 @@ const Signuppass: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const response = await fetch("/api/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: Cookies.get("email"),
-        firstname: Cookies.get("firstname"),
-        lastname: Cookies.get("lastname"),
-        phonenumber: Cookies.get("phonenumber"),
-        password: password,
-        userToken: Cookies.get("USER_TOKEN"),
-      }),
-    });
-
-    if (!response.ok) {
-      setState("Signup failed");
-
-      return;
-    } else {
-      Cookies.remove("USER_TOKEN");
-      router.push("/signupsuccess"); // Navigate to the next step
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: Cookies.get("email"),
+          firstname: Cookies.get("firstname"),
+          lastname: Cookies.get("lastname"),
+          phonenumber: Cookies.get("phonenumber"),
+          password: password,
+          userToken: Cookies.get("USER_TOKEN"),
+        }),
+      });
+  
+      if (!response.ok) {
+        setIsLoading(false);
+        setState("Signup failed");
+  
+        return;
+      } else {
+        Cookies.remove("USER_TOKEN");
+        setIsLoading(true);
+        router.push("/signupsuccess"); // Navigate to the next step
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setState("Unexpected error. Try later");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -133,7 +121,8 @@ const Signuppass: React.FC = () => {
       style={{ width: "32rem" }}
       onSubmit={handleSubmit}
     >
-      <p style={{ fontSize: "2rem", fontWeight: 500 }}>New Password</p>
+      <Dot text="3/3" color={"blue"} textColor="text-link" />
+      <p style={{ fontSize: "2rem", fontWeight: 500 }}>Set your Password</p>
       <p className="text-text mb-2 text-sm">
         Enter your credentials to access your account
       </p>
@@ -193,6 +182,7 @@ const Signuppass: React.FC = () => {
       <p className="text-error">{state}</p>
 
       <Button
+        isLoading={isLoading}
         fullWidth
         className="text-white"
         color="primary"

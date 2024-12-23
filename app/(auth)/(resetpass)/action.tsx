@@ -16,7 +16,7 @@ const userInfo: UserInfo = {
 
 export async function inputEmail(prevState: any, formData: FormData) {
   if ((formData.get("email") as string) === "")
-    return { message: "enter an email" };
+    return { message: "enter an email", isLoding: false };
 
   userInfo.email = formData.get("email") as string as string;
   const user = await fetch(`${siteConfig.links.server}/users/emailcheck`, {
@@ -30,7 +30,7 @@ export async function inputEmail(prevState: any, formData: FormData) {
   const json = await user.json();
 
   if(!json.password) {
-    return { message: "Not existing user" };
+    return { message: "Not existing user", isLoading: false };
   }
 
   const response = await fetch("/api/sendcode", {
@@ -44,7 +44,7 @@ export async function inputEmail(prevState: any, formData: FormData) {
   const json1 = await response.json();
   console.log(json1);
 
-  if (!response.ok) return { message: "Invalid email" };
+  if (!response.ok) return { message: "Invalid email", isLoading: false };
 
   Cookies.set('USER_TOKEN', json.userToken);
   // Redirect to /checkinbox with the email as a query parameter

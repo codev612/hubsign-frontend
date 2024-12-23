@@ -14,11 +14,12 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { useFormState } from "react-dom";
 import Cookies from "js-cookie";
-
 import { inputEmail } from "../action";
+import LoadingButton from "@/components/global/loadingbutton";
 
 const initialState = {
   message: "",
+  isLoading: false,
 };
 
 export default function Signupfree() {
@@ -26,6 +27,8 @@ export default function Signupfree() {
 
   // email format validation
   const [value, setEmailValue] = useState("");
+
+  const [isLoading, setIsLoading] = useState(initialState.isLoading);
 
   const validateEmail = (value: string) =>
     // value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -42,9 +45,12 @@ export default function Signupfree() {
     setEmailValue(Cookies.get("email") || "");
   }, []);
 
+  useEffect(()=>setIsLoading(state.isLoading),[state]);
+
   return (
     <form
       action={formAction}
+      onSubmit={()=>setIsLoading(true)}
       className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg"
       style={{ width: "24rem" }}
     >
@@ -71,16 +77,8 @@ export default function Signupfree() {
         />
         <p className="text-error">{state.message}</p>
       </div>
-      <Button
-        fullWidth
-        className="text-white"
-        color="primary"
-        isDisabled={isInvalid}
-        size="md"
-        type="submit"
-      >
-        Get Started
-      </Button>
+      <LoadingButton title="Get Started" isLoading={isLoading}></LoadingButton>
+
       <div className="flex flex-col items-center justify-center">
         <div>
           By clicking the Get Started above, you agree to the{" "}

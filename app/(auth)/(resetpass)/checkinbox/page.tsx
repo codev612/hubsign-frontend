@@ -14,7 +14,9 @@ export default function Checkinbox() {
 
   const router = useRouter();
 
-  const [state, setState] = useState("");
+  const [state, setState] = useState<string>("");
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [code, setCode] = useState<string[]>(Array(6).fill("")); // Create an array with 6 empty strings
 
@@ -74,25 +76,58 @@ export default function Checkinbox() {
     event.preventDefault();
     const verificationCode = code.join(""); // Join the array to submit as a string
 
-    console.log("Verification code submitted:", verificationCode);
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/verifycode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email, code: verificationCode, userToken }),
+      });
+      
+      const json = await response.json();
 
-    const response = await fetch("/api/verifycode", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: email, code: verificationCode, userToken }),
-    });
-
-    if (!response.ok) {
-      setState("Invalid code");
-
-      return;
-    } else {
-      // const data = await response.json();
-      router.push(`/newpass`);
+      if (!response.ok) {
+        setState(json.error);
+        setIsLoading(false);
+        return;
+      } else {
+        // const data = await response.json();
+        router.push(`/newpass`);
+      }
+    } catch (error) {
+      setState("Unexpected error. Try later");
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const handleResend = async () => {
+    try {
+      const response = await fetch("/api/sendcode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: Cookies.get("email"),
+        }),
+      });
+
+      const json = await response.json();
+  
+      if (!response.ok) {
+        setState(json.error);
+        return;
+      } else {
+        setState("Resent a confirmation code.")
+      }
+    } catch (error) {
+      setState("Unexpected error. Try later");
+    } 
+  }
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -122,11 +157,17 @@ export default function Checkinbox() {
           ))}
         </div>
         <p className="text-error">{state}</p>
-        <div className="flex">
-          <p>{"Didn't get the code?"}</p>
-          <Link>Resend the code</Link>
+        <div className="text-sm">
+          {"Didn't get the code? "}
+          <Button 
+          className="bg-forecolor text-link" 
+          size="md"
+          onClick={handleResend}
+          >Resend the code
+          </Button>
         </div>
         <Button
+          isLoading={isLoading}
           fullWidth
           className="text-white"
           color="primary"

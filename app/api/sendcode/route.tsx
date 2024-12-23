@@ -46,10 +46,6 @@ export async function POST(req: Request) {
   try {
     const response = await mailerSend.email.send(emailParams);
     console.log(response);
-    // Create a JWT
-    const token = jwt.sign({ email }, process.env.JWT_SECRET || "esign", {
-      expiresIn: "1h",
-    });
 
     return NextResponse.json(
       { message: "Verification code sent" },

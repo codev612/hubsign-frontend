@@ -45,7 +45,8 @@ module.exports = {
             forecolor: "#F4F4F4",
             text: "#525252",
             primary: "#2563EB",
-            error: "#f31260"
+            error: "#f31260",
+            link: "#2563EB",
           },
         },
         dark: {},

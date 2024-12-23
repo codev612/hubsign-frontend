@@ -1,35 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "@nextui-org/link";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { useFormState } from "react-dom";
-
+import Cookies from "js-cookie";
 import { inputEmail } from "../action";
+import LoadingButton from "@/components/global/loadingbutton";
 
 const initialState = {
   message: "",
+  isLoading: false,
 };
 
 export default function Resetpass() {
   const [state, formAction] = useFormState(inputEmail, initialState);
   // email format validation
-  const [value, setEmailValue] = useState("");
+  const [value, setEmailValue] = useState<string>("");
+
+  const [isLoading, setIsLoading] = useState<boolean>(initialState.isLoading);
 
   const validateEmail = (value: string) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
 
   const isInvalid = React.useMemo(() => {
     if (value === "") return false;
-
+    Cookies.set("email", value);
     return validateEmail(value) ? false : true;
   }, [value]);
+
+  useEffect(()=>setIsLoading(false),[state]);
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <form
         action={formAction}
+        onSubmit={()=>setIsLoading(true)}
         className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md"
         style={{ width: "382px" }}
       >
@@ -52,15 +59,7 @@ export default function Resetpass() {
           onValueChange={setEmailValue}
         />
         <p className="text-error">{state.message}</p>
-        <Button
-          fullWidth
-          className="text-white"
-          color="primary"
-          size="md"
-          type="submit"
-        >
-          Send Verification Email
-        </Button>
+        <LoadingButton title="Send Verification Email" isLoading={isLoading}></LoadingButton>
         <Link href="/signin">
           <Button fullWidth className="text-text" size="md" variant="bordered">
             Back to Log in

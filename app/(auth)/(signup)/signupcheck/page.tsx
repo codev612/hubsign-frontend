@@ -6,12 +6,14 @@ import { Button } from "@nextui-org/button";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import Dot from "@/components/global/dot";
 
 const Signupcheck: React.FC = () => {
   const router = useRouter();
   const [code, setCode] = useState<string[]>(Array(6).fill("")); // Create an array with 6 empty strings
   const [email, setEmail] = useState<string>("");
   const [state, setState] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleChange = (
     index: number,
@@ -67,43 +69,84 @@ const Signupcheck: React.FC = () => {
 
     console.log("Verification code submitted:", verificationCode);
 
-    const response = await fetch("/api/verifycode", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: Cookies.get("email"),
-        code: verificationCode,
-      }),
-    });
+    try {
+      setIsLoading(true);
 
-    if (!response.ok) {
-      setState("Invalid code");
-      return;
-    } else {
-      const data = await response.json();
-      const jwtToken = data.token; // Get the token
-
-      Cookies.set("ESIGN_TOKEN", jwtToken);
-      router.push("/signuppass"); // Navigate to the next step
+      const response = await fetch("/api/verifycode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: Cookies.get("email"),
+          code: verificationCode,
+        }),
+      });
+  
+      if (!response.ok) {
+        setIsLoading(false);
+        setState("Invalid code");
+        return;
+      } else {
+        const data = await response.json();
+        const jwtToken = data.token; // Get the token
+  
+        Cookies.set("ESIGN_TOKEN", jwtToken);
+        setIsLoading(false);
+        router.push("/signuppass"); // Navigate to the next step
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setState("Unexpected error. Try later");
+    } finally {
+      setIsLoading(false);
     }
+    
   };
 
   useEffect(() => {
     setEmail(Cookies.get("email") || "");
   }, []);
 
+  const handleClick = () => {
+    router.push("/signupfree");
+  }
+
+  const handleResend = async () => {
+    try {
+      const response = await fetch("/api/sendcode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: Cookies.get("email"),
+        }),
+      });
+
+      const json = await response.json();
+  
+      if (!response.ok) {
+        setState(json.error);
+        return;
+      } else {
+        setState("Resent a confirmation code.")
+      }
+    } catch (error) {
+      setState("Unexpected error. Try later");
+    } 
+  }
+
   return (
     <form
       className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg"
       onSubmit={handleSubmit}
     >
+      <Dot text="2/3" color={"blue"} textColor="text-link" />
       <p style={{ fontSize: "1.5rem", fontWeight: 500 }}>Check your inbox</p>
       <p className="text-text mb-2 text-sm">
         We sent you a confirmation code to {email}.
       </p>
-
       <div className="flex flex-col w-full">
         <p>6-digit code</p>
         <div className="flex justify-between w-full gap-1">
@@ -125,18 +168,24 @@ const Signupcheck: React.FC = () => {
         <p className="text-error">{state}</p>
       </div>
 
-      <div className="flex flex-col">
-        <p>
+      <div className="flex flex-col gap-0">
+        <div className="m-0 p-0" style={{fontSize: "0.875rem"}}>
           {"Didn't get the code?"}
-          <Button type="submit">Resend the code</Button>
-        </p>
-        <p>
+          <Button 
+          className="bg-background text-link" 
+          size="sm"
+          onClick={handleResend}
+          >Resend the code
+          </Button>
+        </div>
+        <div className="m-0 p-0" style={{fontSize: "0.875rem"}}>
           Wrong email?
-          <Link href="/signupfree">Use a different email address</Link>
-        </p>
+          <Button className="bg-background text-link" size="sm" onClick={handleClick}>Use a different email address</Button>
+        </div>
       </div>
 
       <Button
+        isLoading={isLoading}
         fullWidth
         className="text-white"
         color="primary"

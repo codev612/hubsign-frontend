@@ -16,16 +16,18 @@ import { Button } from "@nextui-org/button";
 import Cookies from "js-cookie";
 import { useRouter } from 'next/navigation';
 import { siteConfig } from "@/config/site";
+import Dot from "@/components/global/dot";
 
 export default function Newpass() {
   //
   const router = useRouter();
-  const [password, setPassword] = useState("");
-  const [passState6, setPassState6] = useState(false);
-  const [passStateContain, setPassStateContain] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [match, setMatch] = useState(false);
-  const [state, setState] = useState("");
+  const [password, setPassword] = useState<string>("");
+  const [passState6, setPassState6] = useState<boolean>(false);
+  const [passStateContain, setPassStateContain] = useState<boolean>(false);
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [match, setMatch] = useState<boolean>(false);
+  const [state, setState] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Regex pattern for password validation
   // const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[<>])(?=\S)(.{6,})$/;// At least 6 characters, one uppercase, one lowercase, and no spaces
@@ -40,15 +42,7 @@ export default function Newpass() {
     }
 
     // Check for invalid characters
-    console.log(setPassStateContain(!invalidCharPattern.test(inputPassword)));
-
-    // if (passwordPattern.test(inputPassword)) {
-    //     setPassStateContain(true)
-    //     // setErrorMessage(''); // Clear error message on valid password
-    // } else {
-    //     setPassStateContain(false)
-    //     // setErrorMessage('Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one of the special characters (< or >), and must not contain spaces.');
-    // }
+    setPassStateContain(!invalidCharPattern.test(inputPassword));
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,57 +67,46 @@ export default function Newpass() {
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const PasswordDesc = () => (
+  const PasswordDesc : React.FC = () => (
     <div>
-      <div className="flex items-center gap-1">
-        <input
-          readOnly
-          style={{
-            borderRadius: "50%", // Makes the input circular
-            width: "10px", // Width of the input dot
-            height: "10px", // Height of the input dot
-            backgroundColor: passState6 ? "blue" : "inherit",
-          }}
-        />
-        <p className="text-text">at least 6 characters</p>
-      </div>
-      <div className="flex items-center gap-1">
-        <input
-          readOnly
-          style={{
-            borderRadius: "50%", // Makes the input circular
-            width: "10px", // Width of the input dot
-            height: "10px", // Height of the input dot
-            backgroundColor: passStateContain ? "blue" : "inherit",
-          }}
-        />
-        <p className="text-text">{"1 not containing spaces and <,> case"}</p>
-      </div>
+      <Dot text="at least 6 characters" color={passState6 ? "blue" : "inherit"} textColor="text-text" />
+      <Dot text={"1 not containing spaces and <,> case"} color={passStateContain ? "blue" : "inherit"} textColor="text-text" />
     </div>
   );
 
-  const MatchDesc = () => (
-    <p className="text-text">{match ? "Match" : "Not match"}</p>
+  const MatchDesc : React.FC = () => (
+    <p className="flex text-text">{match ? "Match" : "Not match"}</p>
   );
 
-  const handleResetPass = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await fetch(`${siteConfig.links.server}/users/resetpass`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userToken: Cookies.get("USER_TOKEN"), password: password }),
-    });
 
-    if (!response.ok) {
-      // setState("Invalid code");
-      setState("Reset failed");
-      return;
-    } else {
-      // const data = await response.json();
-      Cookies.remove("USER_TOKEN");
-      router.push(`/signin`);
+    try {
+      setIsLoading(false);
+
+      const response = await fetch(`${siteConfig.links.server}/users/resetpass`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userToken: Cookies.get("USER_TOKEN"), password: password }),
+      });
+  
+      if (!response.ok) {
+        // setState("Invalid code");
+        setIsLoading(false)
+        setState("Password reset failed");
+        return;
+      } else {
+        // const data = await response.json();
+        Cookies.remove("USER_TOKEN");
+        router.push(`/resetsuccess`);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setState("Unexpected error. Try later")
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -132,7 +115,7 @@ export default function Newpass() {
       <form
         className="flex flex-col items-center justify-center bg-forecolor p-10 gap-4 rounded-md"
         style={{ width: "382px" }}
-        onSubmit={handleResetPass}
+        onSubmit={handleSubmit}
       >
         <p style={{ fontSize: "2rem", fontWeight: 500 }}>New Password</p>
         <p className="text-text mb-2">
@@ -189,11 +172,17 @@ export default function Newpass() {
           onChange={handleConfirmPasswordChange}
         />
         <p className="text-error">{state}</p>
-        <Button fullWidth className="text-white" color="primary" size="md" type="submit">
+        <Button 
+        isLoading={isLoading}
+        fullWidth 
+        className="text-white" 
+        color="primary" 
+        size="md" 
+        type="submit">
           Reset Password
         </Button>
         <div className="flex flex-col items-center justify-center">
-          <Link href="/">
+          <Link href="/signupfree">
             <p className="text-text">{"Don't have an account?"}</p>
           </Link>
           <Link href="/">

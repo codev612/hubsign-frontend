@@ -6,15 +6,25 @@ import { Input } from "@nextui-org/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { Button } from "@nextui-org/button";
+import LoadingButton from "@/components/global/loadingbutton";
+import { siteConfig } from "@/config/site";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function Signin() {
+  const router = useRouter();
   // visible password
   const [isVisible, setIsVisible] = useState(false);
-
+  // loading button
+  const [isLoading, setIsLoading] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   // email format validation
   const [value, setEmailValue] = useState("");
+  
+  const [password, setPassword] = useState("");
+
+  const [state, setState] = useState("");
 
   const validateEmail = (value: string) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -25,11 +35,40 @@ export default function Signin() {
     return validateEmail(value) ? false : true;
   }, [value]);
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    setIsLoading(true);
+
+    const response = await fetch(`${siteConfig.links.server}/auth/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email:value, password: password }),
+    });
+
+    setIsLoading(false);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setState(data.message);
+      return;
+    }
+      
+    Cookies.set("ACCESS_TOKEN", data.access_token);
+    console.log(data)
+    console.log('signin success');
+    // router.push(`/signin`);
+  }
+
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <form
-        className="flex flex-col items-center justify-center bg-forecolor p-10 gap-4 rounded-md"
+        className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md"
         style={{ width: "382px" }}
+        onSubmit={handleSubmit}
       >
         <p style={{ fontSize: "2rem", fontWeight: 500 }}>Log in to eSign</p>
         <p className="text-text mb-2">
@@ -48,11 +87,7 @@ export default function Signin() {
           onValueChange={setEmailValue}
         />
         <Input
-          description={
-            <Link href="/resetpass">
-              <p className="text-text">{"Forgot your password?"}</p>
-            </Link>
-          }
+        className="mb-0"
           endContent={
             <button
               aria-label="toggle password visibility"
@@ -67,6 +102,10 @@ export default function Signin() {
               )}
             </button>
           }
+          value={password}
+          onChange={(e)=>setPassword(e.target.value)}
+          required
+          errorMessage="Please enter a valid password"
           label="Password"
           labelPlacement={"outside"}
           placeholder="Enter your password"
@@ -74,9 +113,11 @@ export default function Signin() {
           type={isVisible ? "text" : "password"}
           variant="bordered"
         />
-        <Button fullWidth className="text-white" color="primary" size="md">
-          Log in
-        </Button>
+        <p className="text-error mt-0" style={{fontSize:'12px', textAlign:'left'}}>{state}</p>
+        <Link href="/resetpass">
+          <p className="text-text test-start" style={{textAlign:'start'}}>{"Forgot your password?"}</p>
+        </Link>
+        <LoadingButton title="Login" isLoading={isLoading}></LoadingButton>
         <div className="flex flex-col items-center justify-center">
           <Link href="/signupfree">
             <p className="text-text">{"Don't have an account?"}</p>

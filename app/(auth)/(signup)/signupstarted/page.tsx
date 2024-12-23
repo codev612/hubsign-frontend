@@ -8,10 +8,8 @@ import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-
-const initialState = {
-  message: "",
-};
+import Dot from "@/components/global/dot";
+// import LoadingButton from "@/components/global/loadingbutton";
 
 export default function Signupstarted() {
 
@@ -24,6 +22,7 @@ export default function Signupstarted() {
   const [lastname, setLastName] = useState("");
   const [phonenumber, setPhoneNumber] = useState("");
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,24 +47,33 @@ export default function Signupstarted() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault(); 
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/sendcode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: Cookies.get("email"),
+        }),
+      });
 
-    const response = await fetch("/api/sendcode", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: Cookies.get("email"),
-      }),
-    });
-
-    if (!response.ok) {
+      const json = await response.json();
+  
+      if (!response.ok) {
+        setState(json.error);
+        setIsLoading(false);
+        return;
+      } else {
+        router.push("/signupcheck");
+      }
+    } catch (error) {
       setState("Unexpected error. Try later");
-
-      return;
-    } else {
-      router.push("/signupcheck");
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,6 +93,7 @@ export default function Signupstarted() {
       style={{ width: "24rem" }}
       onSubmit={handleSubmit}
     >
+      <Dot text="1/3" color={"blue"} textColor="text-link" />
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>{"Let's get started"}</p>
       <p className="text-text mb-2 text-sm">
         Add your info to make collaboration easy
@@ -130,7 +139,9 @@ export default function Signupstarted() {
         fullWidth
       />
       <p className="text-error">{state}</p>
+      {/* <LoadingButton title="Get Started" isLoading={isLoading}></LoadingButton> */}
       <Button
+        isLoading={isLoading}
         fullWidth
         className="text-white"
         color="primary"
