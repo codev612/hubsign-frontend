@@ -49,6 +49,8 @@ module.exports = {
             link: "#2563EB",
             bgdanger: "#FCE9EA",
             info: "#A1E2A1",
+            brand10: "#E8EEFD",
+            brand50: "#2563EB",
           },
         },
         dark: {},
