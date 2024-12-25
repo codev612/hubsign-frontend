@@ -3,16 +3,11 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Avatar,
   User,
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-
-interface UserAvatarProps {
-  username?: string;
-  email?: string;
-};
+import { UserAvatarProps } from "@/interface/interface";
 
 const UserAvatar: React.FC<UserAvatarProps> =({username="", email=""}) => {
   const router = useRouter();
