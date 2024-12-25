@@ -7,8 +7,8 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import Dot from "@/components/global/dot";
-import StateBoard from "@/components/global/stateboard";
+import Dot from "@/components/common/dot";
+import StateBoard from "@/components/common/stateboard";
 
 const Signuppass: React.FC = () => {
   // State variables with TypeScript types

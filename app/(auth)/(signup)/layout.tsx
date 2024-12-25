@@ -9,15 +9,8 @@ import {
   // NavbarMenuItem,
 } from "@nextui-org/navbar";
 import NextLink from "next/link";
-import { Input } from "@nextui-org/input";
-import { Kbd } from "@nextui-org/kbd";
 import Image from "next/image";
 import {
-  // TwitterIcon,
-  // GithubIcon,
-  // DiscordIcon,
-  // HeartFilledIcon,
-  SearchIcon,
   Logo,
 } from "@/components/icons";
 
@@ -26,28 +19,7 @@ export default function SignupLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const Bottombar = () => {
-    const searchInput = (
-      <Input
-        aria-label="Search"
-        classNames={{
-          inputWrapper: "bg-default-100",
-          input: "text-sm",
-        }}
-        endContent={
-          <Kbd className="hidden lg:inline-block" keys={["command"]}>
-            K
-          </Kbd>
-        }
-        labelPlacement="outside"
-        placeholder="Search..."
-        startContent={
-          <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-        }
-        type="search"
-      />
-    );
-
+  const Bottombar:React.FC = () => {
     return (
       <NextUINavbar className="bg-background" maxWidth="xl" position="sticky">
         <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -76,60 +48,31 @@ export default function SignupLayout({
           className="hidden sm:flex basis-1/5 sm:basis-full"
           justify="end"
         />
-
-        {/* <NavbarContent className="hidden lg:flex gap-4 justify-start ml-2" justify="end">
-          <ul className="hidden lg:flex justify-start ml-2">
-            <NavbarItem className="border-2">
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
-                )}
-                color="foreground"
-                href={"/"}
-              >
-                Terms of use
-              </NextLink>
-            </NavbarItem>
-            <NavbarItem className="border-2">
-                <NextLink
-                className={clsx(
-                    linkStyles({ color: "foreground" }),
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
-                )}
-                color="foreground"
-                href={'/'}
-                >
-                Privacy Policy
-                </NextLink>
-            </NavbarItem>
-          </ul>
-        </NavbarContent> */}
       </NextUINavbar>
     );
   };
 
-  const Navbar = () => {
-    const searchInput = (
-      <Input
-        aria-label="Search"
-        classNames={{
-          inputWrapper: "bg-default-100",
-          input: "text-sm",
-        }}
-        endContent={
-          <Kbd className="hidden lg:inline-block" keys={["command"]}>
-            K
-          </Kbd>
-        }
-        labelPlacement="outside"
-        placeholder="Search..."
-        startContent={
-          <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-        }
-        type="search"
-      />
-    );
+  const Navbar:React.FC = () => {
+    // const searchInput = (
+    //   <Input
+    //     aria-label="Search"
+    //     classNames={{
+    //       inputWrapper: "bg-default-100",
+    //       input: "text-sm",
+    //     }}
+    //     endContent={
+    //       <Kbd className="hidden lg:inline-block" keys={["command"]}>
+    //         K
+    //       </Kbd>
+    //     }
+    //     labelPlacement="outside"
+    //     placeholder="Search..."
+    //     startContent={
+    //       <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+    //     }
+    //     type="search"
+    //   />
+    // );
 
     return (
       <NextUINavbar className="bg-background" maxWidth="xl">

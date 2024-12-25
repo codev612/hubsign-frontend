@@ -2,10 +2,10 @@ import { Button } from "@nextui-org/react";
 
 interface LoadingButtonProps {
   title: string; // Define the prop type as a string
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
-const LoadingButton: React.FC<LoadingButtonProps> = ({ title, isLoading }) => {
+const LoadingButton: React.FC<LoadingButtonProps> = ({ title, isLoading=false }) => {
   return (
     <Button
       isLoading={isLoading}

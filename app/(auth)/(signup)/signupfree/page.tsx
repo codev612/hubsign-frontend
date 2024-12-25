@@ -6,8 +6,8 @@ import { Input } from "@nextui-org/input";
 import { useFormState } from "react-dom";
 import Cookies from "js-cookie";
 import { inputEmail } from "../action";
-import LoadingButton from "@/components/global/loadingbutton";
-import StateBoard from "@/components/global/stateboard";
+import LoadingButton from "@/components/common/loadingbutton";
+import StateBoard from "@/components/common/stateboard";
 
 const initialState = {
   message: "",

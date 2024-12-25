@@ -42,11 +42,9 @@ export async function inputEmail(prevState: any, formData: FormData) {
   });
 
   const json1 = await response.json();
-  console.log(json1);
 
   if (!response.ok) return { message: "Invalid email", isLoading: false };
 
-  Cookies.set('USER_TOKEN', json.userToken);
   // Redirect to /checkinbox with the email as a query parameter
   return redirect(`/checkinbox?uid=${json.userToken}`);
 }

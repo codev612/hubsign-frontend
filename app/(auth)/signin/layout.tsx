@@ -1,5 +1,5 @@
-import { Navbar } from "@/components/navbar";
-import { Bottombar } from "@/components/bottombar";
+import { Navbar } from "@/components/layouts/global/navbar";
+import { Bottombar } from "@/components/layouts/global/bottombar";
 
 export default function SigninLayout({
   children,

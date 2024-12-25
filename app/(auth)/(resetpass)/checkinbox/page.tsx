@@ -5,7 +5,7 @@ import { Button } from "@nextui-org/button";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import StateBoard from "@/components/global/stateboard";
+import StateBoard from "@/components/common/stateboard";
 
 export default function Checkinbox() {
   const searchParams = useSearchParams(); // Get search params

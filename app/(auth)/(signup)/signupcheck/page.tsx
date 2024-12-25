@@ -1,13 +1,12 @@
 "use client";
 
 import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { Link } from "@nextui-org/link";
 import { Button } from "@nextui-org/button";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import Dot from "@/components/global/dot";
-import StateBoard from "@/components/global/stateboard";
+import Dot from "@/components/common/dot";
+import StateBoard from "@/components/common/stateboard";
 
 const Signupcheck: React.FC = () => {
   const router = useRouter();
@@ -72,8 +71,6 @@ const Signupcheck: React.FC = () => {
     event.preventDefault();
     const verificationCode = code.join(""); // Join the array to submit as a string
 
-    console.log("Verification code submitted:", verificationCode);
-
     try {
       setIsLoading(true);
 
@@ -93,11 +90,7 @@ const Signupcheck: React.FC = () => {
         setState({...state, text: "Invalid code", state:"text-error", bgColor:"bg-bgdanger"});
         return;
       } else {
-        const data = await response.json();
-        const jwtToken = data.token; // Get the token
-  
-        Cookies.set("ESIGN_TOKEN", jwtToken);
-        setIsLoading(false);
+
         router.push("/signuppass"); // Navigate to the next step
       }
     } catch (error) {

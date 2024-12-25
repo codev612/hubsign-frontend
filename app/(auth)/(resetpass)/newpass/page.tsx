@@ -16,8 +16,8 @@ import { Button } from "@nextui-org/button";
 import Cookies from "js-cookie";
 import { useRouter } from 'next/navigation';
 import { siteConfig } from "@/config/site";
-import Dot from "@/components/global/dot";
-import StateBoard from "@/components/global/stateboard";
+import Dot from "@/components/common/dot";
+import StateBoard from "@/components/common/stateboard";
 
 export default function Newpass() {
   //

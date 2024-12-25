@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .title {
+        color: #262626;
+        font-family: 'Gabarito', sans-serif;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 120%;
+    }
+
+    .title-large {
+        font-size: 32px;
+    }
+
+    .title-medium {
+        font-size: 24px;
+    }
+
+    .title-small {
+        font-size: 20px;
+    }
+
+    .title-tiny {
+        font-family: 'Inter',sans-serif;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 130%;
+    }
+
+    .text-summary {
+        color: #262626;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 130%; 
+    }
+    .text-item {
+        color: #262626;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 130%; 
+    }
+}

@@ -14,8 +14,13 @@ import {
   SearchIcon,
   Logo,
 } from "@/components/icons";
+import UserAvatar from "@/components/common/user";
 
-export const Navbar : React.FC = () => {
+interface NavbarProps {
+  user: any
+}
+
+export const Navbar : React.FC<NavbarProps> = ({user}) => {
   const router = useRouter();
   const searchInput = (
     <Input
@@ -56,25 +61,25 @@ export const Navbar : React.FC = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <Button
+        { user ? <UserAvatar username={`${user.firstname} ${user.lastname}`} email={user.email} /> : <Button
           className="text-text border-1 bg-forecolor"
           href="/signupfree"
           radius="md"
           onClick={handleClick}
         >
           {"Don't have an account? Signup"}
-        </Button>
+        </Button>}
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Button
+      { user ? <UserAvatar username={`${user.firstname} ${user.lastname}`} email={user.email} /> : <Button
           className="text-text border-1 bg-forecolor"
           href="/signupfree"
           radius="md"
           onClick={handleClick}
         >
-          {"Don't have an account? Signup11"}
-        </Button>
+          {"Don't have an account? Signup"}
+        </Button>}
       </NavbarContent>
     </NextUINavbar>
   );

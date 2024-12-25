@@ -1,19 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "@nextui-org/link";
 import { Input } from "@nextui-org/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { Button } from "@nextui-org/button";
-import LoadingButton from "@/components/global/loadingbutton";
+import LoadingButton from "@/components/common/loadingbutton";
 import { siteConfig } from "@/config/site";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import StateBoard from "@/components/global/stateboard";
+import StateBoard from "@/components/common/stateboard";
+import { useFormState } from "react-dom";
+import { signin } from "./action";
+
+
+interface InitialState {
+  message: string;
+  isLoading: boolean;
+}
+
+const initialState: InitialState = {
+  message: "",
+  isLoading: false,
+};
 
 export default function Signin() {
   const router = useRouter();
+  const [state, formAction] = useFormState(signin, initialState);
   // visible password
   const [isVisible, setIsVisible] = useState(false);
   // loading button
@@ -25,8 +39,6 @@ export default function Signin() {
   
   const [password, setPassword] = useState("");
 
-  const [state, setState] = useState("");
-
   const validateEmail = (value: string) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
 
@@ -36,40 +48,17 @@ export default function Signin() {
     return validateEmail(value) ? false : true;
   }, [value]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    setIsLoading(true);
-
-    const response = await fetch(`${siteConfig.links.server}/auth/signin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email:value, password: password }),
-    });
-
+  useEffect(()=>{
     setIsLoading(false);
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setState(data.message);
-      return;
-    }
-      
-    Cookies.set("ACCESS_TOKEN", data.access_token);
-    console.log(data)
-    console.log('signin success');
-    // router.push(`/signin`);
-  }
+  }, [state])
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <form
         className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md"
         style={{ width: "382px" }}
-        onSubmit={handleSubmit}
+        action={formAction}
+        onSubmit={()=>setIsLoading(true)}
       >
         <p style={{ fontSize: "2rem", fontWeight: 500 }}>Log in to eSign</p>
         <p className="text-text mb-2">
@@ -85,10 +74,12 @@ export default function Signin() {
           size="md"
           type="email"
           variant="bordered"
+          value={value}
+          name="email"
           onValueChange={setEmailValue}
         />
         <Input
-        className="mb-0"
+          className="mb-0"
           endContent={
             <button
               aria-label="toggle password visibility"
@@ -104,6 +95,7 @@ export default function Signin() {
             </button>
           }
           value={password}
+          name="password"
           onChange={(e)=>setPassword(e.target.value)}
           required
           errorMessage="Please enter a valid password"
@@ -115,7 +107,7 @@ export default function Signin() {
           variant="bordered"
         />
         {/* <p className="text-error mt-0" style={{fontSize:'12px', textAlign:'left'}}>{state}</p> */}
-        {state!=="" ? <StateBoard state="text-error" text={state} /> : ""}
+        {state.message!=="" ? <StateBoard state="text-error" text={state.message} /> : ""}
         <Link href="/resetpass">
           <p className="text-text test-start" style={{textAlign:'start'}}>{"Forgot your password?"}</p>
         </Link>

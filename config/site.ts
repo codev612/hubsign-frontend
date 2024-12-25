@@ -60,11 +60,7 @@ export const siteConfig = {
     },
   ],
   links: {
-    github: "https://github.com/nextui-org/nextui",
-    twitter: "https://twitter.com/getnextui",
-    docs: "https://nextui.org",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
-    server: "http://localhost:4000"
+    server: "http://localhost:4000",
   },
+  base_url:"http://localhost:3000",
 };

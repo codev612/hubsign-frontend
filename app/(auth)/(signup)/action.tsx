@@ -34,8 +34,6 @@ export async function inputEmail(prevState: any, formData: FormData) {
 
   const user = await res.json();
 
-  console.log(user);
-
   if (user.password) {
     return { message: "Already exists", isLoading: false };
   }

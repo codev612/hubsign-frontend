@@ -16,16 +16,16 @@ module.exports = {
     },
   },
   darkMode: "class",
-  darkMode: "class",
   plugins: [
     nextui({
       layout: {
         disabledOpacity: "0.3", // opacity-[0.3]
         fontSize: {
-          tiny: "0.75rem", // text-tiny
-          small: "0.875rem", // text-small
-          medium: "1rem", // text-medium
-          large: "1.125rem", // text-large
+          tiny: "12px", // text-tiny
+          small: "14px", // text-small
+          medium: "16px", // text-medium
+          large: "24px", // text-large
+          vlarge: "32px",//text-vlarge
         },
         radius: {
           small: "2px", // rounded-small

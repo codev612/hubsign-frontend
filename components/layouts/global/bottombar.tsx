@@ -42,7 +42,7 @@ export const Bottombar : React.FC = () => {
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
           </NextLink>
-          <p className="text-text">© eSign, 2024, All rights reserved</p>
+          <p className="text-text text-tiny">© eSign, 2024, All rights reserved</p>
         </NavbarBrand>
       </NavbarContent>
       <NavbarContent
@@ -50,13 +50,13 @@ export const Bottombar : React.FC = () => {
         justify="end"
       >
         {/* <ul className="hidden lg:flex gap-4 justify-start ml-2"> */}
-          <NavbarItem className="border-1">
-            <NextLink className="text-text" href={"/"}>
+          <NavbarItem>
+            <NextLink className="text-text text-tiny" href={"/"}>
               Terms of use
             </NextLink>
           </NavbarItem>
-          <NavbarItem className="border-1">
-            <NextLink className="text-text" href={"/"}>
+          <NavbarItem>
+            <NextLink className="text-text text-tiny" href={"/"}>
               Privacy Policy
             </NextLink>
           </NavbarItem>
