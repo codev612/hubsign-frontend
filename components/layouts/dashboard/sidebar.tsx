@@ -13,6 +13,7 @@ import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined';
 import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import { Divider } from '@nextui-org/react';
 
 // Define the props for the Sidebar component
 interface SidebarProps {
@@ -44,25 +45,27 @@ const items = [
 
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
     return (
-        <div className="flex flex-col h-screen border-r border-gray-200 w-64 p-4 bg-background gap-4">
+        <div className="flex flex-col sm:w-[20%] h-screen border-r border-gray-200 w-64 p-4 bg-background gap-4 overflow-y-auto">
             <Link href={"/"} className='mb-4'>
                 <Logo />
             </Link>
             <div className='mb-4'>
                 <UserAvatar username={`${user.firstname} ${user.lastname}`} email={user.email} />
             </div>
-            <Snippet className='bg-brand10 text-brand50 items-center justify-center' hideSymbol hideCopyButton>
-                <div><HourglassEmptyOutlinedIcon fontSize='small' />30 days of free trial left</div>
+            <Snippet className='text-brand bg-brand10 items-center justify-center' hideSymbol hideCopyButton>
+                <div className='items-center justify-center'><HourglassEmptyOutlinedIcon fontSize='small' />30 days of free trial left</div>
             </Snippet>
+            <Divider />
             <Button
                 fullWidth
-                className="text-white my-5"
+                className="text-white my-1 min-h-[30px]"
                 color="primary"
                 size="md"
                 type="submit"
             >
                 <AddOutlinedIcon /> New Document
             </Button>
+            <Divider />
             <div className="flex-grow w-full text-text">
                 <Listbox className='p-0' aria-label="Sidebar menu" items={items} onAction={(link) => alert(link)}>
                     {(item) => (
@@ -77,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             </div>
             <Button
                 fullWidth
-                className="text-text my-5 bg-forecolor"
+                className="text-text my-5 bg-forecolor min-h-[30px]"
                 size="md"
             >
                 <SettingsOutlinedIcon /> Settings

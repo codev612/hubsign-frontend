@@ -47,4 +47,13 @@
         font-weight: 400;
         line-height: 130%; 
     }
+    .text-brand {
+        color: var(--Brand-50, #2563EB);
+        /* Body/Default/Medium */
+        font-family: 'Inter',sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 130%; /* 18.2px */
+    }
 }

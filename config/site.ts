@@ -59,6 +59,18 @@ export const siteConfig = {
       href: "/logout",
     },
   ],
+  pagemenu:{
+    document: [
+      {
+        label: "Completed",
+        link: "/dashboard/documents/completed",
+      },
+      {
+          label: "Pending",
+          link: "/dashboard/documents/pending",
+      }
+    ]
+  },
   links: {
     server: "http://localhost:4000",
   },

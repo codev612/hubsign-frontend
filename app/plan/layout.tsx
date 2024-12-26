@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/layouts/global/navbar";
+import { Navbar } from "@/components/layouts/common/navbar";
 import { Bottombar } from "@/components/layouts/plan/bottombar";
 import { getUser } from "@/lib/dal";
 

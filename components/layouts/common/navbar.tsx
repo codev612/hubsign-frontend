@@ -17,10 +17,10 @@ import {
 import UserAvatar from "@/components/common/user";
 
 interface NavbarProps {
-  user: any
+  user?: any
 }
 
-export const Navbar : React.FC<NavbarProps> = ({user}) => {
+export const Navbar : React.FC<NavbarProps> = ({user=null}) => {
   const router = useRouter();
   const searchInput = (
     <Input

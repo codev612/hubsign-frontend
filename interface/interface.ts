@@ -7,3 +7,8 @@ export interface UserAvatarProps {
     username?: string;
     email?: string;
 };
+
+export interface PageTitleBarProps {
+    pageTitle: string,
+    buttonTitle: string,
+}
