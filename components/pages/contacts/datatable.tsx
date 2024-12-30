@@ -1,6 +1,6 @@
 "use client"
 
-import React, { SVGProps, useState } from "react";
+import React, { SVGProps, useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -191,6 +191,19 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([]),
   );
+  const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Convert selectedKeys to an array of _id values
+    const selectedIds = Array.from(selectedKeys).map((key) => {
+        const item = data.find((d) => d._id === key);
+        return item ? item._id : null; // This could still yield null
+    }).filter(Boolean) as string[]; // Ensure the filter returns only strings
+
+    setSelectedIDs(selectedIds);
+    console.log("Selected Keys:", selectedKeys);
+}, [selectedKeys, data]);
+
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS),
   );
@@ -254,6 +267,30 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   }, [sortDescriptor, items]);
 
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const [deleteItem, setDeleteItem] = useState<string[]>([]);
+  const [actionState, setActionState] = useState(false);
+
+  const handleOpen = (id:string) => {
+    setDeleteItem([id]);
+    onOpen();
+  }
+
+  const handleBatchOpen = () => {
+    onOpen();
+  }
+
+  useEffect(()=>{
+    if(actionState) {
+      setData(data.filter(item => !deleteItem.includes(item._id)));
+      setActionState(true);
+      setDeleteItem([]);
+      setSelectedKeys(new Set([]));
+    }
+  }, [actionState])
+
+  useEffect(()=>{
+    setDeleteItem(selectedIDs);
+  },[selectedIDs]);
 
   const renderCell = React.useCallback((data: Data, columnKey: React.Key) => {
     const cellValue = data[columnKey as keyof Data];
@@ -305,7 +342,7 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
                 >Edit</DropdownItem>
                 <DropdownItem 
                 key="delete"
-                onClick={onOpen}
+                onClick={()=>handleOpen(data._id)}
                 // onClick={()=>setModalVisible(true)}
                 >
                   Delete
@@ -418,7 +455,9 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
             </Button>
             <Button 
             variant="bordered"
-            startContent={<DeleteForeverOutlinedIcon />}>
+            startContent={<DeleteForeverOutlinedIcon />}
+            onClick={()=>{ handleBatchOpen();}}
+            >
               Delete
             </Button>
           </div>
@@ -521,11 +560,13 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
 
   return (
     <>
-      <ConfirmModal 
+      <ConfirmModal
+      actionState={setActionState} 
       isOpen={isOpen} 
       onOpenChange={onOpenChange} 
       message="This action will delete the contact “[contact Name].” The contact record will be permanently removed, and all associated signing links will be deactivated. Do you wish to proceed?"
       title="Delete Contact"
+      id={deleteItem}
       />
       <Table
         // isHeaderSticky

@@ -1,19 +1,51 @@
 import { useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
+import { siteConfig } from "@/config/site";
+import Cookies from "js-cookie";
+import { redirect, useRouter } from "next/navigation";
 
 interface ConfirmModalProps {
     isOpen: boolean;
     message: string;
     title: string;
+    id: string[];
+    actionState: (state: boolean)=>void;
     // onOpen: () => void;
     onOpenChange: (isOpen: boolean) => void; // Adjust if the signature for onOpenChange is different
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({isOpen, onOpenChange, message, title}) => {
-    
+const ConfirmModal: React.FC<ConfirmModalProps> = ({isOpen, onOpenChange, message, title, id, actionState}) => {
+    const router = useRouter();
     useEffect(()=>{
-      console.log("isopen",isOpen)
-    },[isOpen])
+        console.log(id);
+    },[id])
+    const handleAction = async () => {
+        if(id.length){
+            try {
+                const response = await fetch(`${siteConfig.links.server}/contacts`,{
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${Cookies.get("session") || ""}`
+                    },
+                    body:JSON.stringify({ ids: id })
+                })
+                console.log(id)
+                if(!response.ok) {
+                    actionState(false);
+                } else {
+                    onOpenChange(false);
+                    actionState(true);
+                    // redirect("/dashboard/contacts");
+                    // router.replace("/dashboard/contacts");
+                    // location.reload();
+                }
+            } catch (error) {
+                throw new Error("Server error");
+            }
+        }
+    }
+
     return (
       <>
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -27,10 +59,10 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({isOpen, onOpenChange, messag
                   </p>
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
+                  <Button variant="bordered" onPress={onClose}>
                     Close
                   </Button>
-                  <Button color="primary" onPress={onClose}>
+                  <Button color="danger" onPress={handleAction}>
                     Delete
                   </Button>
                 </ModalFooter>
