@@ -1,4 +1,6 @@
-import React, { SVGProps } from "react";
+"use client"
+
+import React, { SVGProps, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -18,11 +20,23 @@ import {
   Selection,
   ChipProps,
   SortDescriptor,
+  useDisclosure,
 } from "@nextui-org/react";
-import { users } from "@/constants/constants";
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import ContentPasteOutlinedIcon from '@mui/icons-material/ContentPasteOutlined';
+import { useRouter } from "next/navigation";
+import ConfirmModal from "./confirmmodal";
+
+interface Data {
+  _id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+  avatar?: string;
+  // Add other fields as per your data
+}
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -156,11 +170,11 @@ export const columns = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
-export const statusOptions = [
-  { name: "Draft", uid: "draft" },
-  { name: "InProgress", uid: "inprogress" },
-  { name: "Completed", uid: "Completed" },
-];
+// export const statusOptions = [
+//   { name: "Draft", uid: "draft" },
+//   { name: "InProgress", uid: "inprogress" },
+//   { name: "Completed", uid: "Completed" },
+// ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   active: "success",
@@ -170,9 +184,9 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "email", "actions"];
 
-type User = (typeof users)[0];
-
-export default function DataTable() {
+export default function DataTable({ initialData }: { initialData: Data[] }) {
+  const router = useRouter();
+  const [data, setData] = useState<Data[]>(initialData);
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([]),
@@ -187,6 +201,7 @@ export default function DataTable() {
     direction: "ascending",
   });
 
+
   const [page, setPage] = React.useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
@@ -200,24 +215,24 @@ export default function DataTable() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredData = [...data];
 
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
-    }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
-      );
-    }
+    // if (hasSearchFilter) {
+    //   filteredUsers = filteredUsers.filter((user) =>
+    //     user.name.toLowerCase().includes(filterValue.toLowerCase()),
+    //   );
+    // }
+    // if (
+    //   statusFilter !== "all" &&
+    //   Array.from(statusFilter).length !== statusOptions.length
+    // ) {
+    //   filteredUsers = filteredUsers.filter((user) =>
+    //     Array.from(statusFilter).includes(user.status),
+    //   );
+    // }
 
-    return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+    return filteredData;
+  }, [data, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -229,27 +244,29 @@ export default function DataTable() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    return [...items].sort((a: Data, b: Data) => {
+      const first = a[sortDescriptor.column as keyof Data] as unknown as number;
+      const second = b[sortDescriptor.column as keyof Data] as unknown as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
+  const renderCell = React.useCallback((data: Data, columnKey: React.Key) => {
+    const cellValue = data[columnKey as keyof Data];
 
     switch (columnKey) {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
+            avatarProps={{ radius: "lg", src: data.avatar }}
+            description={data.email}
             name={cellValue}
           >
-            {user.email}
+            {data.email}
           </User>
         );
       // case "role":
@@ -282,8 +299,17 @@ export default function DataTable() {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem key="edit">Edit</DropdownItem>
-                <DropdownItem key="delete">Delete</DropdownItem>
+                <DropdownItem 
+                key="edit"
+                onClick={()=>router.push(`/dashboard/contacts/${data._id}`)}
+                >Edit</DropdownItem>
+                <DropdownItem 
+                key="delete"
+                onClick={onOpen}
+                // onClick={()=>setModalVisible(true)}
+                >
+                  Delete
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -293,17 +319,17 @@ export default function DataTable() {
     }
   }, []);
 
-  const onNextPage = React.useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages]);
+  // const onNextPage = React.useCallback(() => {
+  //   if (page < pages) {
+  //     setPage(page + 1);
+  //   }
+  // }, [page, pages]);
 
-  const onPreviousPage = React.useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
+  // const onPreviousPage = React.useCallback(() => {
+  //   if (page > 1) {
+  //     setPage(page - 1);
+  //   }
+  // }, [page]);
 
   const onRowsPerPageChange = React.useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -408,7 +434,7 @@ export default function DataTable() {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} items
+            Total {data.length} items
           </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
@@ -431,7 +457,7 @@ export default function DataTable() {
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    data.length,
     hasSearchFilter,
   ]);
 
@@ -494,46 +520,54 @@ export default function DataTable() {
   );
 
   return (
-    <Table
-      // isHeaderSticky
-      aria-label="Example table with custom cells, pagination and sorting"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      checkboxesProps={{
-        classNames: {
-          wrapper: "after:bg-link after:text-background text-white",
-        },
-      }}
-      classNames={classNames}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      shadow="none"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No items found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <ConfirmModal 
+      isOpen={isOpen} 
+      onOpenChange={onOpenChange} 
+      message="This action will delete the contact “[contact Name].” The contact record will be permanently removed, and all associated signing links will be deactivated. Do you wish to proceed?"
+      title="Delete Contact"
+      />
+      <Table
+        // isHeaderSticky
+        aria-label="Example table with custom cells, pagination and sorting"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        checkboxesProps={{
+          classNames: {
+            wrapper: "after:bg-link after:text-background text-white",
+          },
+        }}
+        classNames={classNames}
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        shadow="none"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No items found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item._id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 }

@@ -8,11 +8,12 @@ export default async function PlanLayout({
   children: React.ReactNode;
 }) {
   const user = await getUser();
+
   return (
     <>
       <Navbar user={user} />
       <main className="container mx-auto max-w-7xl px-6 flex-grow bg-background">
-          {children}
+        {children}
       </main>
       <Bottombar />
     </>

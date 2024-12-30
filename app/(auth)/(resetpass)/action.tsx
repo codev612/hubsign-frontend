@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
+
 import { siteConfig } from "@/config/site";
-import Cookies from "js-cookie";
 
 // Define an interface for User Information
 interface UserInfo {
@@ -29,7 +29,7 @@ export async function inputEmail(prevState: any, formData: FormData) {
 
   const json = await user.json();
 
-  if(!json.password) {
+  if (!json.password) {
     return { message: "Not existing user", isLoading: false };
   }
 

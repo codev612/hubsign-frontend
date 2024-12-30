@@ -7,6 +7,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import { Button } from "@nextui-org/button";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+
 import Dot from "@/components/common/dot";
 import StateBoard from "@/components/common/stateboard";
 
@@ -69,8 +70,16 @@ const Signuppass: React.FC = () => {
   // Password Description component
   const PasswordDesc: React.FC = () => (
     <div>
-      <Dot text="at least 6 characters" color={passState6 ? "blue" : "inherit"} textColor="text-text" />
-      <Dot text={"1 not containing spaces and <,> case"} color={passStateContain ? "blue" : "inherit"} textColor="text-text" />
+      <Dot
+        color={passState6 ? "blue" : "inherit"}
+        text="at least 6 characters"
+        textColor="text-text"
+      />
+      <Dot
+        color={passStateContain ? "blue" : "inherit"}
+        text={"1 not containing spaces and <,> case"}
+        textColor="text-text"
+      />
     </div>
   );
 
@@ -97,11 +106,11 @@ const Signuppass: React.FC = () => {
           userToken: Cookies.get("USER_TOKEN"),
         }),
       });
-  
+
       if (!response.ok) {
         setIsLoading(false);
         setState("Signup failed");
-  
+
         return;
       } else {
         Cookies.remove("USER_TOKEN");
@@ -122,7 +131,7 @@ const Signuppass: React.FC = () => {
       style={{ width: "32rem" }}
       onSubmit={handleSubmit}
     >
-      <Dot text="3/3" color={"blue"} textColor="text-link" />
+      <Dot color={"blue"} text="3/3" textColor="text-link" />
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>Set your Password</p>
       <p className="text-text mb-2 text-sm">
         Enter your credentials to access your account
@@ -180,14 +189,14 @@ const Signuppass: React.FC = () => {
         variant="bordered"
         onChange={handleConfirmPasswordChange}
       />
-      { state!=="" ? <StateBoard state="text-error" text={state} /> : "" }
+      {state !== "" ? <StateBoard state="text-error" text={state} /> : ""}
 
       <Button
-        isLoading={isLoading}
         fullWidth
         className="text-white"
         color="primary"
         isDisabled={!isPasswordValid}
+        isLoading={isLoading}
         size="md"
         type="submit"
       >

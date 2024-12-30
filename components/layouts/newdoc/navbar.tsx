@@ -10,6 +10,7 @@ import { Kbd } from "@nextui-org/kbd";
 import { Input } from "@nextui-org/input";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { SearchIcon, Logo } from "@/components/icons";
 import UserAvatar from "@/components/common/user";
@@ -42,12 +43,38 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
   );
 
   const handleClick = () => {
-    router.push("/signupfree");
+    router.back();
   };
 
   return (
-    <NextUINavbar className="bg-forecolor" maxWidth="xl" position="sticky">
+    <NextUINavbar
+      className="bg-forecolor border-b-1 w-full"
+      maxWidth="full"
+      position="sticky"
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+        {user ? (
+          <UserAvatar
+            email={user.email}
+            username={`${user.firstname} ${user.lastname}`}
+          />
+        ) : (
+          <Button
+            className="text-text border-1 bg-forecolor"
+            href="/signupfree"
+            radius="md"
+            onClick={handleClick}
+          >
+            <ArrowBackIcon />
+            {"Back"}
+          </Button>
+        )}
+      </NavbarContent>
+
+      <NavbarContent
+        className="hidden sm:flex basis-1/5 sm:basis-full"
+        justify="end"
+      >
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Logo />
@@ -55,43 +82,12 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
-        {user ? (
-          <UserAvatar
-            email={user.email}
-            username={`${user.firstname} ${user.lastname}`}
-          />
-        ) : (
-          <Button
-            className="text-text border-1 bg-forecolor"
-            href="/signupfree"
-            radius="md"
-            onClick={handleClick}
-          >
-            {"Don't have an account? Signup"}
-          </Button>
-        )}
-      </NavbarContent>
-
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        {user ? (
-          <UserAvatar
-            email={user.email}
-            username={`${user.firstname} ${user.lastname}`}
-          />
-        ) : (
-          <Button
-            className="text-text border-1 bg-forecolor"
-            href="/signupfree"
-            radius="md"
-            onClick={handleClick}
-          >
-            {"Don't have an account? Signup"}
-          </Button>
-        )}
+        <NavbarBrand as="li" className="gap-3 max-w-fit">
+          <NextLink className="flex justify-start items-center gap-1" href="/">
+            <Logo />
+          </NextLink>
+        </NavbarBrand>
       </NavbarContent>
     </NextUINavbar>
   );

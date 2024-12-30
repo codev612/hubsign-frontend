@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import PageMenu from "@/components/layouts/common/pagemenu";
-import { siteConfig } from "@/config/site";
+import React from "react";
 import { usePathname } from "next/navigation";
 
+import PageMenu from "@/components/layouts/common/pagemenu";
+import { siteConfig } from "@/config/site";
+
 export default function Pending() {
-    const path = usePathname();
-    return (
-        <>
-            <PageMenu items={siteConfig.pagemenu.document} currentPath={path} />
-            <h1>pendig</h1>
-        </>
-    );
+  const path = usePathname();
+
+  return (
+    <>
+      <PageMenu currentPath={path} items={siteConfig.pagemenu.document} />
+      <h1>pendig</h1>
+    </>
+  );
 }

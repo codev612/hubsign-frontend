@@ -6,15 +6,14 @@ import {
 } from "@nextui-org/navbar";
 import { Kbd } from "@nextui-org/kbd";
 import { Input } from "@nextui-org/input";
-import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
-import clsx from "clsx";
+
 import {
   SearchIcon,
   // Logo,
 } from "@/components/icons";
 
-export const Bottombar : React.FC = () => {
+export const Bottombar: React.FC = () => {
   const searchInput = (
     <Input
       aria-label="Search"
@@ -40,26 +39,27 @@ export const Bottombar : React.FC = () => {
     <NextUINavbar className="bg-background" maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
-          </NextLink>
-          <p className="text-text text-tiny">© eSign, 2024, All rights reserved</p>
+          <NextLink
+            className="flex justify-start items-center gap-1"
+            href="/"
+          />
+          <p className="text-text text-tiny">
+            © eSign, 2024, All rights reserved
+          </p>
         </NavbarBrand>
       </NavbarContent>
-      <NavbarContent
-        className="flex"
-        justify="end"
-      >
+      <NavbarContent className="flex" justify="end">
         {/* <ul className="hidden lg:flex gap-4 justify-start ml-2"> */}
-          <NavbarItem>
-            <NextLink className="text-text text-tiny" href={"/"}>
-              Terms of use
-            </NextLink>
-          </NavbarItem>
-          <NavbarItem>
-            <NextLink className="text-text text-tiny" href={"/"}>
-              Privacy Policy
-            </NextLink>
-          </NavbarItem>
+        <NavbarItem>
+          <NextLink className="text-text text-tiny" href={"/"}>
+            Terms of use
+          </NextLink>
+        </NavbarItem>
+        <NavbarItem>
+          <NextLink className="text-text text-tiny" href={"/"}>
+            Privacy Policy
+          </NextLink>
+        </NavbarItem>
         {/* </ul> */}
       </NavbarContent>
     </NextUINavbar>

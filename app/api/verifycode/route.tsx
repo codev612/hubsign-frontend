@@ -5,10 +5,15 @@ import { NextResponse } from "next/server";
 import { verificationCodes } from "@/lib/shared";
 
 export async function POST(req: Request) {
-  const { email, code, userToken }: { email: string; code: string, userToken: string } = await req.json();
+  const {
+    email,
+    code,
+    userToken,
+  }: { email: string; code: string; userToken: string } = await req.json();
 
   const entry = verificationCodes[email]; // Access the stored entry for the email
   const currentTime = Date.now(); // Get current time
+
   // Check if code exists and is valid, and has not expired
   if (entry && entry.code === code && currentTime < entry.expiresAt) {
     delete verificationCodes[email]; // Remove code upon successful verification

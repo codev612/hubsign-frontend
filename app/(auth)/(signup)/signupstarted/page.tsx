@@ -8,14 +8,14 @@ import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+
 import Dot from "@/components/common/dot";
 // import LoadingButton from "@/components/global/loadingbutton";
 import StateBoard from "@/components/common/stateboard";
 
 export default function Signupstarted() {
-
   const searchParams = useSearchParams(); // Get search params
-  const userToken = searchParams.get('uid');
+  const userToken = searchParams.get("uid");
 
   const router = useRouter();
   const [state, setState] = useState("");
@@ -48,7 +48,7 @@ export default function Signupstarted() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); 
+    event.preventDefault();
     try {
       setIsLoading(true);
       const response = await fetch("/api/sendcode", {
@@ -62,10 +62,11 @@ export default function Signupstarted() {
       });
 
       const json = await response.json();
-  
+
       if (!response.ok) {
         setState(json.error);
         setIsLoading(false);
+
         return;
       } else {
         router.push("/signupcheck");
@@ -94,7 +95,7 @@ export default function Signupstarted() {
       style={{ width: "24rem" }}
       onSubmit={handleSubmit}
     >
-      <Dot text="1/3" color={"blue"} textColor="text-link" />
+      <Dot color={"blue"} text="1/3" textColor="text-link" />
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>{"Let's get started"}</p>
       <p className="text-text mb-2 text-sm">
         Add your info to make collaboration easy
@@ -139,13 +140,13 @@ export default function Signupstarted() {
         // size="md"
         fullWidth
       />
-      { state!=="" ? <StateBoard state="text-error" text={state} /> : "" }
+      {state !== "" ? <StateBoard state="text-error" text={state} /> : ""}
       {/* <LoadingButton title="Get Started" isLoading={isLoading}></LoadingButton> */}
       <Button
-        isLoading={isLoading}
         fullWidth
         className="text-white"
         color="primary"
+        isLoading={isLoading}
         size="md"
         type="submit"
       >

@@ -5,15 +5,13 @@ import { Link } from "@nextui-org/link";
 import { Input } from "@nextui-org/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import { Button } from "@nextui-org/button";
-import LoadingButton from "@/components/common/loadingbutton";
-import { siteConfig } from "@/config/site";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import StateBoard from "@/components/common/stateboard";
 import { useFormState } from "react-dom";
+
 import { signin } from "./action";
 
+import LoadingButton from "@/components/common/loadingbutton";
+import StateBoard from "@/components/common/stateboard";
 
 interface InitialState {
   message: string;
@@ -36,7 +34,7 @@ export default function Signin() {
 
   // email format validation
   const [value, setEmailValue] = useState("");
-  
+
   const [password, setPassword] = useState("");
 
   const validateEmail = (value: string) =>
@@ -48,17 +46,17 @@ export default function Signin() {
     return validateEmail(value) ? false : true;
   }, [value]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsLoading(false);
-  }, [state])
+  }, [state]);
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <form
+        action={formAction}
         className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md"
         style={{ width: "382px" }}
-        action={formAction}
-        onSubmit={()=>setIsLoading(true)}
+        onSubmit={() => setIsLoading(true)}
       >
         <p style={{ fontSize: "2rem", fontWeight: 500 }}>Log in to eSign</p>
         <p className="text-text mb-2">
@@ -70,15 +68,16 @@ export default function Signin() {
           isInvalid={isInvalid}
           label="Email"
           labelPlacement={"outside"}
+          name="email"
           placeholder="Enter your email"
           size="md"
           type="email"
-          variant="bordered"
           value={value}
-          name="email"
+          variant="bordered"
           onValueChange={setEmailValue}
         />
         <Input
+          required
           className="mb-0"
           endContent={
             <button
@@ -94,24 +93,29 @@ export default function Signin() {
               )}
             </button>
           }
-          value={password}
-          name="password"
-          onChange={(e)=>setPassword(e.target.value)}
-          required
           errorMessage="Please enter a valid password"
           label="Password"
           labelPlacement={"outside"}
+          name="password"
           placeholder="Enter your password"
           size="md"
           type={isVisible ? "text" : "password"}
+          value={password}
           variant="bordered"
+          onChange={(e) => setPassword(e.target.value)}
         />
         {/* <p className="text-error mt-0" style={{fontSize:'12px', textAlign:'left'}}>{state}</p> */}
-        {state.message!=="" ? <StateBoard state="text-error" text={state.message} /> : ""}
+        {state.message !== "" ? (
+          <StateBoard state="text-error" text={state.message} />
+        ) : (
+          ""
+        )}
         <Link href="/resetpass">
-          <p className="text-text test-start" style={{textAlign:'start'}}>{"Forgot your password?"}</p>
+          <p className="text-text test-start" style={{ textAlign: "start" }}>
+            {"Forgot your password?"}
+          </p>
         </Link>
-        <LoadingButton title="Login" isLoading={isLoading}></LoadingButton>
+        <LoadingButton isLoading={isLoading} title="Login" />
         <div className="flex flex-col items-center justify-center">
           <Link href="/signupfree">
             <p className="text-text">{"Don't have an account?"}</p>

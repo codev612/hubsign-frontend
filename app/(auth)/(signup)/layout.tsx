@@ -10,16 +10,15 @@ import {
 } from "@nextui-org/navbar";
 import NextLink from "next/link";
 import Image from "next/image";
-import {
-  Logo,
-} from "@/components/icons";
+
+import { Logo } from "@/components/icons";
 
 export default function SignupLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const Bottombar:React.FC = () => {
+  const Bottombar: React.FC = () => {
     return (
       <NextUINavbar className="bg-background" maxWidth="xl" position="sticky">
         <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -52,7 +51,7 @@ export default function SignupLayout({
     );
   };
 
-  const Navbar:React.FC = () => {
+  const Navbar: React.FC = () => {
     // const searchInput = (
     //   <Input
     //     aria-label="Search"
@@ -109,7 +108,7 @@ export default function SignupLayout({
               alt="Mascot"
               className="h-full w-auto object-cover" // Ensures it takes full height and keeps its aspect ratio
               height={700}
-              src="/assets/img/mascot.png"
+              src="/assets/img/mascot.svg"
               style={{ zIndex: 999 }}
               width={582}
             />

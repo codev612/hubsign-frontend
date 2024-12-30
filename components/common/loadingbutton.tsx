@@ -3,16 +3,21 @@ import { Button } from "@nextui-org/react";
 interface LoadingButtonProps {
   title: string; // Define the prop type as a string
   isLoading?: boolean;
+  disable?: boolean;
 }
 
-const LoadingButton: React.FC<LoadingButtonProps> = ({ title, isLoading=false }) => {
+const LoadingButton: React.FC<LoadingButtonProps> = ({
+  title,
+  isLoading = false,
+  disable = false,
+}) => {
   return (
     <Button
-      isLoading={isLoading}
+      disabled={disable}
       fullWidth
-      color="primary"
-      type="submit"
       className="text-white"
+      color="primary"
+      isLoading={isLoading}
       spinner={
         <svg
           className="animate-spin h-5 w-5 text-current"
@@ -35,6 +40,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({ title, isLoading=false })
           />
         </svg>
       }
+      type="submit"
     >
       {title} {/* Use the title prop here */}
     </Button>

@@ -5,11 +5,10 @@ export default async function DocumentsLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <>
-        <PageTitleBar pageTitle="Documents" buttonTitle="New Document" />
-        {children}
+      <PageTitleBar buttonTitle="New Document" buttonLink="/" pageTitle="Documents" />
+      {children}
     </>
   );
 }

@@ -5,11 +5,12 @@ import { Button } from "@nextui-org/button";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+
 import StateBoard from "@/components/common/stateboard";
 
 export default function Checkinbox() {
   const searchParams = useSearchParams(); // Get search params
-  const userToken = searchParams.get('uid');
+  const userToken = searchParams.get("uid");
   const email = Cookies.get("email"); // Retrieve the email from the query string
 
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function Checkinbox() {
   const [state, setState] = useState({
     state: "text-error",
     bgColor: "bg-bgdanger",
-    text: ""
+    text: "",
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -72,9 +73,9 @@ export default function Checkinbox() {
     }
   };
 
-  useEffect(()=> {
+  useEffect(() => {
     Cookies.set("USER_TOKEN", userToken || "");
-  })
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -87,21 +88,36 @@ export default function Checkinbox() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: email, code: verificationCode, userToken }),
+        body: JSON.stringify({
+          email: email,
+          code: verificationCode,
+          userToken,
+        }),
       });
-      
+
       const json = await response.json();
 
       if (!response.ok) {
-        setState({...state, text:json.error, state:"text-error", bgColor: "bg-bgdanger"});
+        setState({
+          ...state,
+          text: json.error,
+          state: "text-error",
+          bgColor: "bg-bgdanger",
+        });
         setIsLoading(false);
+
         return;
       } else {
         // const data = await response.json();
         router.push(`/newpass`);
       }
     } catch (error) {
-      setState({...state, text:"Unexpected error. Try later", state:"text-error", bgColor:"bg-bgdanger"});
+      setState({
+        ...state,
+        text: "Unexpected error. Try later",
+        state: "text-error",
+        bgColor: "bg-bgdanger",
+      });
       setIsLoading(false);
     } finally {
       setIsLoading(false);
@@ -121,17 +137,33 @@ export default function Checkinbox() {
       });
 
       const json = await response.json();
-  
+
       if (!response.ok) {
-        setState({...state, text:json.error, state:"text-error", bgColor:"bg-bgdanger"});
+        setState({
+          ...state,
+          text: json.error,
+          state: "text-error",
+          bgColor: "bg-bgdanger",
+        });
+
         return;
       } else {
-        setState({...state, text: "Resent a confirmation code.", state:"text-text", bgColor: "bg-info"})
+        setState({
+          ...state,
+          text: "Resent a confirmation code.",
+          state: "text-text",
+          bgColor: "bg-info",
+        });
       }
     } catch (error) {
-      setState({...state, text: "Unexpected error. Try later", state:"text-error", bgColor: "bg-bgdanger"});
-    } 
-  }
+      setState({
+        ...state,
+        text: "Unexpected error. Try later",
+        state: "text-error",
+        bgColor: "bg-bgdanger",
+      });
+    }
+  };
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -160,21 +192,30 @@ export default function Checkinbox() {
             />
           ))}
         </div>
-        { state.text!=="" ? <StateBoard state={state.state} text={state.text} bgColor={state.bgColor} /> : ""}
+        {state.text !== "" ? (
+          <StateBoard
+            bgColor={state.bgColor}
+            state={state.state}
+            text={state.text}
+          />
+        ) : (
+          ""
+        )}
         <div className="text-sm">
           {"Didn't get the code? "}
-          <Button 
-          className="bg-forecolor text-link" 
-          size="md"
-          onClick={handleResend}
-          >Resend the code
+          <Button
+            className="bg-forecolor text-link"
+            size="md"
+            onClick={handleResend}
+          >
+            Resend the code
           </Button>
         </div>
         <Button
-          isLoading={isLoading}
           fullWidth
           className="text-white"
           color="primary"
+          isLoading={isLoading}
           size="md"
           type="submit"
         >

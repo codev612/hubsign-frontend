@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "@nextui-org/link";
 // import { Snippet } from "@nextui-org/snippet";
 // import { Code } from "@nextui-org/code";
@@ -14,7 +14,8 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { Button } from "@nextui-org/button";
 import Cookies from "js-cookie";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+
 import { siteConfig } from "@/config/site";
 import Dot from "@/components/common/dot";
 import StateBoard from "@/components/common/stateboard";
@@ -68,14 +69,22 @@ export default function Newpass() {
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const PasswordDesc : React.FC = () => (
+  const PasswordDesc: React.FC = () => (
     <div>
-      <Dot text="at least 6 characters" color={passState6 ? "blue" : "inherit"} textColor="text-text" />
-      <Dot text={"1 not containing spaces and <,> case"} color={passStateContain ? "blue" : "inherit"} textColor="text-text" />
+      <Dot
+        color={passState6 ? "blue" : "inherit"}
+        text="at least 6 characters"
+        textColor="text-text"
+      />
+      <Dot
+        color={passStateContain ? "blue" : "inherit"}
+        text={"1 not containing spaces and <,> case"}
+        textColor="text-text"
+      />
     </div>
   );
 
-  const MatchDesc : React.FC = () => (
+  const MatchDesc: React.FC = () => (
     <p className="flex text-text">{match ? "Match" : "Not match"}</p>
   );
 
@@ -85,18 +94,25 @@ export default function Newpass() {
     try {
       setIsLoading(false);
 
-      const response = await fetch(`${siteConfig.links.server}/users/resetpass`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${siteConfig.links.server}/users/resetpass`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userToken: Cookies.get("USER_TOKEN"),
+            password: password,
+          }),
         },
-        body: JSON.stringify({ userToken: Cookies.get("USER_TOKEN"), password: password }),
-      });
-  
+      );
+
       if (!response.ok) {
         // setState("Invalid code");
-        setIsLoading(false)
+        setIsLoading(false);
         setState("Password reset failed");
+
         return;
       } else {
         // const data = await response.json();
@@ -105,11 +121,11 @@ export default function Newpass() {
       }
     } catch (error) {
       setIsLoading(false);
-      setState("Unexpected error. Try later")
+      setState("Unexpected error. Try later");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -172,14 +188,15 @@ export default function Newpass() {
           variant="bordered"
           onChange={handleConfirmPasswordChange}
         />
-        { state!=="" ? <StateBoard state="text-error" text={state}/> : ""}
-        <Button 
-        isLoading={isLoading}
-        fullWidth 
-        className="text-white" 
-        color="primary" 
-        size="md" 
-        type="submit">
+        {state !== "" ? <StateBoard state="text-error" text={state} /> : ""}
+        <Button
+          fullWidth
+          className="text-white"
+          color="primary"
+          isLoading={isLoading}
+          size="md"
+          type="submit"
+        >
           Reset Password
         </Button>
         <div className="flex flex-col items-center justify-center">

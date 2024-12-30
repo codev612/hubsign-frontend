@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 interface DotProps {
   text: string;
@@ -6,10 +6,12 @@ interface DotProps {
   bgColor?: string;
 }
 
-const StateBoard: React.FC<DotProps> = ({ text, state, bgColor="bg-bgdanger" }) => {
-  return (
-    <p className={`${state} ${bgColor} rounded-md p-3`}>{text}</p>
-  );
+const StateBoard: React.FC<DotProps> = ({
+  text,
+  state,
+  bgColor = "bg-bgdanger",
+}) => {
+  return <p className={`${state} ${bgColor} rounded-md p-3`}>{text}</p>;
 };
 
 export default StateBoard;

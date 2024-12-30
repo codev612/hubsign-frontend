@@ -59,20 +59,20 @@ export const siteConfig = {
       href: "/logout",
     },
   ],
-  pagemenu:{
+  pagemenu: {
     document: [
       {
         label: "Completed",
         link: "/dashboard/documents/completed",
       },
       {
-          label: "Pending",
-          link: "/dashboard/documents/pending",
-      }
-    ]
+        label: "Pending",
+        link: "/dashboard/documents/pending",
+      },
+    ],
   },
   links: {
     server: "http://localhost:4000",
+    base_url: "http://localhost:3000",
   },
-  base_url:"http://localhost:3000",
 };

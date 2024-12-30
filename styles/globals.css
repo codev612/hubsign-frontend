@@ -56,4 +56,25 @@
         font-weight: 500;
         line-height: 130%; /* 18.2px */
     }
+    .dropzone-title {
+        color: var(--Brand-50, #2563EB);
+        text-align: center;
+        /* Heading/3 */
+        font-family: 'Gabarito',sans-serif;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 120%;
+    }
+    .dropzone-summary {
+        color: var(--Brand-40, #739BF2);
+        text-align: center;
+        /* Body/Small/Regular */
+        font-family: 'Inter',sans-serif;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 130%; /* 15.6px */
+    }
+  
 }

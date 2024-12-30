@@ -5,7 +5,9 @@ import { Link } from "@nextui-org/link";
 import { Input } from "@nextui-org/input";
 import { useFormState } from "react-dom";
 import Cookies from "js-cookie";
+
 import { inputEmail } from "../action";
+
 import LoadingButton from "@/components/common/loadingbutton";
 import StateBoard from "@/components/common/stateboard";
 
@@ -37,14 +39,14 @@ export default function Signupfree() {
     setEmailValue(Cookies.get("email") || "");
   }, []);
 
-  useEffect(()=>setIsLoading(state.isLoading),[state]);
+  useEffect(() => setIsLoading(state.isLoading), [state]);
 
   return (
     <form
       action={formAction}
-      onSubmit={()=>setIsLoading(true)}
       className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg"
       style={{ width: "24rem" }}
+      onSubmit={() => setIsLoading(true)}
     >
       <p style={{ fontSize: "2rem", fontWeight: 500 }}>
         Signup to eSign and try for free for 30 days
@@ -67,9 +69,13 @@ export default function Signupfree() {
           variant={"bordered"}
           onValueChange={setEmailValue}
         />
-        { state.message!=="" ? <StateBoard state="text-error" text={state.message} /> : "" }
+        {state.message !== "" ? (
+          <StateBoard state="text-error" text={state.message} />
+        ) : (
+          ""
+        )}
       </div>
-      <LoadingButton title="Get Started" isLoading={isLoading}></LoadingButton>
+      <LoadingButton isLoading={isLoading} title="Get Started" />
 
       <div className="flex flex-col items-center justify-center">
         <div>

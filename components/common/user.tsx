@@ -7,15 +7,19 @@ import {
 } from "@nextui-org/react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+
 import { UserAvatarProps } from "@/interface/interface";
 
-const UserAvatar: React.FC<UserAvatarProps> =({username="", email=""}) => {
+const UserAvatar: React.FC<UserAvatarProps> = ({
+  username = "",
+  email = "",
+}) => {
   const router = useRouter();
 
-  const handleLogout = () => {
-    Cookies.remove("session");
-    router.push("signin");
-  }
+  const handleLogout = async () => {
+    await Cookies.remove("session");
+    router.push("/signin");
+  };
 
   return (
     <div className="flex items-center gap-4">
@@ -75,6 +79,6 @@ const UserAvatar: React.FC<UserAvatarProps> =({username="", email=""}) => {
       </Dropdown>
     </div>
   );
-}
+};
 
 export default UserAvatar;

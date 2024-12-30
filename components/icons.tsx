@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { IconSvgProps } from "@/types";
 import { siteConfig } from "@/config/site";
 
@@ -18,7 +19,7 @@ export const Logo: React.FC<LogoProps> = ({
   <img
     alt="Logo" // Alternate text for accessibility
     height={size || height}
-    src={`${siteConfig.base_url}/assets/img/brand.png`} // Update with your logo's path
+    src={`${siteConfig.links.base_url}/assets/img/brand.svg`} // Update with your logo's path
     width={size || width} // Set width and height
     {...props} // Spread additional props
     style={{ display: "block" }} // Optional: remove extra space below the image

@@ -5,6 +5,7 @@ import { Button } from "@nextui-org/button";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+
 import Dot from "@/components/common/dot";
 import StateBoard from "@/components/common/stateboard";
 
@@ -13,9 +14,9 @@ const Signupcheck: React.FC = () => {
   const [code, setCode] = useState<string[]>(Array(6).fill("")); // Create an array with 6 empty strings
   const [email, setEmail] = useState<string>("");
   const [state, setState] = useState({
-    text:"",
+    text: "",
     state: "text-error",
-    bgColor: "bg-bgdanger"
+    bgColor: "bg-bgdanger",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -84,18 +85,28 @@ const Signupcheck: React.FC = () => {
           code: verificationCode,
         }),
       });
-  
+
       if (!response.ok) {
         setIsLoading(false);
-        setState({...state, text: "Invalid code", state:"text-error", bgColor:"bg-bgdanger"});
+        setState({
+          ...state,
+          text: "Invalid code",
+          state: "text-error",
+          bgColor: "bg-bgdanger",
+        });
+
         return;
       } else {
-
         router.push("/signuppass"); // Navigate to the next step
       }
     } catch (error) {
       setIsLoading(false);
-      setState({...state, text: "Unexpected error. Try later", state:"text-error", bgColor:"bg-bgdanger"});
+      setState({
+        ...state,
+        text: "Unexpected error. Try later",
+        state: "text-error",
+        bgColor: "bg-bgdanger",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +118,7 @@ const Signupcheck: React.FC = () => {
 
   const handleClick = () => {
     router.push("/signupfree");
-  }
+  };
 
   const handleResend = async () => {
     try {
@@ -122,24 +133,40 @@ const Signupcheck: React.FC = () => {
       });
 
       const json = await response.json();
-  
+
       if (!response.ok) {
-        setState({...state, text:json.error, state:"text-error", bgColor:"bg-bgdanger"});
+        setState({
+          ...state,
+          text: json.error,
+          state: "text-error",
+          bgColor: "bg-bgdanger",
+        });
+
         return;
       } else {
-        setState({...state, text:"Resent a confirmation code.", state:"text-text", bgColor:"bg-info"})
+        setState({
+          ...state,
+          text: "Resent a confirmation code.",
+          state: "text-text",
+          bgColor: "bg-info",
+        });
       }
     } catch (error) {
-      setState({...state, text:"Unexpected error. Try later", state:"text-error", bgColor:"bg-bgdanger"});
-    } 
-  }
+      setState({
+        ...state,
+        text: "Unexpected error. Try later",
+        state: "text-error",
+        bgColor: "bg-bgdanger",
+      });
+    }
+  };
 
   return (
     <form
       className="flex flex-col items-start justify-center bg-background gap-4 rounded-md max-w-lg"
       onSubmit={handleSubmit}
     >
-      <Dot text="2/3" color={"blue"} textColor="text-link" />
+      <Dot color={"blue"} text="2/3" textColor="text-link" />
       <p style={{ fontSize: "1.5rem", fontWeight: 500 }}>Check your inbox</p>
       <p className="text-text mb-2 text-sm">
         We sent you a confirmation code to {email}.
@@ -165,29 +192,44 @@ const Signupcheck: React.FC = () => {
         {/* <p className="text-error">{state}</p> */}
       </div>
       <div className="flex flex-col w-full">
-        { state.text!=="" ? <StateBoard state={state.state} text={state.text} bgColor={state.bgColor} /> : "" }
+        {state.text !== "" ? (
+          <StateBoard
+            bgColor={state.bgColor}
+            state={state.state}
+            text={state.text}
+          />
+        ) : (
+          ""
+        )}
       </div>
       <div className="flex flex-col gap-0">
-        <div className="m-0 p-0" style={{fontSize: "0.875rem"}}>
+        <div className="m-0 p-0" style={{ fontSize: "0.875rem" }}>
           {"Didn't get the code?"}
-          <Button 
-          className="bg-background text-link" 
-          size="sm"
-          onClick={handleResend}
-          >Resend the code
+          <Button
+            className="bg-background text-link"
+            size="sm"
+            onClick={handleResend}
+          >
+            Resend the code
           </Button>
         </div>
-        <div className="m-0 p-0" style={{fontSize: "0.875rem"}}>
+        <div className="m-0 p-0" style={{ fontSize: "0.875rem" }}>
           Wrong email?
-          <Button className="bg-background text-link" size="sm" onClick={handleClick}>Use a different email address</Button>
+          <Button
+            className="bg-background text-link"
+            size="sm"
+            onClick={handleClick}
+          >
+            Use a different email address
+          </Button>
         </div>
       </div>
 
       <Button
-        isLoading={isLoading}
         fullWidth
         className="text-white"
         color="primary"
+        isLoading={isLoading}
         size="md"
         type="submit"
       >
