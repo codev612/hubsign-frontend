@@ -195,12 +195,18 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
 
   useEffect(() => {
     // Convert selectedKeys to an array of _id values
-    const selectedIds = Array.from(selectedKeys).map((key) => {
+    
+    if(selectedKeys==="all") {
+      const selectedIds = data.map(item => item._id);
+      setSelectedIDs(selectedIds);
+    } else {
+      const selectedIds = Array.from(selectedKeys).map((key) => {
         const item = data.find((d) => d._id === key);
         return item ? item._id : null; // This could still yield null
-    }).filter(Boolean) as string[]; // Ensure the filter returns only strings
+      }).filter(Boolean) as string[]; // Ensure the filter returns only strings
 
-    setSelectedIDs(selectedIds);
+      setSelectedIDs(selectedIds);
+    }
     console.log("Selected Keys:", selectedKeys);
 }, [selectedKeys, data]);
 
