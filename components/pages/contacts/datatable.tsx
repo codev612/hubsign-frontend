@@ -567,12 +567,12 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   return (
     <>
       <ConfirmModal
-      actionState={setActionState} 
-      isOpen={isOpen} 
-      onOpenChange={onOpenChange} 
-      message="This action will delete the contact “[contact Name].” The contact record will be permanently removed, and all associated signing links will be deactivated. Do you wish to proceed?"
-      title="Delete Contact"
-      id={deleteItem}
+        actionState={setActionState} 
+        isOpen={isOpen} 
+        onOpenChange={onOpenChange} 
+        message={`This action will delete the ${deleteItem.length} contact[s]. The contact record will be permanently removed, and all associated signing links will be deactivated. Do you wish to proceed?`}
+        title="Delete Contact"
+        id={deleteItem}
       />
       <Table
         // isHeaderSticky

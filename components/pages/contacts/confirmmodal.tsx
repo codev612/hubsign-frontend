@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 import { siteConfig } from "@/config/site";
 import Cookies from "js-cookie";
-import { redirect, useRouter } from "next/navigation";
 
 interface ConfirmModalProps {
     isOpen: boolean;
@@ -15,7 +14,6 @@ interface ConfirmModalProps {
 }
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({isOpen, onOpenChange, message, title, id, actionState}) => {
-    const router = useRouter();
     useEffect(()=>{
         console.log(id);
     },[id])
@@ -36,9 +34,6 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({isOpen, onOpenChange, messag
                 } else {
                     onOpenChange(false);
                     actionState(true);
-                    // redirect("/dashboard/contacts");
-                    // router.replace("/dashboard/contacts");
-                    // location.reload();
                 }
             } catch (error) {
                 throw new Error("Server error");
