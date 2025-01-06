@@ -28,6 +28,7 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => 
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [searchText, setSearchText] = useState<string>("");
     const [activeInputIndex, setActiveInputIndex] = useState<number | null>(null);
+    const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
 
     const handleAddRcpt = () => {
         setRcpts([...recpts, { name: "", email: "" }]);
@@ -46,6 +47,7 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => 
             contact.name.toLowerCase().includes(value.toLowerCase())
         );
         setSearchResults(filteredContacts);
+        setIsSearchOpen(true);
     };
 
     const handleDeleteRcpt = (index: number) => {
@@ -73,6 +75,25 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => 
 
     const handleAddMe = () => { };
 
+    // Close the search results when clicking outside the dropdown
+    const handleClickOutside = (e: MouseEvent) => {
+        const target = e.target as HTMLElement; // Type assertion to ensure it's an HTMLElement
+        if (
+            target &&
+            !target.closest('.dropdown-container') &&
+            !target.closest('.input-container')
+        ) {
+            setIsSearchOpen(false); // Close the dropdown if clicked outside
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     useEffect(() => {
         console.log(recpts);
     }, [recpts]);
@@ -93,7 +114,7 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => 
                             value={item.email}
                             onChange={(e) => handleInputChange(index, 'email', e.target.value)}
                             onKeyDown={(e) => handleKeyDown(e, index)} // Handle keyboard navigation
-                            onFocus={()=>{setActiveInputIndex(index);setActiveIndex(0)}}
+                            onFocus={()=>{setActiveInputIndex(index);setActiveIndex(0);}}
                         />
                         <Input
                             className="bg-forecolor rounded-lg"
@@ -109,19 +130,20 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => 
                             onFocus={()=>{setActiveInputIndex(index);setActiveIndex(0)}}
                         />
                         {/* Dropdown container for each input */}
-                        {searchResults.length > 0 && searchText.length > 0 && (activeInputIndex===index) && (
+                        {isSearchOpen && searchResults.length > 0 && searchText.length > 0 && (activeInputIndex===index) && (
                             <div
                                 className="left-0 right-0 mt-1 border bg-white rounded-md shadow-md max-h-60 overflow-auto z-10"
                                 style={{ position:"absolute", top:"2rem"}} // Place the dropdown just below the input
                             >
                                 {searchResults.map((contact, i) => (
-                                    <div
+                                    <button
                                         key={i}
-                                        className={`cursor-pointer p-2 hover:bg-gray-100 ${activeIndex === i ? "bg-gray-200" : ""}`}
+                                        className={`cursor-pointer p-1 hover:bg-gray-100 w-full ${activeIndex === i ? "bg-gray-200" : ""}`}
                                         onClick={() => handleSelectContact(index, contact)} // Update specific recipient
+                                        onMouseOut={()=>setActiveIndex(-1)}
                                     >
-                                        <div>{`${contact.name}(${contact.email})`}</div>
-                                    </div>
+                                        <div className="flex flex-row">{contact.name}<p className="text-text">{`(${contact.email})`}</p></div>
+                                    </button>
                                 ))}
                             </div>
                         )}
