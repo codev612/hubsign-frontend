@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
 // import { signin } from "./action";
 import { Tabs, Tab } from "@nextui-org/react";
+import { Input} from "@nextui-org/react";
+import { Checkbox } from "@nextui-org/react";
 import { signin } from "../(auth)/signin/action";
 import FileUpload from "@/components/common/fileupload";
-import { Input} from "@nextui-org/react";
 import Recipients from "@/components/pages/newdoc/recipients";
 
 interface InitialState {
@@ -49,6 +50,8 @@ export default function NewDoc() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [filteredContacts, setFilteredContacts] = useState<any[]>([]);
 
+  const [customSigningOrder, setCustomSigningOrder] = useState<boolean>(false);
+
   useEffect(() => {
     setIsLoading(false);
   }, [state]);
@@ -73,8 +76,11 @@ export default function NewDoc() {
           <p>select a template</p>
         </Tab>
       </Tabs>
-      <h1 className="title-medium">Add Recipients</h1>
-      <Recipients />
+      <div className="flex flex-row justify-between items-center w-full">
+        <h1 className="title-medium">Add Recipients</h1>
+        <Checkbox isSelected={customSigningOrder} onValueChange={setCustomSigningOrder}>Custom singing order</Checkbox>
+      </div>
+      <Recipients customSigningOrder={customSigningOrder} />
     </section>
   );
 }

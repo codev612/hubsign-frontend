@@ -17,7 +17,11 @@ interface Recipient {
     email: string;
 }
 
-const Recipients = () => {
+interface RecipientProps {
+    customSigningOrder:boolean;
+}
+
+const Recipients:React.FC<RecipientProps> = ({customSigningOrder}) => {
     const [recpts, setRcpts] = useState<Recipient[]>([]);
     const [searchResults, setSearchResults] = useState<Recipient[]>([]);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -29,11 +33,9 @@ const Recipients = () => {
     };
 
     const handleInputChange = (index: number, field: keyof Recipient, value: string) => {
-        console.log(index)
         const updatedRecipients = [...recpts];
         updatedRecipients[index] = { ...updatedRecipients[index], [field]: value };
         setRcpts(updatedRecipients);
-        setActiveIndex(index);
         // Set the search text for use in filtering
         setSearchText(value);
 
@@ -51,7 +53,6 @@ const Recipients = () => {
     };
 
     const handleSelectContact = (index: number, contact: Recipient) => {
-        console.log('select:', index)
         const updatedRecipients = [...recpts];
         updatedRecipients[activeInputIndex || 0] = { name: contact.name, email: contact.email };
         setRcpts(updatedRecipients);
@@ -79,7 +80,7 @@ const Recipients = () => {
         <>
             {recpts.length ? recpts.map((item, index) => (
                 <div key={index} className="flex flex-row justify-between items-center w-full gap-2 p-3 bg-background rounded-md">
-                    <DragIndicatorIcon />
+                    {customSigningOrder&&<DragIndicatorIcon />}
                     <div className="flex flex-row gap-1" style={{position:"relative"}}>
                         <Input
                             className="bg-forecolor rounded-lg"
@@ -91,7 +92,7 @@ const Recipients = () => {
                             value={item.email}
                             onChange={(e) => handleInputChange(index, 'email', e.target.value)}
                             onKeyDown={(e) => handleKeyDown(e, index)} // Handle keyboard navigation
-                            onFocus={()=>setActiveInputIndex(index)}
+                            onFocus={()=>{setActiveInputIndex(index);setActiveIndex(0)}}
                         />
                         <Input
                             className="bg-forecolor rounded-lg"
@@ -104,7 +105,7 @@ const Recipients = () => {
                             value={item.name}
                             onChange={(e) => handleInputChange(index, 'name', e.target.value)}
                             onKeyDown={(e) => handleKeyDown(e, index)} // Handle keyboard navigation
-                            onFocus={()=>setActiveInputIndex(index)}
+                            onFocus={()=>{setActiveInputIndex(index);setActiveIndex(0)}}
                         />
                         {/* Dropdown container for each input */}
                         {searchResults.length > 0 && searchText.length > 0 && (activeInputIndex===index) && (
