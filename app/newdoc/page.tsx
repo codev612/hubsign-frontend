@@ -10,6 +10,8 @@ import { Checkbox } from "@nextui-org/react";
 import { signin } from "../(auth)/signin/action";
 import FileUpload from "@/components/common/fileupload";
 import Recipients from "@/components/pages/newdoc/recipients";
+import { siteConfig } from "@/config/site";
+import Cookies from "js-cookie";
 
 interface InitialState {
   message: string;
@@ -30,18 +32,18 @@ export default function NewDoc() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  // email format validation
-  const [value, setEmailValue] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  // // email format validation
+  // const [value, setEmailValue] = useState<string>("");
+  // const [password, setPassword] = useState<string>("");
 
-  const validateEmail = (value: string) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+  // const validateEmail = (value: string) =>
+  //   value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
 
-  const isInvalid = React.useMemo(() => {
-    if (value === "") return false;
+  // const isInvalid = React.useMemo(() => {
+  //   if (value === "") return false;
 
-    return validateEmail(value) ? false : true;
-  }, [value]);
+  //   return validateEmail(value) ? false : true;
+  // }, [value]);
 
   const [isUpLoading, setIsUpLoading] = useState<boolean>(false);
   const [selectedFile, setFile] = useState<any>(null);
@@ -55,6 +57,34 @@ export default function NewDoc() {
   useEffect(() => {
     setIsLoading(false);
   }, [state]);
+
+  // Step 2: Fetch data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${siteConfig.links.server}/contacts`,{
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || null}`
+          }
+        }); // Replace with your API endpoint
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const result = await response.json();
+        setContacts(result);
+        // setData(result); // Set the fetched data to state
+      } catch (error) {
+        // setError("Failed to fetch data");
+        console.error(error);
+      } finally {
+        // setLoading(false); // Set loading to false when fetching is done
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   return (
     <section className="flex flex-col items-start w-full justify-center gap-4">
@@ -80,7 +110,10 @@ export default function NewDoc() {
         <h1 className="title-medium">Add Recipients</h1>
         <Checkbox isSelected={customSigningOrder} onValueChange={setCustomSigningOrder}>Custom singing order</Checkbox>
       </div>
-      <Recipients customSigningOrder={customSigningOrder} />
+      <Recipients 
+      customSigningOrder={customSigningOrder} 
+      contacts={contacts}
+      />
     </section>
   );
 }

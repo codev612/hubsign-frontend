@@ -6,11 +6,11 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import AddIcon from '@mui/icons-material/Add';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const contacts = [
-    { name: "dmytro", email: "dmytrozaets66@gmail.com" },
-    { name: "Damon", email: "codeveloper612@gmail.com" },
-    { name: "brian", email: "amadyba865@gmail.com" }
-];
+// const contacts = [
+//     { name: "dmytro", email: "dmytrozaets66@gmail.com" },
+//     { name: "Damon", email: "codeveloper612@gmail.com" },
+//     { name: "brian", email: "amadyba865@gmail.com" }
+// ];
 
 interface Recipient {
     name: string;
@@ -19,9 +19,10 @@ interface Recipient {
 
 interface RecipientProps {
     customSigningOrder:boolean;
+    contacts: Recipient[];
 }
 
-const Recipients:React.FC<RecipientProps> = ({customSigningOrder}) => {
+const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => {
     const [recpts, setRcpts] = useState<Recipient[]>([]);
     const [searchResults, setSearchResults] = useState<Recipient[]>([]);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);

@@ -25,6 +25,7 @@ export const getUser = cache(async () => {
     const response = await fetch(`${siteConfig.links.server}/auth/profile`, {
       method: "GET",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${session}`, // Attach token to Authorization header
       },
     });
@@ -52,6 +53,7 @@ export const getContacts = async () => {
     const response = await fetch(`${siteConfig.links.server}/contacts`, {
       method: "GET",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${session}`, // Attach token to Authorization header
       },
     });
