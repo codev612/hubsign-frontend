@@ -124,6 +124,7 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts, user
                             onChange={(e) => handleInputChange(index, 'email', e.target.value)}
                             onKeyDown={(e) => handleKeyDown(e, index)} // Handle keyboard navigation
                             onFocus={()=>{setActiveInputIndex(index);setActiveIndex(0);}}
+                            isDisabled={item.email===user.email?true:false}
                         />
                         <Input
                             className="bg-forecolor rounded-lg"
