@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/layouts/newdoc/navbar";
 
-export default function SigninLayout({
+export default function NewDocLayout({
   children,
 }: {
   children: React.ReactNode;

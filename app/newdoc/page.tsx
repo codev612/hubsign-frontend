@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
-
 // import { signin } from "./action";
 import { Tabs, Tab } from "@nextui-org/react";
-
 import { signin } from "../(auth)/signin/action";
 import FileUpload from "@/components/common/fileupload";
 import { Input} from "@nextui-org/react";
@@ -22,19 +20,18 @@ const initialState: InitialState = {
   isLoading: false,
 };
 
-export default function Signin() {
+export default function NewDoc() {
   const router = useRouter();
   const [state, formAction] = useFormState(signin, initialState);
   // visible password
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
   // loading button
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   // email format validation
-  const [value, setEmailValue] = useState("");
-
-  const [password, setPassword] = useState("");
+  const [value, setEmailValue] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const validateEmail = (value: string) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -44,6 +41,13 @@ export default function Signin() {
 
     return validateEmail(value) ? false : true;
   }, [value]);
+
+  const [isUpLoading, setIsUpLoading] = useState<boolean>(false);
+  const [selectedFile, setFile] = useState<any>(null);
+  const [filename, setFilename] = useState<string>("");
+
+  const [contacts, setContacts] = useState<any[]>([]);
+  const [filteredContacts, setFilteredContacts] = useState<any[]>([]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -58,12 +62,12 @@ export default function Signin() {
           tabList: "bg-background",
           cursor: "w-full bg-forecolor rounded text-text",
           tab: "max-w-fit px-12",
-          // tabContent: "group-data-[selected=true]:text-[#06b6d4]",
+          // tabContent: "p-0",
         }}
         size="lg"
       >
         <Tab key={"document"} title="Upload a document">
-          <FileUpload />
+          <FileUpload setFile={setFile} filename={filename} setFilename={setFilename} />
         </Tab>
         <Tab key={"template"} title="Start with a template">
           <p>select a template</p>
