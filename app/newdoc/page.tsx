@@ -23,7 +23,18 @@ const initialState: InitialState = {
   isLoading: false,
 };
 
-export default function NewDoc() {
+interface Recipient {
+  name: string;
+  email: string;
+}
+
+interface ChildComponentProps {
+  contacts: Recipient[];  // Define the type of contacts properly
+  user: Recipient;        // Define the type of user properly
+}
+
+const NewDoc = ()=> {
+
   const router = useRouter();
   const [state, formAction] = useFormState(signin, initialState);
   // visible password
@@ -50,6 +61,7 @@ export default function NewDoc() {
   const [filename, setFilename] = useState<string>("");
 
   const [contacts, setContacts] = useState<any[]>([]);
+  const [user, setUser] = useState<any>({});
   const [filteredContacts, setFilteredContacts] = useState<any[]>([]);
 
   const [customSigningOrder, setCustomSigningOrder] = useState<boolean>(false);
@@ -58,17 +70,16 @@ export default function NewDoc() {
     setIsLoading(false);
   }, [state]);
 
-  // Step 2: Fetch data on component mount
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchContactsData = async () => {
       try {
         const response = await fetch(`${siteConfig.links.server}/contacts`,{
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("session") || null}`
+            Authorization: `Bearer ${Cookies.get("session") || ""}`
           }
-        }); // Replace with your API endpoint
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -83,7 +94,32 @@ export default function NewDoc() {
       }
     };
 
-    fetchData();
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`${siteConfig.links.server}/auth/profile`,{
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`
+          }
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const result = await response.json();
+        console.log(result)
+        setUser({name:`${result.firstname} ${result.lastname}`, email:result.email});
+        // setData(result); // Set the fetched data to state
+      } catch (error) {
+        // setError("Failed to fetch data");
+        console.error(error);
+      } finally {
+        // setLoading(false); // Set loading to false when fetching is done
+      }
+    };
+
+    fetchContactsData();
+    fetchUserData();
   }, []); // Empty dependency array ensures this runs only once on mount
 
   return (
@@ -113,7 +149,10 @@ export default function NewDoc() {
       <Recipients 
       customSigningOrder={customSigningOrder} 
       contacts={contacts}
+      user={user}
       />
     </section>
   );
 }
+
+export default NewDoc;

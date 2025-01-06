@@ -1,10 +1,12 @@
+import React from "react";
 import { Navbar } from "@/components/layouts/newdoc/navbar";
+import { getContacts, getUser } from "@/lib/dal";
 
-export default function NewDocLayout({
-  children,
-}: {
+interface NewDocLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default async function NewDocLayout({ children }: NewDocLayoutProps) {
   return (
     <>
       <Navbar />

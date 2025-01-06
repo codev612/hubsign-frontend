@@ -20,15 +20,17 @@ interface Recipient {
 interface RecipientProps {
     customSigningOrder:boolean;
     contacts: Recipient[];
+    user: Recipient;
 }
 
-const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => {
+const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts, user}) => {
     const [recpts, setRcpts] = useState<Recipient[]>([]);
     const [searchResults, setSearchResults] = useState<Recipient[]>([]);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [searchText, setSearchText] = useState<string>("");
     const [activeInputIndex, setActiveInputIndex] = useState<number | null>(null);
     const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+    const [addedme, setAddedme] = useState<boolean>(false);
 
     const handleAddRcpt = () => {
         setRcpts([...recpts, { name: "", email: "" }]);
@@ -73,7 +75,9 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => 
         }
     };
 
-    const handleAddMe = () => { };
+    const handleAddMe = () => {
+        setRcpts([...recpts, user]);
+    };
 
     // Close the search results when clicking outside the dropdown
     const handleClickOutside = (e: MouseEvent) => {
@@ -96,6 +100,11 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => 
 
     useEffect(() => {
         console.log(recpts);
+        const isUserInRecipients = recpts.some(
+            (recipient) => recipient.email === user.email
+        );
+
+        isUserInRecipients ? setAddedme(true) : setAddedme(false);
     }, [recpts]);
 
     return (
@@ -160,8 +169,14 @@ const Recipients:React.FC<RecipientProps> = ({customSigningOrder, contacts}) => 
             )) : ""}
 
             <div className="flex flex-row gap-2">
-                <Button size="sm" variant="bordered" radius="md" startContent={<AddIcon />} onClick={handleAddRcpt}>Add Recipient</Button>
-                <Button size="sm" variant="bordered" radius="md" startContent={<AccountCircleIcon />} onClick={handleAddMe}>Add Myself</Button>
+                <Button size="sm" variant="bordered" radius="md" startContent={<AddIcon />} 
+                onClick={handleAddRcpt}
+                >Add Recipient</Button>
+                <Button size="sm" variant="bordered" radius="md" startContent={<AccountCircleIcon />} 
+                onClick={handleAddMe}
+                // disabled={addedme}
+                isDisabled={addedme}
+                >Add Myself</Button>
             </div>
         </>
     );
