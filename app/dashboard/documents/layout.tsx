@@ -7,7 +7,7 @@ export default async function DocumentsLayout({
 }) {
   return (
     <>
-      <PageTitleBar buttonTitle="New Document" buttonLink="/" pageTitle="Documents" />
+      <PageTitleBar buttonTitle="New Document" buttonLink="/adddoc" pageTitle="Documents" />
       {children}
     </>
   );

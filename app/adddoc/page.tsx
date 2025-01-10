@@ -12,8 +12,6 @@ import FileUpload from "@/components/common/fileupload";
 import Recipients from "@/components/pages/newdoc/recipients";
 import { siteConfig } from "@/config/site";
 import Cookies from "js-cookie";
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 
 interface InitialState {
   message: string;
@@ -147,13 +145,11 @@ const NewDoc = ()=> {
         <h1 className="title-medium">Add Recipients</h1>
         <Checkbox isSelected={customSigningOrder} onValueChange={setCustomSigningOrder}>Custom singing order</Checkbox>
       </div>
-      <DndProvider backend={HTML5Backend}>
       <Recipients 
-        customSigningOrder={customSigningOrder} 
+        customSigningOrder={customSigningOrder}
         contacts={contacts}
         user={user}
       />
-      </DndProvider>
     </section>
   );
 }

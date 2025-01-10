@@ -77,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
         size="md"
         // onClick={handleNewDoc}
       >
-        <Link href={"/newdoc"}>
+        <Link href={"/adddoc"}>
           <AddOutlinedIcon /> New Document
         </Link>
       </Button>
