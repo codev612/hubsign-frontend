@@ -1,6 +1,6 @@
 import React from "react";
+
 import { Navbar } from "@/components/layouts/adddoc/navbar";
-import { getContacts, getUser } from "@/lib/dal";
 
 interface NewDocLayoutProps {
   children: React.ReactNode;

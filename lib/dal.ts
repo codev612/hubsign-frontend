@@ -67,6 +67,7 @@ export const getContacts = async () => {
     return json;
   } catch (error) {
     console.log(error);
+
     return null;
   }
 };

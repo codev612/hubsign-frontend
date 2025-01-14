@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
 // import { signin } from "./action";
 import { Tabs, Tab } from "@nextui-org/react";
-import { Input} from "@nextui-org/react";
 import { Checkbox } from "@nextui-org/react";
+import Cookies from "js-cookie";
+
 import { signin } from "../(auth)/signin/action";
+
 import FileUpload from "@/components/common/fileupload";
 import Recipients from "@/components/pages/newdoc/recipients";
 import { siteConfig } from "@/config/site";
-import Cookies from "js-cookie";
 
 interface InitialState {
   message: string;
@@ -29,12 +30,11 @@ interface Recipient {
 }
 
 interface ChildComponentProps {
-  contacts: Recipient[];  // Define the type of contacts properly
-  user: Recipient;        // Define the type of user properly
+  contacts: Recipient[]; // Define the type of contacts properly
+  user: Recipient; // Define the type of user properly
 }
 
-const NewDoc = ()=> {
-
+const NewDoc = () => {
   const router = useRouter();
   const [state, formAction] = useFormState(signin, initialState);
   // visible password
@@ -73,17 +73,19 @@ const NewDoc = ()=> {
   useEffect(() => {
     const fetchContactsData = async () => {
       try {
-        const response = await fetch(`${siteConfig.links.server}/contacts`,{
+        const response = await fetch(`${siteConfig.links.server}/contacts`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("session") || ""}`
-          }
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
         });
+
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const result = await response.json();
+
         setContacts(result);
         // setData(result); // Set the fetched data to state
       } catch (error) {
@@ -96,18 +98,26 @@ const NewDoc = ()=> {
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${siteConfig.links.server}/auth/profile`,{
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("session") || ""}`
-          }
-        });
+        const response = await fetch(
+          `${siteConfig.links.server}/auth/profile`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("session") || ""}`,
+            },
+          },
+        );
+
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const result = await response.json();
-        setUser({name:`${result.firstname} ${result.lastname}`, email:result.email});
+
+        setUser({
+          name: `${result.firstname} ${result.lastname}`,
+          email: result.email,
+        });
         // setData(result); // Set the fetched data to state
       } catch (error) {
         // setError("Failed to fetch data");
@@ -135,7 +145,11 @@ const NewDoc = ()=> {
         size="lg"
       >
         <Tab key={"document"} title="Upload a document">
-          <FileUpload setFile={setFile} filename={filename} setFilename={setFilename} />
+          <FileUpload
+            filename={filename}
+            setFile={setFile}
+            setFilename={setFilename}
+          />
         </Tab>
         <Tab key={"template"} title="Start with a template">
           <p>select a template</p>
@@ -143,15 +157,20 @@ const NewDoc = ()=> {
       </Tabs>
       <div className="flex flex-row justify-between items-center w-full">
         <h1 className="title-medium">Add Recipients</h1>
-        <Checkbox isSelected={customSigningOrder} onValueChange={setCustomSigningOrder}>Custom singing order</Checkbox>
+        <Checkbox
+          isSelected={customSigningOrder}
+          onValueChange={setCustomSigningOrder}
+        >
+          Custom singing order
+        </Checkbox>
       </div>
-      <Recipients 
-        customSigningOrder={customSigningOrder}
+      <Recipients
         contacts={contacts}
+        customSigningOrder={customSigningOrder}
         user={user}
       />
     </section>
   );
-}
+};
 
 export default NewDoc;

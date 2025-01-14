@@ -12,17 +12,17 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
   User,
   Pagination,
   Selection,
   ChipProps,
   SortDescriptor,
 } from "@nextui-org/react";
-import { users } from "@/constants/constants";
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import ContentPasteOutlinedIcon from '@mui/icons-material/ContentPasteOutlined';
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
+import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
+
+import { users } from "@/constants/common";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -380,19 +380,22 @@ export default function DataTable() {
                 ))}
               </DropdownMenu>
             </Dropdown> */}
-            <Button 
-            variant="bordered"
-            startContent={<ContentCopyOutlinedIcon />}>
+            <Button
+              startContent={<ContentCopyOutlinedIcon />}
+              variant="bordered"
+            >
               Copy
             </Button>
-            <Button 
-            variant="bordered"
-            startContent={<ContentPasteOutlinedIcon />}>
+            <Button
+              startContent={<ContentPasteOutlinedIcon />}
+              variant="bordered"
+            >
               Paste
             </Button>
-            <Button 
-            variant="bordered"
-            startContent={<DeleteForeverOutlinedIcon />}>
+            <Button
+              startContent={<DeleteForeverOutlinedIcon />}
+              variant="bordered"
+            >
               Delete
             </Button>
           </div>

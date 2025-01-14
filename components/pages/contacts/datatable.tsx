@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { SVGProps, useEffect, useState } from "react";
 import {
@@ -14,7 +14,6 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
   User,
   Pagination,
   Selection,
@@ -22,10 +21,11 @@ import {
   SortDescriptor,
   useDisclosure,
 } from "@nextui-org/react";
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import ContentPasteOutlinedIcon from '@mui/icons-material/ContentPasteOutlined';
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
+import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
 import { useRouter } from "next/navigation";
+
 import ConfirmModal from "./confirmmodal";
 
 interface Data {
@@ -195,20 +195,24 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
 
   useEffect(() => {
     // Convert selectedKeys to an array of _id values
-    
-    if(selectedKeys==="all") {
-      const selectedIds = data.map(item => item._id);
+
+    if (selectedKeys === "all") {
+      const selectedIds = data.map((item) => item._id);
+
       setSelectedIDs(selectedIds);
     } else {
-      const selectedIds = Array.from(selectedKeys).map((key) => {
-        const item = data.find((d) => d._id === key);
-        return item ? item._id : null; // This could still yield null
-      }).filter(Boolean) as string[]; // Ensure the filter returns only strings
+      const selectedIds = Array.from(selectedKeys)
+        .map((key) => {
+          const item = data.find((d) => d._id === key);
+
+          return item ? item._id : null; // This could still yield null
+        })
+        .filter(Boolean) as string[]; // Ensure the filter returns only strings
 
       setSelectedIDs(selectedIds);
     }
     console.log("Selected Keys:", selectedKeys);
-}, [selectedKeys, data]);
+  }, [selectedKeys, data]);
 
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS),
@@ -219,7 +223,6 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
     column: "age",
     direction: "ascending",
   });
-
 
   const [page, setPage] = React.useState(1);
 
@@ -265,38 +268,40 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a: Data, b: Data) => {
       const first = a[sortDescriptor.column as keyof Data] as unknown as number;
-      const second = b[sortDescriptor.column as keyof Data] as unknown as number;
+      const second = b[
+        sortDescriptor.column as keyof Data
+      ] as unknown as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [deleteItem, setDeleteItem] = useState<string[]>([]);
   const [actionState, setActionState] = useState(false);
 
-  const handleOpen = (id:string) => {
+  const handleOpen = (id: string) => {
     setDeleteItem([id]);
     onOpen();
-  }
+  };
 
   const handleBatchOpen = () => {
     onOpen();
-  }
+  };
 
-  useEffect(()=>{
-    if(actionState) {
-      setData(data.filter(item => !deleteItem.includes(item._id)));
+  useEffect(() => {
+    if (actionState) {
+      setData(data.filter((item) => !deleteItem.includes(item._id)));
       setActionState(true);
       setDeleteItem([]);
       setSelectedKeys(new Set([]));
     }
-  }, [actionState])
+  }, [actionState]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setDeleteItem(selectedIDs);
-  },[selectedIDs]);
+  }, [selectedIDs]);
 
   const renderCell = React.useCallback((data: Data, columnKey: React.Key) => {
     const cellValue = data[columnKey as keyof Data];
@@ -342,14 +347,16 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem 
-                key="edit"
-                onClick={()=>router.push(`/dashboard/contacts/${data._id}`)}
-                >Edit</DropdownItem>
-                <DropdownItem 
-                key="delete"
-                onClick={()=>handleOpen(data._id)}
-                // onClick={()=>setModalVisible(true)}
+                <DropdownItem
+                  key="edit"
+                  onClick={() => router.push(`/dashboard/contacts/${data._id}`)}
+                >
+                  Edit
+                </DropdownItem>
+                <DropdownItem
+                  key="delete"
+                  onClick={() => handleOpen(data._id)}
+                  // onClick={()=>setModalVisible(true)}
                 >
                   Delete
                 </DropdownItem>
@@ -449,20 +456,24 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
                 ))}
               </DropdownMenu>
             </Dropdown> */}
-            <Button 
-            variant="bordered"
-            startContent={<ContentCopyOutlinedIcon />}>
+            <Button
+              startContent={<ContentCopyOutlinedIcon />}
+              variant="bordered"
+            >
               Copy
             </Button>
-            <Button 
-            variant="bordered"
-            startContent={<ContentPasteOutlinedIcon />}>
+            <Button
+              startContent={<ContentPasteOutlinedIcon />}
+              variant="bordered"
+            >
               Paste
             </Button>
-            <Button 
-            variant="bordered"
-            startContent={<DeleteForeverOutlinedIcon />}
-            onClick={()=>{ handleBatchOpen();}}
+            <Button
+              startContent={<DeleteForeverOutlinedIcon />}
+              variant="bordered"
+              onClick={() => {
+                handleBatchOpen();
+              }}
             >
               Delete
             </Button>
@@ -567,12 +578,12 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   return (
     <>
       <ConfirmModal
-        actionState={setActionState} 
-        isOpen={isOpen} 
-        onOpenChange={onOpenChange} 
+        actionState={setActionState}
+        id={deleteItem}
+        isOpen={isOpen}
         message={`This action will delete the ${deleteItem.length} contact[s]. The contact record will be permanently removed, and all associated signing links will be deactivated. Do you wish to proceed?`}
         title="Delete Contact"
-        id={deleteItem}
+        onOpenChange={onOpenChange}
       />
       <Table
         // isHeaderSticky

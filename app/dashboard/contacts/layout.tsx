@@ -1,5 +1,4 @@
 import PageTitleBar from "@/components/layouts/common/pagetitlebar";
-import { getContacts } from "@/lib/dal";
 
 export default async function ContactsLayout({
   children,
@@ -8,7 +7,12 @@ export default async function ContactsLayout({
 }) {
   return (
     <>
-      <PageTitleBar buttonTitle="New Contact" buttonLink={"/dashboard/contacts/new"} pageTitle="Contacts" description="An overview of all recipients you’ve shared documents with." />
+      <PageTitleBar
+        buttonLink={"/dashboard/contacts/new"}
+        buttonTitle="New Contact"
+        description="An overview of all recipients you’ve shared documents with."
+        pageTitle="Contacts"
+      />
       {children}
     </>
   );

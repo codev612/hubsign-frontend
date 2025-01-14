@@ -10,6 +10,9 @@
 	},
 	"dependencies": {
 		"@emotion/styled": "^11.13.5",
+		"@liveblocks/client": "^2.15.2",
+		"@liveblocks/react": "^2.15.2",
+		"@liveblocks/react-ui": "^2.15.2",
 		"@mui/icons-material": "^6.1.9",
 		"@nextui-org/button": "2.0.38",
 		"@nextui-org/code": "2.0.33",
@@ -23,11 +26,19 @@
 		"@nextui-org/switch": "2.0.34",
 		"@nextui-org/system": "2.2.6",
 		"@nextui-org/theme": "2.2.11",
+		"@radix-ui/react-context-menu": "^2.2.4",
+		"@radix-ui/react-dropdown-menu": "^2.1.4",
+		"@radix-ui/react-label": "^2.1.1",
+		"@radix-ui/react-select": "^2.1.4",
+		"@radix-ui/react-slot": "^1.1.1",
 		"@react-aria/ssr": "3.9.4",
 		"@react-aria/visually-hidden": "3.8.12",
 		"bcrypt": "^5.1.1",
 		"bcryptjs": "^2.4.3",
+		"canvas": "^3.0.1",
+		"class-variance-authority": "^0.7.1",
 		"clsx": "2.1.1",
+		"dotenv": "^16.4.7",
 		"fabric": "^5.5.0",
 		"framer-motion": "~11.1.1",
 		"html2canvas": "^1.4.1",
@@ -35,6 +46,7 @@
 		"js-cookie": "^3.0.5",
 		"jsonwebtoken": "^9.0.2",
 		"jspdf": "^2.5.2",
+		"lucide-react": "^0.471.1",
 		"mailersend": "^2.3.0",
 		"mongodb": "^6.11.0",
 		"next": "14.2.4",
@@ -52,7 +64,8 @@
 		"react-input-mask": "^2.0.4",
 		"react-pdf": "^9.2.1",
 		"sharp": "^0.33.5",
-		"swr": "^2.3.0"
+		"tailwind-merge": "^2.6.0",
+		"uuid": "^11.0.5"
 	},
 	"devDependencies": {
 		"@next/eslint-plugin-next": "^15.0.3",
@@ -84,5 +97,8 @@
 		"tailwind-variants": "0.1.20",
 		"tailwindcss": "3.4.3",
 		"typescript": "5.6.3"
+	},
+	"browser": {
+		"canvas": false
 	}
 }

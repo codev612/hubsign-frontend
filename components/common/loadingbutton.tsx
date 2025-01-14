@@ -13,10 +13,10 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
 }) => {
   return (
     <Button
-      disabled={disable}
       fullWidth
       className="text-white"
       color="primary"
+      disabled={disable}
       isLoading={isLoading}
       spinner={
         <svg

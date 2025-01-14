@@ -43,9 +43,9 @@ export default function RootLayout({
         )}
       >
         {/* <CanvasProvider> */}
-          <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
-            <div className="relative flex flex-col h-screen">{children}</div>
-          </Providers>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
+          <div className="relative flex flex-col h-screen">{children}</div>
+        </Providers>
         {/* </CanvasProvider> */}
       </body>
     </html>

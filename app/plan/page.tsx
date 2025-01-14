@@ -5,7 +5,7 @@ import { Divider } from "@nextui-org/react";
 import { Accordion, AccordionItem } from "@nextui-org/react";
 
 import PlanCard from "@/components/pages/plan/plancard";
-import { plans } from "@/constants/constants";
+import { plans } from "@/constants/common";
 
 const faqsR = [
   {

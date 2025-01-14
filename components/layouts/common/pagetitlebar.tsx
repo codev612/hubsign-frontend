@@ -1,21 +1,22 @@
-"use client"
+"use client";
 
 import { Button } from "@nextui-org/button";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { PageTitleBarProps } from "@/interface/interface";
 import { useRouter } from "next/navigation";
+
+import { PageTitleBarProps } from "@/interface/interface";
 
 const PageTitleBar: React.FC<PageTitleBarProps> = ({
   pageTitle,
   buttonTitle,
   buttonLink,
-  description=""
+  description = "",
 }) => {
   const router = useRouter();
 
   const handleClick = () => {
     router.push(buttonLink);
-  }
+  };
 
   return (
     <section>
@@ -31,9 +32,13 @@ const PageTitleBar: React.FC<PageTitleBarProps> = ({
           <AddOutlinedIcon /> {buttonTitle}
         </Button>
       </div>
-      {description ? <div className="flex flex-row text-text">
-        <p>{description}</p>
-      </div>: ""}
+      {description ? (
+        <div className="flex flex-row text-text">
+          <p>{description}</p>
+        </div>
+      ) : (
+        ""
+      )}
     </section>
   );
 };
