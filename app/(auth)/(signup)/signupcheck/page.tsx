@@ -5,7 +5,6 @@ import { Button } from "@nextui-org/button";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-
 import Dot from "@/components/common/dot";
 import StateBoard from "@/components/common/stateboard";
 
@@ -208,7 +207,7 @@ const Signupcheck: React.FC = () => {
           <Button
             className="bg-background text-link"
             size="sm"
-            onClick={handleResend}
+            onPress={handleResend}
           >
             Resend the code
           </Button>
@@ -218,7 +217,7 @@ const Signupcheck: React.FC = () => {
           <Button
             className="bg-background text-link"
             size="sm"
-            onClick={handleClick}
+            onPress={handleClick}
           >
             Use a different email address
           </Button>

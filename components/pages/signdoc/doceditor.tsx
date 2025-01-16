@@ -310,7 +310,7 @@ const DocEditor = () => {
       <section className="flex flex-row w-full">
         {/* <LeftSidebar allShapes={Array.from(canvasObjects)} /> */}
         <div className="relative w-full">
-            <Navbar
+          <Navbar
             activeElement={activeElement}
             handleActiveElement={handleActiveElement}
             // handleImageUpload={(e: any) => {

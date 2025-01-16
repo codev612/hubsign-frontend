@@ -25,18 +25,10 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
 import { useRouter } from "next/navigation";
-
 import ConfirmModal from "./confirmmodal";
+import { Contact } from "@/interface/interface"
 
-interface Data {
-  _id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-  avatar?: string;
-  // Add other fields as per your data
-}
+type Data = Contact
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -211,7 +203,6 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
 
       setSelectedIDs(selectedIds);
     }
-    console.log("Selected Keys:", selectedKeys);
   }, [selectedKeys, data]);
 
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
@@ -289,11 +280,12 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   const handleBatchOpen = () => {
     onOpen();
   };
-
+ 
+  //showing contacts after remove
   useEffect(() => {
     if (actionState) {
       setData(data.filter((item) => !deleteItem.includes(item._id)));
-      setActionState(true);
+      setActionState(false);
       setDeleteItem([]);
       setSelectedKeys(new Set([]));
     }
@@ -349,13 +341,13 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
               <DropdownMenu>
                 <DropdownItem
                   key="edit"
-                  onClick={() => router.push(`/dashboard/contacts/${data._id}`)}
+                  onPress={() => router.push(`/dashboard/contacts/${data._id}`)}
                 >
                   Edit
                 </DropdownItem>
                 <DropdownItem
                   key="delete"
-                  onClick={() => handleOpen(data._id)}
+                  onPress={() => handleOpen(data._id)}
                   // onClick={()=>setModalVisible(true)}
                 >
                   Delete
@@ -471,7 +463,7 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
             <Button
               startContent={<DeleteForeverOutlinedIcon />}
               variant="bordered"
-              onClick={() => {
+              onPress={() => {
                 handleBatchOpen();
               }}
             >

@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
             className="text-text border-1 bg-forecolor"
             href="/signupfree"
             radius="md"
-            onClick={handleClick}
+            onPress={handleClick}
           >
             <ArrowBackIcon />
             {"Back"}

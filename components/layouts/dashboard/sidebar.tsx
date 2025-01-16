@@ -90,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
               key={item.link}
               className="px-0"
               startContent={item.icon}
-              onClick={() => router.push(item.link)}
+              onPress={() => router.push(item.link)}
             >
               {/* {item.icon} */}
               {item.label}

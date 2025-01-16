@@ -1,17 +1,14 @@
-// "use client";
-
 import React from "react";
-
-// import { usePathname } from "next/navigation";
-import DataTable from "@/components/pages/contacts/datatable";
 import { getContacts } from "@/lib/dal";
+import { Contact } from "@/interface/interface";
+import Contacts from "./contacts"; // Correct import for Contacts component
 
-export default async function Contacts() {
-  const contacts = await getContacts();
+export default async function Page() {
+  const contacts: Contact[] = await getContacts();  // Explicitly define the type for contacts
 
   return (
     <>
-      <DataTable initialData={contacts} />
+      <Contacts contacts={contacts} />  {/* Pass contacts prop to Contacts component */}
     </>
   );
 }

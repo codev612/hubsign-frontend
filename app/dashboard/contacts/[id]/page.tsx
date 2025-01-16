@@ -3,18 +3,17 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@nextui-org/input";
 import { useRouter } from "next/navigation";
-import { useFormState } from "react-dom";
-
-// import { signin } from "./action";
+import { useActionState } from "react";
 import { Button } from "@nextui-org/button";
 import Cookies from "js-cookie";
-
 import { updateContact } from "../action";
-
 import LoadingButton from "@/components/common/loadingbutton";
 import StateBoard from "@/components/common/stateboard";
 import { siteConfig } from "@/config/site";
+import { usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 
+// Define InitialState type
 interface InitialState {
   message: string;
   isLoading: boolean;
@@ -25,53 +24,55 @@ const initialState: InitialState = {
   isLoading: false,
 };
 
-const EditContact = ({
-  params,
-}: {
-  params: {
-    id: string | number | readonly string[] | undefined;
-    slug: string;
-  };
-}) => {
-  // const path = usePathname();
+// Define Params type
+interface Params {
+  id: string | number | readonly string[] | undefined;
+  slug: string;
+}
+
+const EditContact = () => {
+  const params = useParams()
   const router = useRouter();
 
-  const [state, formAction] = useFormState(updateContact, initialState);
-  // visible password
-  const [isVisible, setIsVisible] = useState(false);
-  // loading button
-  const [isLoading, setIsLoading] = useState(false);
+  const [state, formAction] = useActionState(updateContact, initialState);
+  const [isVisible, setIsVisible] = useState(false); // visible password
+  const [isLoading, setIsLoading] = useState(false); // loading button
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  // email format validation
-  const [value, setEmailValue] = useState<string>("");
+  const [value, setEmailValue] = useState<string>(""); // email format validation
   const [name, setName] = useState<string>("");
+  const [ contactId, setContactId ] = useState<any>("");
 
-  const validateEmail = (value: string) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+  // const validateEmail = (value: string) =>
+  //   value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+
+  useEffect(() => {
+    console.log(params)
+    setContactId(params.id);
+  }, [])
 
   const isInvalid = React.useMemo(() => {
-    if (value === "") return false;
+    return (value==="") ? false : true;
+    // return validateEmail(value) ? false : true;
 
-    return validateEmail(value) ? false : true;
   }, [value]);
 
   useEffect(() => {
-    setIsLoading(state.isLoding || false);
+    setIsLoading(state.isLoading || false);
   }, [state]);
 
   useEffect(() => {
-    if (params.id !== "new") {
+    if (contactId !== "new") {
       const fetchData = async () => {
         try {
           const res = await fetch(
-            `${siteConfig.links.server}/contacts/${params.id}`,
+            `${siteConfig.links.server}/contacts/${contactId}`,
             {
               method: "GET",
               headers: {
                 Authorization: `Bearer ${Cookies.get("session") || ""}`,
               },
-            },
+            }
           );
 
           if (!res.ok) throw new Error("Failed to fetch data");
@@ -89,14 +90,13 @@ const EditContact = ({
 
       fetchData();
     }
-  }, []);
+  }, [contactId]);
 
   return (
     <section className="flex flex-col justify-center items-center w-full">
       <form
         action={formAction}
         className="flex flex-col justify-center bg-forecolor p-10 gap-4 rounded-md"
-        // style={{ width: "382px" }}
         onSubmit={() => setIsLoading(true)}
       >
         <p className="title-large">Contacts Information</p>
@@ -104,7 +104,7 @@ const EditContact = ({
         <Input
           required
           errorMessage="Please enter a valid email"
-          isInvalid={isInvalid}
+          // isInvalid={isInvalid}
           label="Email"
           labelPlacement={"outside"}
           name="email"
@@ -118,7 +118,6 @@ const EditContact = ({
         <Input
           required
           errorMessage="Please enter contact's name"
-          // isInvalid={isInvalid}
           label="Name"
           labelPlacement={"outside"}
           name="name"
@@ -129,14 +128,17 @@ const EditContact = ({
           variant="bordered"
           onValueChange={setName}
         />
-        <input hidden readOnly name="id" value={params.id} />
+        <input hidden readOnly name="id" value={contactId} />
         {state.message !== "" ? (
           <StateBoard state="text-error" text={state.message} />
         ) : (
           ""
         )}
-        <LoadingButton disable={isInvalid} isLoading={isLoading} title="Save" />
-        <Button variant="bordered" onClick={() => router.back()}>
+        <LoadingButton 
+        // disable={isInvalid} 
+        isLoading={isLoading} title="Save" 
+        />
+        <Button variant="bordered" onPress={() => router.back()}>
           Back
         </Button>
       </form>

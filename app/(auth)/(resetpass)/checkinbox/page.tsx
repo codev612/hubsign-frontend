@@ -5,7 +5,6 @@ import { Button } from "@nextui-org/button";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-
 import StateBoard from "@/components/common/stateboard";
 
 export default function Checkinbox() {
@@ -206,7 +205,7 @@ export default function Checkinbox() {
           <Button
             className="bg-forecolor text-link"
             size="md"
-            onClick={handleResend}
+            onPress={handleResend}
           >
             Resend the code
           </Button>

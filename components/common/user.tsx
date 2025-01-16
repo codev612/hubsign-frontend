@@ -72,7 +72,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
           <DropdownItem key="system">System</DropdownItem>
           <DropdownItem key="configurations">Configurations</DropdownItem> */}
           <DropdownItem key="gotodashboard">Go to the dashboard</DropdownItem>
-          <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+          <DropdownItem key="logout" color="danger" onPress={handleLogout}>
             Log Out
           </DropdownItem>
         </DropdownMenu>

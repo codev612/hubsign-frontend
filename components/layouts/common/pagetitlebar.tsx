@@ -27,7 +27,7 @@ const PageTitleBar: React.FC<PageTitleBarProps> = ({
           className="text-white w-151"
           color="primary"
           size="md"
-          onClick={handleClick}
+          onPress={handleClick}
         >
           <AddOutlinedIcon /> {buttonTitle}
         </Button>

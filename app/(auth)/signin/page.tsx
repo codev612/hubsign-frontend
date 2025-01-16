@@ -6,10 +6,8 @@ import { Input } from "@nextui-org/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { useRouter } from "next/navigation";
-import { useFormState } from "react-dom";
-
+import { useActionState } from "react";
 import { signin } from "./action";
-
 import LoadingButton from "@/components/common/loadingbutton";
 import StateBoard from "@/components/common/stateboard";
 
@@ -25,7 +23,7 @@ const initialState: InitialState = {
 
 export default function Signin() {
   const router = useRouter();
-  const [state, formAction] = useFormState(signin, initialState);
+  const [state, formAction] = useActionState(signin, initialState);
   // visible password
   const [isVisible, setIsVisible] = useState(false);
   // loading button

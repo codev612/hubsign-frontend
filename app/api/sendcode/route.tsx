@@ -1,7 +1,6 @@
 // app/api/sendVerificationCode/route.ts
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { NextResponse } from "next/server";
-
 import { verificationCodes } from "@/lib/shared";
 
 const mailerSend = new MailerSend({

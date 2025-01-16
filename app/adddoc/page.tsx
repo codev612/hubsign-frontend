@@ -2,16 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFormState } from "react-dom";
-// import { signin } from "./action";
+import { useActionState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import { Checkbox } from "@nextui-org/react";
 import Cookies from "js-cookie";
-
 import { signin } from "../(auth)/signin/action";
-
 import FileUpload from "@/components/common/fileupload";
-import Recipients from "@/components/pages/newdoc/recipients";
+import Recipients from "@/components/pages/adddoc/recipients";
 import { siteConfig } from "@/config/site";
 
 interface InitialState {
@@ -34,9 +31,9 @@ interface ChildComponentProps {
   user: Recipient; // Define the type of user properly
 }
 
-const NewDoc = () => {
+const AddDoc = () => {
   const router = useRouter();
-  const [state, formAction] = useFormState(signin, initialState);
+  const [state, formAction] = useActionState(signin, initialState);
   // visible password
   const [isVisible, setIsVisible] = useState<boolean>(false);
   // loading button
@@ -173,4 +170,4 @@ const NewDoc = () => {
   );
 };
 
-export default NewDoc;
+export default AddDoc;

@@ -3,11 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "@nextui-org/link";
 import { Input } from "@nextui-org/input";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import Cookies from "js-cookie";
-
 import { inputEmail } from "../action";
-
 import LoadingButton from "@/components/common/loadingbutton";
 import StateBoard from "@/components/common/stateboard";
 
@@ -17,11 +15,10 @@ const initialState = {
 };
 
 export default function Signupfree() {
-  const [state, formAction] = useFormState(inputEmail, initialState);
+  const [state, formAction] = useActionState(inputEmail, initialState);
 
   // email format validation
   const [value, setEmailValue] = useState("");
-
   const [isLoading, setIsLoading] = useState(initialState.isLoading);
 
   const validateEmail = (value: string) =>

@@ -14,3 +14,13 @@ export interface PageTitleBarProps {
   buttonLink: string;
   description?: string;
 }
+
+export interface Contact {
+  _id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+  avatar?: string;
+  // Add other fields as per your data
+}

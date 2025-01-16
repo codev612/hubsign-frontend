@@ -60,6 +60,7 @@ const RecipientItem: React.FC<{
   customSigningOrder,
   isDisabled,
 }) => {
+
   const ref = React.useRef<HTMLDivElement>(null);
 
   const [, drop] = useDrop({
@@ -139,7 +140,7 @@ const RecipientItem: React.FC<{
           placeholder="Email Address"
           radius="md"
           size={"sm"}
-          type="email"
+          type="text"
           value={recipient.email}
           variant="bordered"
           onChange={(e) => {
@@ -162,7 +163,17 @@ const RecipientItem: React.FC<{
           type="text"
           value={recipient.name}
           variant="bordered"
-          onChange={(e) => handleInputChange(index, "name", e.target.value)}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            handleInputChange(index, "name", e.target.value);
+            setIsSearchOpen(true);
+          }}
+          onFocus={() => {
+            setActiveInputIndex(index);
+            setActiveIndex(0);
+            setIsSearchOpen(true);
+          }}
+          onKeyDown={handleKeyDown}
         />
         {isSearchOpen &&
           searchResults.length > 0 &&
@@ -177,7 +188,7 @@ const RecipientItem: React.FC<{
                   key={i}
                   className={`cursor-pointer p-1 hover:bg-gray-100 w-full ${activeIndex === i ? "bg-gray-200" : ""}`}
                   size="sm"
-                  onClick={() => handleSelectContact(index, contact)}
+                  onPress={() => handleSelectContact(index, contact)}
                 >
                   <div className="flex flex-row">
                     {contact.name}
@@ -192,7 +203,7 @@ const RecipientItem: React.FC<{
         isIconOnly
         className="bg-forecolor rounded-md"
         size="sm"
-        onClick={() => handleDeleteRcpt(index)}
+        onPress={() => handleDeleteRcpt(index)}
       >
         <DeleteForeverIcon />
       </Button>
@@ -244,6 +255,7 @@ const Recipients: React.FC<RecipientProps> = ({
   };
 
   const handleSelectContact = (index: number, contact: Recipient) => {
+
     const updatedRecipients = [...recpts];
 
     updatedRecipients[index] = { name: contact.name, email: contact.email };
@@ -304,7 +316,7 @@ const Recipients: React.FC<RecipientProps> = ({
           size="sm"
           startContent={<AddIcon />}
           variant="bordered"
-          onClick={handleAddRcpt}
+          onPress={handleAddRcpt}
         >
           Add Recipient
         </Button>
@@ -314,7 +326,7 @@ const Recipients: React.FC<RecipientProps> = ({
           size="sm"
           startContent={<AccountCircleIcon />}
           variant="bordered"
-          onClick={handleAddMe}
+          onPress={handleAddMe}
         >
           Add Myself
         </Button>

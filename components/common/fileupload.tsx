@@ -31,7 +31,7 @@ const FileUplaod: React.FC<FileUploadProps> = ({
           {filename}{" "}
           <Button
             className="bg-forecolor"
-            onClick={() => {
+            onPress={() => {
               setFilename("");
               setFile(null);
             }}

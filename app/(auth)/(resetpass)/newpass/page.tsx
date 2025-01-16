@@ -2,26 +2,17 @@
 
 import React, { useState } from "react";
 import { Link } from "@nextui-org/link";
-// import { Snippet } from "@nextui-org/snippet";
-// import { Code } from "@nextui-org/code";
-// import { button as buttonStyles } from "@nextui-org/theme";
-
-// import { siteConfig } from "@/config/site";
-// import { title, subtitle } from "@/components/primitives";
-// import { GithubIcon } from "@/components/icons";
 import { Input } from "@nextui-org/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { Button } from "@nextui-org/button";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-
 import { siteConfig } from "@/config/site";
 import Dot from "@/components/common/dot";
 import StateBoard from "@/components/common/stateboard";
 
 export default function Newpass() {
-  //
   const router = useRouter();
   const [password, setPassword] = useState<string>("");
   const [passState6, setPassState6] = useState<boolean>(false);

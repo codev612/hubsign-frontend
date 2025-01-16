@@ -10,7 +10,6 @@ import { Kbd } from "@nextui-org/kbd";
 import { Input } from "@nextui-org/input";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-
 import { SearchIcon, Logo } from "@/components/icons";
 import UserAvatar from "@/components/common/user";
 
@@ -69,7 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
             className="text-text border-1 bg-forecolor"
             href="/signupfree"
             radius="md"
-            onClick={handleClick}
+            onPress={handleClick}
           >
             {"Don't have an account? Signup"}
           </Button>
@@ -87,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
             className="text-text border-1 bg-forecolor"
             href="/signupfree"
             radius="md"
-            onClick={handleClick}
+            onPress={handleClick}
           >
             {"Don't have an account? Signup"}
           </Button>
