@@ -7,7 +7,6 @@ import {
 } from "@nextui-org/react";
 import React from "react";
 import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
-
 import LoadingButton from "@/components/common/loadingbutton";
 
 interface PlanCardProps {
