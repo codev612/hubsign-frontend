@@ -81,5 +81,8 @@
         font-weight: 400;
         line-height: 130%; /* 15.6px */
     }
+    canvas {
+        box-shadow: none !important;
+    }
   
 }

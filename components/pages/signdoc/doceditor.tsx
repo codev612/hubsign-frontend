@@ -1,15 +1,13 @@
 "use client";
 
-import Board from "@/components/pages/signdoc/editor/pdf";
-
-// import Background from "@/components/canvas/Background";
+import PDFBoard from "@/components/pages/signdoc/editor/pdf";
 
 const DocEditor = () => {
   
   return (
-    <section className="flex flex-row w-full">
-      <Board />
-    </section>
+    <>
+      <PDFBoard />
+    </>
   );
 };
 

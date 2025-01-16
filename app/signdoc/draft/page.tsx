@@ -14,12 +14,7 @@ const SignDoc = () => {
   const router = useRouter();
   return (
     <>
-      {/* <div className="flex flex-col h-full p-4 bg-forecolor gap-4 overflow-y-auto">
-        <SideBar />
-      </div> */}
-      <div className="flex flex-col h-full w-full p-4 bg-forecolor gap-4 overflow-y-auto">
-        <DocEditor />
-      </div>
+      <DocEditor />
     </>
   );
 };

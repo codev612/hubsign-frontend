@@ -23,12 +23,12 @@ const SideBar: React.FC = () => {
     const [openExporter, setOpenExporter] = useState<boolean>(false);
 
     return (
-        <div className="fixed z-50 top-[85%] md:top-0 left-0 md:h-[100vh] md:w-max h-[15vh] w-[100vw] flex md:flex-col flex-row items-center justify-center md:mx-16">
+        <div className="fixed z-50 top-20 md:top-20 left-0 md:h-[100vh] md:w-max h-[15vh] w-[100vw] flex md:flex-col flex-row items-center md:mx-16">
             <div className={`md:mx-10 border max-h-[68vh] flex md:flex-col flex-wrap flex-row items-center justify-center shadow-lg rounded-lg md:py-8 py-2 px-4 md:text-[1.5rem] text-[1.2rem] min-w-[8vw] gap-8 ${contextValues.theme ? "border-[rgba(36,36,36,0.5)] bg-[rgb(25,25,25)] text-white shadow-[0px_0px_8px_rgb(0,0,0)]" : "bg-white text-black"}`}>
 
                 <ExportPopup className="text-[1.5rem] cursor-pointer" open={openExporter} setOpen={setOpenExporter} />
 
-                <Tooltip title="Sticky Notes">
+                {/* <Tooltip title="Sticky Notes">
                     <div>
                         <TfiNotepad className={`cursor-pointer text-[1.6rem]`} onClick={() => contextValues.addNote(contextValues.canvas!)} />
                     </div>
@@ -44,30 +44,32 @@ const SideBar: React.FC = () => {
                     <div>
                         <BsCircle className='cursor-pointer' onClick={() => contextValues.addCircle(contextValues.canvas!)} />
                     </div>
-                </Tooltip>
-
+                </Tooltip> */}
+                <h1>Fields</h1>
                 <Tooltip title="TextBox">
-                    <div>
-                        <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} />
+                    <div className='flex flex-row items-center justify-center gap-1'>
+                        {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
+                        <img src='/assets/img/controls/textbox.png' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)}/>
+                        <p className='text-text text-sm'>Textbox</p>
                     </div>
                 </Tooltip>
 
-                <Tooltip title="Add Image">
+                {/* <Tooltip title="Add Image">
                     <div>
                         <label htmlFor="img-input">
                             <BiImageAdd className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' />
                         </label>
                         <input type="file" id="img-input" accept='image/*' style={{ display: "none" }} onChange={(e) => contextValues.addImage(e, contextValues.canvas!)} />
                     </div>
-                </Tooltip>
+                </Tooltip> */}
 
-                <Tooltip title="Draw">
+                {/* <Tooltip title="Draw">
                     <div>
                         <HiPencil className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.toggleDraw(contextValues.canvas!)} />
                     </div>
-                </Tooltip>
+                </Tooltip> */}
 
-                <Tooltip title="Highlight">
+                {/* <Tooltip title="Highlight">
                     <div>
                         <AiOutlineHighlight className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addHighlight(contextValues.canvas!)} />
                     </div>
@@ -102,8 +104,8 @@ const SideBar: React.FC = () => {
 
                 <Tooltip title="Border Color">
                     <div className="md:w-[1.6rem] md:h-[1.6rem] w-[1.3rem] h-[1.3rem] rounded cursor-pointer" style={{ border: `4px dotted ${contextValues.borderColor}` }} onClick={(e) => setOpenBorderColor(e.currentTarget)}></div>
-                </Tooltip>
-                <Popover
+                </Tooltip> */}
+                {/* <Popover
                     id="simple-popover"
                     open={Boolean(openBorderColor)}
                     anchorEl={openBorderColor}
@@ -136,11 +138,10 @@ const SideBar: React.FC = () => {
                         color={contextValues.color}
                         onChangeComplete={(col: ColorResult) => contextValues.setColor(col.hex)}
                     />
-                </Popover>
+                </Popover> */}
 
-                <Tooltip title="Stroke Width">
+                {/* <Tooltip title="Stroke Width">
                     <div className='cursor-pointer'>
-                        {/* <BsBorderWidth onClick={(e) => setOpenStroke(e.currentTarget)} /> */}
                         <BsBorderWidth 
                             onClick={(e) => {
                                 const target = e.currentTarget;
@@ -150,8 +151,8 @@ const SideBar: React.FC = () => {
                             }} 
                         />
                     </div>
-                </Tooltip>
-                <Popover
+                </Tooltip> */}
+                {/* <Popover
                     id="simple-popover"
                     open={Boolean(openStroke)}
                     anchorEl={openStroke}
@@ -173,14 +174,14 @@ const SideBar: React.FC = () => {
                             valueLabelDisplay="auto"
                         />
                     </div>
-                </Popover>
+                </Popover> */}
 
-                <Tooltip title="Hide/unHide Canvas">
+                {/* <Tooltip title="Hide/unHide Canvas">
                     <div className='cursor-pointer' onClick={() => contextValues.setHiddenCanvas(old => !old)}>
                         {contextValues.hideCanvas ? <BiHide className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' /> :
                             <BiShow className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' />}
                     </div>
-                </Tooltip>
+                </Tooltip> */}
 
             </div>
         </div >

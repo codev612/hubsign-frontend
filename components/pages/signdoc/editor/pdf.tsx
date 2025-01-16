@@ -5,15 +5,14 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { useDropzone } from 'react-dropzone';
 import { fabric } from 'fabric';
-// import { useButtons } from '../context/CanvasContext';
 import { useButtons } from '@/context/canvas';
-// import SideBar from './SideBar';
 import { MdClose } from 'react-icons/md';
 import Loader from './Loader';
 import { Icon } from './Icon';
 import SideBar from '@/components/pages/signdoc/editor/SideBar';
+import ControlBar from './ControlBar';
 
-const Board: React.FC = () => {
+const PDFBoard: React.FC = () => {
   const contextValues = useButtons();
   const [docIsLoading, setDocIsLoading] = useState<boolean>(false);
 
@@ -62,7 +61,7 @@ const Board: React.FC = () => {
     return new fabric.Canvas('canvas', {
       isDrawingMode: false,
       height: 842,
-      width: 595,
+      width: 868,
       backgroundColor: 'rgba(0,0,0,0)',
     });
   };
@@ -73,48 +72,40 @@ const Board: React.FC = () => {
   ).toString();
 
   return (
-    <div className={`min-h-[100vh] ${contextValues.theme ? 'text-white bg-[rgb(20,20,20)]' : ''}`}>
+    <div className='min-h-[100vh]'>
       {contextValues.selectedFile && <SideBar />}
       {contextValues.selectedFile ? (
-        <div
-          className={`w-full py-8 ${contextValues.theme ? 'text-white bg-[rgb(20,20,20)]' : 'text-black bg-white'}`}
-        >
-          <div
-            className="p-2 z-[1200] bg-red-500 shadow-sm rounded-md text-white fixed top-5 right-5 cursor-pointer"
-            onClick={() => contextValues.setFile(null)}
-          >
-            <MdClose className="text-white text-xl" />
-          </div>
-
-          <div
-            className={`flex justify-center items-center ${contextValues.theme ? 'text-white bg-[rgb(20,20,20)]' : 'text-black bg-white'}`}
-          >
+        <div className="w-full">
+          <div className="flex flex-col justify-center items-center">
+            <div className='w-[868]'>
+              <ControlBar />
+            </div>
             <div id="singlePageExport" className="flex items-center justify-center">
               {docIsLoading && (
                 <>
                   <div className="w-[100%] h-[100%] top-[0] fixed bg-[rgba(50,50,50,0.2)] z-[1001] backdrop-blur-sm"></div>
                   <div className="fixed z-[1100] flex w-[100%] h-[100%] top-[0] justify-center items-center">
-                    <Loader color={"#606060"} size={120} 
-                    // stokeWidth={'5'} 
-                    />
+                    <Loader color={"#606060"} size={120} />
                   </div>
                 </>
               )}
+              
               <Document
                 file={contextValues.selectedFile}
                 onLoadSuccess={onDocumentLoadSuccess}
                 className="flex justify-center"
               >
                 <div id="doc">
+                  
                   <div
-                    className="absolute z-[9] px-4 py-4"
+                    className="absolute z-[9] p-0"
                     id="canvasWrapper"
                     style={{ visibility: "visible" }}
                   >
                     <canvas id="canvas" />
                   </div>
                   <div
-                    className={`px-4 py-4 ${
+                    className={`${
                       !contextValues.isExporting && contextValues.theme
                         ? "bg-[rgb(25,25,25)] shadow-[0px_0px_16px_rgb(0,0,0)] border-none"
                         : "shadow-lg border"
@@ -122,7 +113,7 @@ const Board: React.FC = () => {
                   >
                     <Page
                       pageNumber={contextValues.currPage}
-                      width={595}
+                      width={868}
                       height={842}
                     />
                   </div>
@@ -130,7 +121,7 @@ const Board: React.FC = () => {
               </Document>
             </div>
           </div>
-          <div className="fixed bottom-2 flex items-center justify-center w-full gap-3 z-50">
+          <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">
             {contextValues.currPage > 1 && (
               <button
                 onClick={() => changePage(-1)}
@@ -181,4 +172,4 @@ const Board: React.FC = () => {
   );
 };
 
-export default Board;
+export default PDFBoard;

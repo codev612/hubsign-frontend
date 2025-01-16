@@ -14,12 +14,12 @@ export default async function SignDocLayout({ children }: NewDocLayoutProps) {
   return (
     <CanvasProvider>
       <Navbar />
-      <main className="w-full flex-grow bg-forecolor p-0 m-0 h-screen overflow-y-auto">
-        {/* <Room> */}
-          {/* <TooltipProvider> */}
-            <section className="flex flex-row w-full">{children}</section>
-          {/* </TooltipProvider> */}
-        {/* </Room> */}
+      <main className="w-full flex-grow bg-background p-0 m-0 bg-forecolor">
+        <section className="flex flex-row w-full">
+          <div className="flex flex-col h-full w-full p-4 bg-forecolor gap-4">
+            {children}
+          </div>
+        </section>
       </main>
     </CanvasProvider>
   );
