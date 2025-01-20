@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Snippet } from "@nextui-org/snippet";
+import { Snippet } from "@heroui/snippet";
 import HourglassEmptyOutlinedIcon from "@mui/icons-material/HourglassEmptyOutlined";
-import { Button } from "@nextui-org/button";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Button } from "@heroui/button";
+import { Listbox, ListboxItem } from "@heroui/listbox";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import PermContactCalendarOutlinedIcon from "@mui/icons-material/PermContactCalendarOutlined";
 import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 import { Logo } from "@/components/icons";
@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col min-w-[266px] h-screen border-r border-gray-200 w-64 p-4 bg-background gap-4 overflow-y-auto">
+    (<div className="flex flex-col min-w-[266px] h-screen border-r border-gray-200 w-64 p-4 bg-background gap-4 overflow-y-auto">
       <Link className="mb-4" href={"/"}>
         <Logo />
       </Link>
@@ -86,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
         <Listbox aria-label="Sidebar menu" className="p-0" items={items}>
           {(item) => (
             // <Link href={item.link}>
-            <ListboxItem
+            (<ListboxItem
               key={item.link}
               className="px-0"
               startContent={item.icon}
@@ -94,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             >
               {/* {item.icon} */}
               {item.label}
-            </ListboxItem>
+            </ListboxItem>)
             // </Link>
           )}
         </Listbox>
@@ -106,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       >
         <SettingsOutlinedIcon /> Settings
       </Button>
-    </div>
+    </div>)
   );
 };
 

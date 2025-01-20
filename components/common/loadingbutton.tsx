@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 interface LoadingButtonProps {
   title: string; // Define the prop type as a string

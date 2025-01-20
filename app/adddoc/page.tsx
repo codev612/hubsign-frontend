@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
-import { Tabs, Tab } from "@nextui-org/react";
-import { Checkbox } from "@nextui-org/react";
+import { Tabs, Tab } from "@heroui/react";
+import { Checkbox } from "@heroui/react";
 import Cookies from "js-cookie";
 import { signin } from "../(auth)/signin/action";
 import FileUpload from "@/components/common/fileupload";

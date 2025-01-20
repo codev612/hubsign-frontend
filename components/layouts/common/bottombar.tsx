@@ -3,9 +3,9 @@ import {
   NavbarContent,
   NavbarBrand,
   NavbarItem,
-} from "@nextui-org/navbar";
-import { Kbd } from "@nextui-org/kbd";
-import { Input } from "@nextui-org/input";
+} from "@heroui/navbar";
+import { Kbd } from "@heroui/kbd";
+import { Input } from "@heroui/input";
 import NextLink from "next/link";
 
 import {

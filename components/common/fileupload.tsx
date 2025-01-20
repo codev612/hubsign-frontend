@@ -1,7 +1,7 @@
 import Dropzone from "react-dropzone";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 
 interface FileUploadProps {
   filename: string;

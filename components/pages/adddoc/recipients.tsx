@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddIcon from "@mui/icons-material/Add";

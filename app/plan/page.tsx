@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Divider } from "@nextui-org/react";
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
+import { Accordion, AccordionItem } from "@heroui/react";
 
 import PlanCard from "@/components/pages/plan/plancard";
 import { plans } from "@/constants/common";

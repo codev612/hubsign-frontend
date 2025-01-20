@@ -20,7 +20,7 @@ import {
   ChipProps,
   SortDescriptor,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";

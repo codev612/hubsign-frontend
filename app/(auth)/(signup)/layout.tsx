@@ -7,7 +7,7 @@ import {
   NavbarBrand,
   NavbarItem,
   // NavbarMenuItem,
-} from "@nextui-org/navbar";
+} from "@heroui/navbar";
 import NextLink from "next/link";
 import Image from "next/image";
 

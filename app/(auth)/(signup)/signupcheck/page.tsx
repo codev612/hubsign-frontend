@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";

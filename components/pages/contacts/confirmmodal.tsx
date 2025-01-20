@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import Cookies from "js-cookie";
 
 import { siteConfig } from "@/config/site";

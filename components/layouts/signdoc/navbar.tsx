@@ -1,9 +1,9 @@
 "use client";
 
-import { Navbar as NextUINavbar, NavbarContent } from "@nextui-org/navbar";
-import { Button } from "@nextui-org/button";
-import { Kbd } from "@nextui-org/kbd";
-import { Input } from "@nextui-org/input";
+import { Navbar as NextUINavbar, NavbarContent } from "@heroui/navbar";
+import { Button } from "@heroui/button";
+import { Kbd } from "@heroui/kbd";
+import { Input } from "@heroui/input";
 import { useRouter } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 

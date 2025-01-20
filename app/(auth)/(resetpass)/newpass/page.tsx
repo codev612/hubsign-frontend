@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { Link } from "@nextui-org/link";
-import { Input } from "@nextui-org/input";
+import { Link } from "@heroui/link";
+import { Input } from "@heroui/input";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { siteConfig } from "@/config/site";

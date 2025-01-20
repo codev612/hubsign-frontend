@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Link } from "@nextui-org/link";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/button";
+import { Link } from "@heroui/link";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/button";
 import { useActionState } from "react";
 import Cookies from "js-cookie";
 import { inputEmail } from "../action";

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import Cookies from "js-cookie";
 import { updateContact } from "../action";
 import LoadingButton from "@/components/common/loadingbutton";

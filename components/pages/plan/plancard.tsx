@@ -4,7 +4,7 @@ import {
   CardBody,
   CardFooter,
   Divider,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import React from "react";
 import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
 import LoadingButton from "@/components/common/loadingbutton";

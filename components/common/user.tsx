@@ -4,7 +4,7 @@ import {
   DropdownMenu,
   DropdownItem,
   User,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
