@@ -38,13 +38,13 @@ const SideBar: React.FC = () => {
                     <div>
                         <BsSquare className='cursor-pointer text-[1.3rem]' onClick={() => contextValues.addRect(contextValues.canvas!)} />
                     </div>
-                </Tooltip>
+                </Tooltip>*/}
 
                 <Tooltip title="Circle">
                     <div>
-                        <BsCircle className='cursor-pointer' onClick={() => contextValues.addCircle(contextValues.canvas!)} />
+                        <BsCircle className='cursor-pointer' onClick={() => contextValues.addCheckbox(contextValues.canvas!, 100,100, 4)} />
                     </div>
-                </Tooltip> */}
+                </Tooltip> 
                 <h1>Fields</h1>
                 <Tooltip title="TextBox">
                     <div className='flex flex-row items-center justify-center gap-1'>

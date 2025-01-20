@@ -5,6 +5,7 @@ import { fabric } from 'fabric';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Roboto } from 'next/font/google';
+import CheckboxManager from '@/utils/canvas/classes/checkboxmanager';
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
@@ -12,6 +13,7 @@ type CanvasContextProps = {
   addRect: (canvi: fabric.Canvas) => void;
   addCircle: (canvi: fabric.Canvas) => void;
   addText: (canvi: fabric.Canvas) => void;
+  addCheckbox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
   addImage: (e: React.ChangeEvent<HTMLInputElement>, canvi: fabric.Canvas) => void;
   addHighlight: (canvi: fabric.Canvas) => void;
   toggleDraw: (canvi: fabric.Canvas) => void;
@@ -40,6 +42,8 @@ type CanvasContextProps = {
   // canvas edits
   edits: Record<number, any>;
   setEdits: (edits: Record<number, any>) => void;
+  showSettingForm: any,
+  setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
 };
 
 const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
@@ -77,6 +81,17 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
   // canvas edits
   const [edits, setEdits] = React.useState({});
+
+  const [checkboxItems, setCheckboxItems] = useState(1);
+  // const [showSettingForm, setShowSettingForm] = useState(false);
+
+  const [showSettingForm, setShowSettingForm] = useState<{
+    show: boolean;
+    position: { left: number; top: number };
+  }>({
+    show: false,
+    position: { left: 0, top: 0 }
+  });
 
   useEffect(() => {
     const wrapper = document.getElementById("canvasWrapper");
@@ -208,15 +223,57 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
 
   const addText = (canvi: fabric.Canvas) => {
-    const text = new fabric.Textbox("Type Here ...", {
+    const text = new fabric.Textbox("Enter a value...", {
       fill: color,
       fontFamily: roboto.style.fontFamily,
     });
     canvi.add(text);
     canvi.renderAll();
     canvi.isDrawingMode = false;
+
+    // Enable interactive resizing and moving of the textbox
+  text.setControlsVisibility({
+    tl: true, // top-left
+    tr: true, // top-right
+    bl: true, // bottom-left
+    br: true, // bottom-right
+    mt: true, // middle-top
+    mb: true, // middle-bottom
+    ml: true, // middle-left
+    mr: true, // middle-right
+  });
+
+    // Optionally, handle events for resizing or moving
+    text.on('moving', (e) => {
+      console.log('Textbox is moving:', e.target?.left, e.target?.top);
+    });
+
+    text.on('scaling', (e) => {
+      console.log('Textbox is scaling:', e.target?.scaleX, e.target?.scaleY);
+    });
+
+    text.on('modified', (e) => {
+      console.log('Textbox modified:', e);
+    });
+
+    text.on('selected', () => {
+      console.log('Textbox selected');
+    });
   };
 
+  //checkbox
+  const addCheckbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+
+    const checkboxManager = new CheckboxManager(canvi, startLeft, startTop, 1, setCheckboxItems, setShowSettingForm); // Initialize with 3 checkboxes
+    checkboxManager.addToCanvas(); // Add the group to the canvas
+  
+    // return checkboxGroup; // Return the group for future use if needed
+  };
+
+  useEffect(() => {
+    console.log(checkboxItems)
+  }, [checkboxItems])
+  
   const toggleDraw = (canvi: fabric.Canvas) => {
     canvi.isDrawingMode = !canvi.isDrawingMode;
     if (canvas) {
@@ -238,6 +295,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         addRect,
         addCircle,
         addText,
+        addCheckbox,
         addImage,
         numPages,
         setNumPages,
@@ -265,6 +323,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setHiddenCanvas,
         edits,
         setEdits,
+        showSettingForm,
+        setShowSettingForm,
       }}
     >
       {children}

@@ -16,6 +16,9 @@ const PDFBoard: React.FC = () => {
   const contextValues = useButtons();
   const [docIsLoading, setDocIsLoading] = useState<boolean>(false);
 
+  const showSettingForm = contextValues.showSettingForm;
+  const setShowSettingForm = contextValues.setShowSettingForm;
+
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (files: File[]) => {
       setDocIsLoading(true);
@@ -58,12 +61,15 @@ const PDFBoard: React.FC = () => {
   }
 
   const initCanvas = (): fabric.Canvas => {
-    return new fabric.Canvas('canvas', {
+    // Initialize fabric canvas
+    const fabricCanvas = new fabric.Canvas('canvas', {
       isDrawingMode: false,
-      height: 842,
+      height:1123,
       width: 868,
       backgroundColor: 'rgba(0,0,0,0)',
     });
+    
+    return fabricCanvas;
   };
 
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -96,13 +102,40 @@ const PDFBoard: React.FC = () => {
                 className="flex justify-center"
               >
                 <div id="doc">
-                  
                   <div
                     className="absolute z-[9] p-0"
                     id="canvasWrapper"
                     style={{ visibility: "visible" }}
                   >
                     <canvas id="canvas" />
+                    {showSettingForm.show && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: showSettingForm.position.left,
+                          top: showSettingForm.position.top,
+                          background: '#fff',
+                          padding: '20px',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                        }}
+                      >
+                        {/* Your form content goes here */}
+                        <p>Form for Checkbox Settings</p>
+                        {/* Example input fields */}
+                        <label htmlFor="numCheckboxes">Number of checkboxes:</label>
+                        <input
+                          id="numCheckboxes"
+                          type="number"
+                          // value={checkboxItems}
+                          // onChange={(e) => setCheckboxItems(Number(e.target.value))}
+                        />
+                        <button onClick={() => setShowSettingForm({
+                          show: false,
+                          position: { left: 0, top: 0 }
+                        })}>Close</button>
+                      </div>
+                    )}
                   </div>
                   <div
                     className={`${
