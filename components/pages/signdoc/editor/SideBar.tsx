@@ -12,6 +12,7 @@ import { Popover, Slider } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { SketchPicker, ColorResult } from 'react-color';
 import ExportPopup from './ExportPopup';
+import { Select, SelectItem } from '@heroui/react';
 
 type AnchorElement = HTMLElement | null;
 
@@ -23,8 +24,8 @@ const SideBar: React.FC = () => {
     const [openExporter, setOpenExporter] = useState<boolean>(false);
 
     return (
-        <div className="fixed z-50 top-20 md:top-20 left-0 md:h-[100vh] md:w-max h-[15vh] w-[100vw] flex md:flex-col flex-row items-center md:mx-16">
-            <div className={`md:mx-10 border max-h-[68vh] flex md:flex-col flex-wrap flex-row items-center justify-center shadow-lg rounded-lg md:py-8 py-2 px-4 md:text-[1.5rem] text-[1.2rem] min-w-[8vw] gap-8 ${contextValues.theme ? "border-[rgba(36,36,36,0.5)] bg-[rgb(25,25,25)] text-white shadow-[0px_0px_8px_rgb(0,0,0)]" : "bg-white text-black"}`}>
+        <div className="fixed z-50 top-20 md:top-20 left-0 md:h-[100vh] md:w-max h-[15vh] w-full flex md:flex-col flex-row items-center pl-6">
+            <div className={` border max-h-[68vh] w-[246] flex md:flex-col flex-wrap flex-row items-start justify-center shadow-lg rounded-lg md:py-8 py-2 px-4 min-w-[8vw] gap-2 ${contextValues.theme ? "border-[rgba(36,36,36,0.5)] bg-[rgb(25,25,25)] text-white shadow-[0px_0px_8px_rgb(0,0,0)]" : "bg-white text-black"}`}>
 
                 <ExportPopup className="text-[1.5rem] cursor-pointer" open={openExporter} setOpen={setOpenExporter} />
 
@@ -40,19 +41,33 @@ const SideBar: React.FC = () => {
                     </div>
                 </Tooltip>*/}
 
-                <Tooltip title="Circle">
-                    <div>
-                        <BsCircle className='cursor-pointer' onClick={() => contextValues.addCheckbox(contextValues.canvas!, 100,100, 4)} />
-                    </div>
-                </Tooltip> 
+                <h1>Adding fields for</h1>
+                <div className='flex flex-col w-full'>
+                    {/* <select className='border-1 rounded-lg p-2'>
+                        <option>Myself</option>
+                        <option>Myself</option>
+                    </select> */}
+                    <Select defaultSelectedKeys={["dmytrozaiets66@gmail.com"]}>
+                        <SelectItem key="dmytrozaiets66@gmail.com">Myself</SelectItem>
+                        <SelectItem>Myself</SelectItem>
+                        <SelectItem>Myself</SelectItem>
+                    </Select>
+                </div>
                 <h1>Fields</h1>
                 <Tooltip title="TextBox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/textbox.png' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)}/>
+                        <img src='/assets/img/controls/checkboxgroup.png' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)}/>
                         <p className='text-text text-sm'>Textbox</p>
                     </div>
                 </Tooltip>
+                <Tooltip title="Checkbox">
+                    <div className='flex flex-row items-center justify-center gap-1'>
+                        {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
+                        <img src='/assets/img/controls/textbox.png' className='cursor-pointer' onClick={() => contextValues.addCheckbox(contextValues.canvas!, 100, 100, 4)}/>
+                        <p className='text-text text-sm'>Checkbox</p>
+                    </div>
+                </Tooltip> 
 
                 {/* <Tooltip title="Add Image">
                     <div>

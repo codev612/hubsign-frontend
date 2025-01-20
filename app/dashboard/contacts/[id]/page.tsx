@@ -66,7 +66,7 @@ const EditContact = () => {
       const fetchData = async () => {
         try {
           const res = await fetch(
-            `${siteConfig.links.server}/contacts/${contactId}`,
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/contacts/${contactId}`,
             {
               method: "GET",
               headers: {

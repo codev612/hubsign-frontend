@@ -6,6 +6,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Roboto } from 'next/font/google';
 import CheckboxManager from '@/utils/canvas/classes/checkboxmanager';
+import { CheckboxSettingFormState } from '@/interface/interface';
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
@@ -42,8 +43,8 @@ type CanvasContextProps = {
   // canvas edits
   edits: Record<number, any>;
   setEdits: (edits: Record<number, any>) => void;
-  showSettingForm: any,
-  setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  showCheckboxSettingForm: any,
+  setShowCheckboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
 };
 
 const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
@@ -85,12 +86,15 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [checkboxItems, setCheckboxItems] = useState(1);
   // const [showSettingForm, setShowSettingForm] = useState(false);
 
-  const [showSettingForm, setShowSettingForm] = useState<{
-    show: boolean;
-    position: { left: number; top: number };
-  }>({
+  const [showCheckboxSettingForm, setShowCheckboxSettingForm] = useState<CheckboxSettingFormState>({
     show: false,
-    position: { left: 0, top: 0 }
+    position: { left: 0, top: 0 },
+    value: {
+      recipient: "",
+      defaultTick: true,
+      checkedBydefault: true,
+      required: true,
+    },
   });
 
   useEffect(() => {
@@ -264,7 +268,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   //checkbox
   const addCheckbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
 
-    const checkboxManager = new CheckboxManager(canvi, startLeft, startTop, 1, setCheckboxItems, setShowSettingForm); // Initialize with 3 checkboxes
+    const checkboxManager = new CheckboxManager(canvi, startLeft, startTop, 1, setCheckboxItems, setShowCheckboxSettingForm); // Initialize with 3 checkboxes
     checkboxManager.addToCanvas(); // Add the group to the canvas
   
     // return checkboxGroup; // Return the group for future use if needed
@@ -323,8 +327,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setHiddenCanvas,
         edits,
         setEdits,
-        showSettingForm,
-        setShowSettingForm,
+        showCheckboxSettingForm,
+        setShowCheckboxSettingForm,
       }}
     >
       {children}

@@ -24,3 +24,21 @@ export interface Contact {
   avatar?: string;
   // Add other fields as per your data
 }
+
+export interface Position {
+  left: number;
+  top: number;
+}
+
+export interface CheckboxSettings {
+  recipient: string;
+  defaultTick: boolean;
+  checkedBydefault: boolean;
+  required: boolean;
+}
+
+export interface CheckboxSettingFormState {
+  show: boolean;
+  position: Position;
+  value: CheckboxSettings;
+}

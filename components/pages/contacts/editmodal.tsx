@@ -9,7 +9,7 @@ import {
 } from "@heroui/react";
 import Cookies from "js-cookie";
 
-interface ConfirmModalProps {
+interface ModalProps {
   isOpen: boolean;
   message: string;
   title: string;
@@ -19,7 +19,7 @@ interface ConfirmModalProps {
   onOpenChange: (isOpen: boolean) => void; // Adjust if the signature for onOpenChange is different
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({
+const EditModal: React.FC<ModalProps> = ({
   isOpen,
   onOpenChange,
   message,
@@ -81,4 +81,4 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   );
 };
 
-export default ConfirmModal;
+export default EditModal;

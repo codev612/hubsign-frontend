@@ -196,15 +196,13 @@ class CheckboxManager {
     // Track scaling of the checkboxGroup
     private trackCheckboxGroup() {
       this.checkboxGroup.on('scaling', () => {
-        console.log(this.checkboxGroup.getScaledWidth(), this.scaleY*this.checkboxGroup.scaleY!, )
+        this.showShowSettingForm();
       });
       this.checkboxGroup.on('selected', () => {
-        console.log(this.checkboxGroup.getScaledWidth(), this.scaleY*this.checkboxGroup.scaleY!, );
         this.showShowSettingForm();
       });
       this.checkboxGroup.on('moving', () => {
         // Get the position of the group
-        console.log(this.recipient )
         this.containerLeft = this.checkboxGroup.left!;
         this.containerTop = this.checkboxGroup.top!;
         this.showShowSettingForm();
@@ -218,6 +216,12 @@ class CheckboxManager {
         position: {
           left: groupPosition.left, // Position horizontally below the group
           top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
+        },
+        value: {
+            recipient: this.recipient,
+            defaultTick: this.defaultTick,
+            checkedBydefault: this.checkedBydefault,
+            required: this.required,
         }
       });
     }

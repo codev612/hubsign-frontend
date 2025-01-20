@@ -268,17 +268,23 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
     });
   }, [sortDescriptor, items]);
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  //for removing confirm modal
+  const { isOpen:isDeleteConfirmOpen, onOpen: onDeleteConfirmOpen, onOpenChange: onDeleteConfirmOpenChange } = useDisclosure();
   const [deleteItem, setDeleteItem] = useState<string[]>([]);
   const [actionState, setActionState] = useState(false);
 
-  const handleOpen = (id: string) => {
+    //for removing confirm modal
+    const { isOpen:isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
+    const [editItem, setEditItem] = useState<string>("");
+    const [editActionState, setEditActionState] = useState(false);
+
+  const handleConfirmOpen = (id: string) => {
     setDeleteItem([id]);
-    onOpen();
+    onDeleteConfirmOpen();
   };
 
-  const handleBatchOpen = () => {
-    onOpen();
+  const handleBatchDeleteOpen = () => {
+    onDeleteConfirmOpen();
   };
  
   //showing contacts after remove
@@ -347,7 +353,7 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
                 </DropdownItem>
                 <DropdownItem
                   key="delete"
-                  onPress={() => handleOpen(data._id)}
+                  onPress={() => handleConfirmOpen(data._id)}
                   // onClick={()=>setModalVisible(true)}
                 >
                   Delete
@@ -464,7 +470,7 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
               startContent={<DeleteForeverOutlinedIcon />}
               variant="bordered"
               onPress={() => {
-                handleBatchOpen();
+                handleBatchDeleteOpen();
               }}
             >
               Delete
@@ -572,10 +578,10 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
       <ConfirmModal
         actionState={setActionState}
         id={deleteItem}
-        isOpen={isOpen}
+        isOpen={isDeleteConfirmOpen}
         message={`This action will delete the ${deleteItem.length} contact[s]. The contact record will be permanently removed, and all associated signing links will be deactivated. Do you wish to proceed?`}
         title="Delete Contact"
-        onOpenChange={onOpenChange}
+        onOpenChange={onDeleteConfirmOpenChange}
       />
       <Table
         // isHeaderSticky
