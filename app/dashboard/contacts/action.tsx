@@ -1,8 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-
-import { siteConfig } from "@/config/site";
 import { getUser } from "@/lib/dal";
 
 export async function updateContact(prevState: any, formData: FormData) {
@@ -16,30 +14,33 @@ export async function updateContact(prevState: any, formData: FormData) {
 
   const user = await getUser();
 
-  if (!user) return redirect("/signin");
+  if (!user) return {state:"error", message: "Server disconnected",data: {}, isLoading: false };
 
   const url =
     id === "new"
-      ? `${siteConfig.links.server}/contacts/update`
-      : `${siteConfig.links.server}/contacts/update/${id}`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      user: user.email,
-      email: formData.get("email") as string,
-      name: formData.get("name") as string,
-    }),
-  });
-
-  if (!response.ok) {
-    return { message: "Server error", isLoading: false };
+      ? `${process.env.NEXT_PUBLIC_SERVER_URL}/contacts/update`
+      : `${process.env.NEXT_PUBLIC_SERVER_URL}/contacts/update/${id}`;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: user.email,
+        email: formData.get("email") as string,
+        name: formData.get("name") as string,
+      }),
+    });
+  
+    const json = await response.json();
+  
+    if (!response.ok) {
+      return {state:"error", message: "Error",data: {}, isLoading: false };
+    }
+    return {state: "success",message:"Success", data: json, isLoading: false};
+  } catch(error) {
+    console.log(error);
+    return {state:"error", message: "Server disconnected",data: {}, isLoading: false };
   }
-
-  // Redirect to /checkinbox with the email as a query parameter
-  // return {message: json, isLoading: false};
-  redirect("/dashboard/contacts");
 }

@@ -27,9 +27,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   id,
   actionState,
 }) => {
-  useEffect(() => {
-    console.log(id);
-  }, [id]);
+
   const handleAction = async () => {
     if (id.length) {
       try {
@@ -42,7 +40,6 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           body: JSON.stringify({ ids: id }),
         });
 
-        console.log(id);
         if (!response.ok) {
           actionState(false);
         } else {

@@ -26,6 +26,7 @@ import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "./confirmmodal";
+import EditModal from "./editmodal";
 import { Contact } from "@/interface/interface"
 
 type Data = Contact
@@ -273,11 +274,6 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   const [deleteItem, setDeleteItem] = useState<string[]>([]);
   const [actionState, setActionState] = useState(false);
 
-    //for removing confirm modal
-    const { isOpen:isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
-    const [editItem, setEditItem] = useState<string>("");
-    const [editActionState, setEditActionState] = useState(false);
-
   const handleConfirmOpen = (id: string) => {
     setDeleteItem([id]);
     onDeleteConfirmOpen();
@@ -286,16 +282,52 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   const handleBatchDeleteOpen = () => {
     onDeleteConfirmOpen();
   };
+
+  //for removing confirm modal
+  const { isOpen:isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
+  const [editItem, setEditItem] = useState({
+    id:"",
+    name:"",
+    email:""
+  });
+  const [editActionState, setEditActionState] = useState({state: false, data:{
+    _id:"",
+    email:"",
+    name:"",
+  }});
+
+  const handleEditOpen = ({id, name, email}:{id:string, name:string, email:string}) => {
+    setEditItem({id, name, email});
+    onEditOpen();
+  };
  
   //showing contacts after remove
   useEffect(() => {
-    if (actionState) {
+    if ( actionState ) {
       setData(data.filter((item) => !deleteItem.includes(item._id)));
       setActionState(false);
       setDeleteItem([]);
       setSelectedKeys(new Set([]));
     }
   }, [actionState]);
+
+  //showing contacts after add or edit
+  useEffect(() => {
+    if ( editActionState.state ) {
+      console.log(editActionState)
+      // setData(data.filter((item) => !deleteItem.includes(item._id)));
+      const newData = data.map( item => item._id === editActionState.data._id ? {...item, name: editActionState.data.name} : item );
+      setData(newData);
+      setEditActionState({
+        state: false,
+        data: {
+          _id:"",
+          email:"",
+          name:"",
+        }
+      });
+    }
+  }, [editActionState]);
 
   useEffect(() => {
     setDeleteItem(selectedIDs);
@@ -347,7 +379,8 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
               <DropdownMenu>
                 <DropdownItem
                   key="edit"
-                  onPress={() => router.push(`/dashboard/contacts/${data._id}`)}
+                  // onPress={() => router.push(`/dashboard/contacts/${data._id}`)}
+                  onPress={()=>handleEditOpen({id: data._id, name: data.name, email: data.email})}
                 >
                   Edit
                 </DropdownItem>
@@ -582,6 +615,13 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
         message={`This action will delete the ${deleteItem.length} contact[s]. The contact record will be permanently removed, and all associated signing links will be deactivated. Do you wish to proceed?`}
         title="Delete Contact"
         onOpenChange={onDeleteConfirmOpenChange}
+      />
+      <EditModal
+        actionState={setEditActionState}
+        item={editItem}
+        isOpen={isEditOpen}
+        title={`${editItem.id===""?"New":"Edit"} Contact`}
+        onOpenChange={onEditOpenChange}
       />
       <Table
         // isHeaderSticky

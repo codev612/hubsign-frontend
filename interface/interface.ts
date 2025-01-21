@@ -25,6 +25,14 @@ export interface Contact {
   // Add other fields as per your data
 }
 
+// Define InitialState type
+export interface ActionInitialState {
+  state: string,
+  data: any,
+  message: string;
+  isLoading: boolean;
+}
+
 export interface Position {
   left: number;
   top: number;

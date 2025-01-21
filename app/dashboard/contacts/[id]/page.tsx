@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@heroui/input";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { Button } from "@heroui/button";
 import Cookies from "js-cookie";
@@ -12,14 +12,11 @@ import StateBoard from "@/components/common/stateboard";
 import { siteConfig } from "@/config/site";
 import { usePathname } from "next/navigation";
 import { useParams } from "next/navigation";
+import { ActionInitialState } from "@/interface/interface";
 
-// Define InitialState type
-interface InitialState {
-  message: string;
-  isLoading: boolean;
-}
-
-const initialState: InitialState = {
+const initialState: ActionInitialState = {
+  state:"",
+  data: {},
   message: "",
   isLoading: false,
 };
@@ -35,8 +32,8 @@ const EditContact = () => {
   const router = useRouter();
 
   const [state, formAction] = useActionState(updateContact, initialState);
-  const [isVisible, setIsVisible] = useState(false); // visible password
-  const [isLoading, setIsLoading] = useState(false); // loading button
+  const [isVisible, setIsVisible] = useState<boolean>(false); // visible password
+  const [isLoading, setIsLoading] = useState<boolean>(false); // loading button
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   const [value, setEmailValue] = useState<string>(""); // email format validation
@@ -59,38 +56,8 @@ const EditContact = () => {
 
   useEffect(() => {
     setIsLoading(state.isLoading || false);
+    if(state.state==="success") redirect("/dashboard/contacts");
   }, [state]);
-
-  useEffect(() => {
-    if (contactId !== "new") {
-      const fetchData = async () => {
-        try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/contacts/${contactId}`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${Cookies.get("session") || ""}`,
-              },
-            }
-          );
-
-          if (!res.ok) throw new Error("Failed to fetch data");
-          const result = await res.json();
-
-          setName(result.name);
-          setEmailValue(result.email);
-        } catch (error) {
-          state.message = "Server error";
-          state.isLoading = false;
-        } finally {
-          state.isLoading = false;
-        }
-      };
-
-      fetchData();
-    }
-  }, [contactId]);
 
   return (
     <section className="flex flex-col justify-center items-center w-full">
@@ -136,7 +103,8 @@ const EditContact = () => {
         )}
         <LoadingButton 
         // disable={isInvalid} 
-        isLoading={isLoading} title="Save" 
+        isLoading={isLoading} 
+        title="Save" 
         />
         <Button variant="bordered" onPress={() => router.back()}>
           Back

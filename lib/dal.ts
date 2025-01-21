@@ -33,6 +33,7 @@ export const getUser = cache(async () => {
     const json = await response.json();
 
     if (!response.ok) {
+      console.log(response)
       redirect("/signin");
     }
 
