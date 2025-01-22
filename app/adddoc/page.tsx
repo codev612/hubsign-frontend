@@ -55,8 +55,6 @@ const AddDoc = () => {
     email: ""
   });
 
-  const [filteredContacts, setFilteredContacts] = useState<any[]>([]);
-
   const [customSigningOrder, setCustomSigningOrder] = useState<boolean>(false);
 
   const [disable, setDisable] = useState<boolean>(true);
@@ -252,6 +250,7 @@ const AddDoc = () => {
       <div className="flex flex-row justify-between items-center w-full">
         <h1 className="title-medium">Add Recipients</h1>
         <Checkbox
+          className="text-white"
           isSelected={customSigningOrder}
           onValueChange={setCustomSigningOrder}
         >
