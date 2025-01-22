@@ -37,7 +37,6 @@ const EditModal: React.FC<ModalProps> = ({
   actionState,
 }) => {
   useEffect(() => {
-    console.log(item);
     setName(item.name);
     setEmail(item.email);
     setId(item.id);
@@ -53,7 +52,6 @@ const EditModal: React.FC<ModalProps> = ({
   useEffect(() => {
     setIsLoading(state.isLoading || false);
     if( state.state==="success" ) {
-        console.log(state.data)
         actionState({state: true, data:state.data});
         onOpenChange(false);
     } else {
@@ -116,7 +114,7 @@ const EditModal: React.FC<ModalProps> = ({
                     value={email}
                     onChange={(e)=>setEmail(e.target.value)}
                     required />
-                    <input hidden readOnly name="id" value={item.id} />
+                    <input hidden readOnly name="id" value={id} />
                 </ModalBody>
                 <ModalFooter>
                     <Button variant="bordered" onPress={onClose}>

@@ -16,7 +16,7 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
       fullWidth
       className="text-white"
       color="primary"
-      disabled={disable}
+      isDisabled={disable}
       isLoading={isLoading}
       spinner={
         <svg

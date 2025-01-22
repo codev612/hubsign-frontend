@@ -212,7 +212,7 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "age",
+    column: "name",
     direction: "ascending",
   });
 
@@ -314,8 +314,6 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   //showing contacts after add or edit
   useEffect(() => {
     if ( editActionState.state ) {
-      console.log(editActionState)
-      // setData(data.filter((item) => !deleteItem.includes(item._id)));
       const newData = data.map( item => item._id === editActionState.data._id ? {...item, name: editActionState.data.name} : item );
       setData(newData);
       setEditActionState({

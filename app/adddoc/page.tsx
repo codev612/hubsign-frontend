@@ -3,13 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
-import { Tabs, Tab } from "@heroui/react";
+import { Tabs, Tab, Button } from "@heroui/react";
 import { Checkbox } from "@heroui/react";
 import Cookies from "js-cookie";
 import { signin } from "../(auth)/signin/action";
-import FileUpload from "@/components/common/fileupload";
+import FileUpload from "@/components/pages/adddoc/fileadd";
 import Recipients from "@/components/pages/adddoc/recipients";
-import { siteConfig } from "@/config/site";
+import { Recipient } from "@/interface/interface";
+import { upload, Upload } from "upload";
 
 interface InitialState {
   message: string;
@@ -21,23 +22,11 @@ const initialState: InitialState = {
   isLoading: false,
 };
 
-interface Recipient {
-  name: string;
-  email: string;
-}
-
-interface ChildComponentProps {
-  contacts: Recipient[]; // Define the type of contacts properly
-  user: Recipient; // Define the type of user properly
-}
-
 const AddDoc = () => {
   const router = useRouter();
   const [state, formAction] = useActionState(signin, initialState);
   // visible password
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  // loading button
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   // // email format validation
@@ -53,15 +42,31 @@ const AddDoc = () => {
   //   return validateEmail(value) ? false : true;
   // }, [value]);
 
-  const [isUpLoading, setIsUpLoading] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploadDone, setUploadDone] = useState<boolean>(false);
+  const [uploadedFilename, setUploadedFilename] = useState<string>("");
+  const [uploadedFilepath, setUploadedFilepath] = useState<string>("");
+
   const [selectedFile, setFile] = useState<any>(null);
   const [filename, setFilename] = useState<string>("");
+  const [selectedTemplate, setTemplate] = useState<string>("");
 
-  const [contacts, setContacts] = useState<any[]>([]);
-  const [user, setUser] = useState<any>({});
+  const [recpts, setRcpts] = useState<Recipient[]>([]);
+  const [contacts, setContacts] = useState<Recipient[]>([]);
+  const [user, setUser] = useState<Recipient>({
+    name: "",
+    email: ""
+  });
   const [filteredContacts, setFilteredContacts] = useState<any[]>([]);
 
   const [customSigningOrder, setCustomSigningOrder] = useState<boolean>(false);
+
+  const [disable, setDisable] = useState<boolean>(true);
+   // loading button
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [activeTab, setActiveTab] = useState<string>("document");
 
   useEffect(() => {
     setIsLoading(false);
@@ -70,7 +75,7 @@ const AddDoc = () => {
   useEffect(() => {
     const fetchContactsData = async () => {
       try {
-        const response = await fetch(`${siteConfig.links.server}/contacts`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -96,7 +101,7 @@ const AddDoc = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `${siteConfig.links.server}/auth/profile`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/profile`,
           {
             method: "GET",
             headers: {
@@ -126,7 +131,89 @@ const AddDoc = () => {
 
     fetchContactsData();
     fetchUserData();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
+
+  useEffect(()=>{
+    (recpts.length && (selectedFile || selectedTemplate)) ? setDisable(false) : setDisable(true);
+  },[recpts, selectedFile, selectedTemplate])
+
+  const hasEmptyFields = () => {
+    return recpts.some(
+      (recipient) => !recipient.email || recipient.email === "" || !recipient.name || recipient.name === ""
+    );
+  };
+
+  useEffect(() => {
+    if(uploadDone){
+      setUploadDone(false);
+      handleAddDocument();
+    }
+  }, [uploadDone])
+
+  //file upload when prepare button's clicked
+  const handleFileUpload = async () => {   
+    if(!selectedFile) return;
+
+    if(hasEmptyFields()) return;
+
+    setIsLoading(true);
+    setIsUploading(true);
+
+    try{
+      const upload = new Upload({
+        url: `${process.env.NEXT_PUBLIC_SERVER_URL}/upload/document`,
+        form: {
+          file: selectedFile,
+        },
+        headers: {
+          Authorization: `Bearer ${Cookies.get("session") || ""}`,
+        },
+      });
+    
+      upload.on('progress', progress => {
+        console.log(progress);
+      });
+    
+      const response = await upload.upload();
+      const json = JSON.parse(response.data as string);
+
+      if(response.status === 201) {
+        setUploadDone(true);
+        setUploadedFilename(json.filename);
+        setUploadedFilepath(json.filepath);
+      }
+    } catch(error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  // adding document the minute file upload finishs
+  const handleAddDocument = async () => {
+    try{
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("session") || ""}`,
+        },
+        body: JSON.stringify({ 
+          name: filename,
+          filename: uploadedFilename,
+          filepath: uploadedFilepath,
+          recipients: recpts,
+        }),
+      })
+
+      if(!response.ok) {
+        console.log(response)
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
 
   return (
     <section className="flex flex-col items-start w-full justify-center gap-4">
@@ -141,14 +228,14 @@ const AddDoc = () => {
         }}
         size="lg"
       >
-        <Tab key={"document"} title="Upload a document">
+        <Tab key={"document"} title="Upload a document" onClick={()=>setActiveTab("document")}>
           <FileUpload
             filename={filename}
             setFile={setFile}
             setFilename={setFilename}
           />
         </Tab>
-        <Tab key={"template"} title="Start with a template">
+        <Tab key={"template"} title="Start with a template" onClick={()=>setActiveTab("template")}>
           <p>select a template</p>
         </Tab>
       </Tabs>
@@ -165,7 +252,19 @@ const AddDoc = () => {
         contacts={contacts}
         customSigningOrder={customSigningOrder}
         user={user}
+        recipients={recpts}
+        setRecipient={setRcpts}
       />
+      <Button
+      fullWidth
+      color="primary"
+      className="text-white"
+      isLoading={isLoading}
+      isDisabled={disable}
+      onPress={handleFileUpload}
+      >
+        Prepare for signing
+      </Button>
     </section>
   );
 };

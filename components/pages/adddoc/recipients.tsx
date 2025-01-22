@@ -7,16 +7,14 @@ import AddIcon from "@mui/icons-material/Add";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-
-interface Recipient {
-  name: string;
-  email: string;
-}
+import { Recipient } from "@/interface/interface";
 
 interface RecipientProps {
   customSigningOrder: boolean;
   contacts: Recipient[];
   user: Recipient;
+  recipients: Recipient[];
+  setRecipient: React.Dispatch<React.SetStateAction<Recipient[]>>;
 }
 
 const RecipientItem: React.FC<{
@@ -215,8 +213,10 @@ const Recipients: React.FC<RecipientProps> = ({
   customSigningOrder,
   contacts,
   user,
+  recipients,
+  setRecipient
 }) => {
-  const [recpts, setRcpts] = useState<Recipient[]>([]);
+  // const [recpts, setRcpts] = useState<Recipient[]>([]);
   const [searchResults, setSearchResults] = useState<Recipient[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
@@ -225,7 +225,7 @@ const Recipients: React.FC<RecipientProps> = ({
   const [addedme, setAddedme] = useState<boolean>(false);
 
   const handleAddRcpt = () => {
-    setRcpts([...recpts, { name: "", email: "" }]);
+    setRecipient([...recipients, { name: "", email: "" }]);
   };
 
   const handleInputChange = (
@@ -233,10 +233,10 @@ const Recipients: React.FC<RecipientProps> = ({
     field: keyof Recipient,
     value: string,
   ) => {
-    const updatedRecipients = [...recpts];
+    const updatedRecipients = [...recipients];
 
     updatedRecipients[index] = { ...updatedRecipients[index], [field]: value };
-    setRcpts(updatedRecipients);
+    setRecipient(updatedRecipients);
 
     // Update search results
     const filteredContacts = contacts.filter(
@@ -249,45 +249,45 @@ const Recipients: React.FC<RecipientProps> = ({
   };
 
   const handleDeleteRcpt = (index: number) => {
-    const updatedRecipients = recpts.filter((_, i) => i !== index);
+    const updatedRecipients = recipients.filter((_, i) => i !== index);
 
-    setRcpts(updatedRecipients);
+    setRecipient(updatedRecipients);
   };
 
   const handleSelectContact = (index: number, contact: Recipient) => {
 
-    const updatedRecipients = [...recpts];
+    const updatedRecipients = [...recipients];
 
     updatedRecipients[index] = { name: contact.name, email: contact.email };
-    setRcpts(updatedRecipients);
+    setRecipient(updatedRecipients);
     setSearchResults([]);
     setSearchText("");
     setIsSearchOpen(false);
   };
 
   const moveRecipient = (dragIndex: number, hoverIndex: number) => {
-    const updatedRecipients = [...recpts];
+    const updatedRecipients = [...recipients];
     const [movedRecipient] = updatedRecipients.splice(dragIndex, 1);
 
     updatedRecipients.splice(hoverIndex, 0, movedRecipient);
-    setRcpts(updatedRecipients);
+    setRecipient(updatedRecipients);
   };
 
   const handleAddMe = () => {
-    setRcpts([...recpts, user]);
+    setRecipient([...recipients, user]);
   };
 
   useEffect(() => {
-    const isUserInRecipients = recpts.some(
+    const isUserInRecipients = recipients.some(
       (recipient) => recipient.email === user.email,
     );
 
     setAddedme(isUserInRecipients);
-  }, [recpts]);
+  }, [recipients]);
 
   return (
     <DndProvider backend={HTML5Backend}>
-      {recpts.map((recipient, index) => (
+      {recipients.map((recipient, index) => (
         <RecipientItem
           key={index}
           activeIndex={activeIndex}

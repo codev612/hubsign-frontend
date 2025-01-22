@@ -25,6 +25,11 @@ export interface Contact {
   // Add other fields as per your data
 }
 
+export interface Recipient {
+  name: string;
+  email: string;
+}
+
 // Define InitialState type
 export interface ActionInitialState {
   state: string,
@@ -33,6 +38,7 @@ export interface ActionInitialState {
   isLoading: boolean;
 }
 
+//canvas controls
 export interface Position {
   left: number;
   top: number;
@@ -49,4 +55,11 @@ export interface CheckboxSettingFormState {
   show: boolean;
   position: Position;
   value: CheckboxSettings;
+}
+
+//adddoc component
+export interface FileAddBoardProps {
+  filename: string;
+  setFile: (file: any) => void;
+  setFilename: (filename: string) => void;
 }
