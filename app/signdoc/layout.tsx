@@ -1,16 +1,12 @@
 import React from "react";
-
-// import { Navbar } from "@/components/layouts/adddoc/navbar";
 import { Navbar } from "@/components/layouts/signdoc/navbar";
-import Room from "./room";
-// import { TooltipProvider } from "@/components/canvas/ui/tooltip";
 import { CanvasProvider } from "@/context/canvas";
 
-interface NewDocLayoutProps {
+interface SignDocLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function SignDocLayout({ children }: NewDocLayoutProps) {
+export default async function SignDocLayout({ children }: SignDocLayoutProps) {
   return (
     <CanvasProvider>
       <Navbar />

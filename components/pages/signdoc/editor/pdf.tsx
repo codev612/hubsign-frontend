@@ -15,24 +15,20 @@ import Checkboxgroup from './settingforms/checkboxgroup';
 
 const PDFBoard: React.FC = () => {
   const contextValues = useButtons();
-  const [docIsLoading, setDocIsLoading] = useState<boolean>(false);
+  const [docIsLoading, setDocIsLoading] = useState<boolean>(true);
 
   const showCheckboxSettingForm = contextValues.showCheckboxSettingForm;
   const setShowCheckboxSettingForm = contextValues.setShowCheckboxSettingForm;
 
-  useEffect(()=>{
-    console.log(showCheckboxSettingForm)
-  }, [showCheckboxSettingForm])
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: (files: File[]) => {
-      setDocIsLoading(true);
-      contextValues.setFile(files[0]);
-    },
-    accept: {
-      'application/pdf': ['.pdf']
-    }
-  });
+  // const { getRootProps, getInputProps } = useDropzone({
+  //   onDrop: (files: File[]) => {
+  //     setDocIsLoading(true);
+  //     contextValues.setFile(files[0]);
+  //   },
+  //   accept: {
+  //     'application/pdf': ['.pdf']
+  //   }
+  // });
 
   function onDocumentLoadSuccess({ numPages }: PDFDocumentProxy): void {
     contextValues.setEdits({});
@@ -84,104 +80,79 @@ const PDFBoard: React.FC = () => {
 
   return (
     <div className='min-h-[100vh]'>
-      {contextValues.selectedFile && <SideBar />}
-      {contextValues.selectedFile ? (
-        <div className="w-full">
-          <div className="flex flex-col justify-center items-center">
-            <div className='w-[868]'>
-              <ControlBar />
-            </div>
-            <div id="singlePageExport" className="flex items-center justify-center">
-              {docIsLoading && (
-                <>
-                  <div className="w-[100%] h-[100%] top-[0] fixed bg-[rgba(50,50,50,0.2)] z-[1001] backdrop-blur-sm"></div>
-                  <div className="fixed z-[1100] flex w-[100%] h-[100%] top-[0] justify-center items-center">
-                    <Loader color={"#606060"} size={120} />
-                  </div>
-                </>
-              )}
-              
-              <Document
-                file={contextValues.selectedFile}
-                onLoadSuccess={onDocumentLoadSuccess}
-                className="flex justify-center"
-              >
-                <div id="doc">
-                  <div
-                    className="absolute z-[9] p-0"
-                    id="canvasWrapper"
-                    style={{ visibility: "visible" }}
-                  >
-                    <canvas id="canvas" />
-                    {showCheckboxSettingForm.show && <Checkboxgroup 
-                              showCheckboxSettingForm={showCheckboxSettingForm} 
-                              setShowCheckboxSettingForm={setShowCheckboxSettingForm} 
-                    />}
-                  </div>
-                  <div
-                    className={`${
-                      !contextValues.isExporting && contextValues.theme
-                        ? "bg-[rgb(25,25,25)] shadow-[0px_0px_16px_rgb(0,0,0)] border-none"
-                        : "shadow-lg border"
-                    }`}
-                  >
-                    <Page
-                      pageNumber={contextValues.currPage}
-                      width={868}
-                      height={842}
-                    />
-                  </div>
+      <SideBar />
+      <div className="w-full">
+        <div className="flex flex-col justify-center items-center">
+          <div className='w-[868]'>
+            <ControlBar />
+          </div>
+          <div id="singlePageExport" className="flex items-center justify-center">
+            {docIsLoading && (
+              <>
+                <div className="w-[100%] h-[100%] top-[0] fixed bg-[rgba(50,50,50,0.2)] z-[1001] backdrop-blur-sm"></div>
+                <div className="fixed z-[1100] flex w-[100%] h-[100%] top-[0] justify-center items-center">
+                  <Loader color={"#606060"} size={120} />
                 </div>
-              </Document>
-            </div>
-          </div>
-          <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">
-            {contextValues.currPage > 1 && (
-              <button
-                onClick={() => changePage(-1)}
-                className="px-4 py-2 bg-gray-700 rounded-md text-white"
-              >
-                {'<'}
-              </button>
+              </>
             )}
-            <div className="px-4 py-2 bg-gray-700 rounded-md text-white">
-              Page {contextValues.currPage} of {contextValues.numPages}
-            </div>
-            {contextValues.currPage < contextValues.numPages! && (
-              <button
-                onClick={() => changePage(1)}
-                className="px-4 py-2 bg-gray-700 rounded-md text-white"
-              >
-                {'>'}
-              </button>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div
-          className="w-full min-h-[100vh] py-8 flex items-center justify-center"
-          {...getRootProps()}
-        >
-          <div className="flex w-[40vw] h-[40vh] justify-center items-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
-            <div className="space-y-1 text-center">
-              <Icon />
-              <div className={`flex text-md ${contextValues.theme ? 'text-gray-400' : 'text-gray-600'}`}>
-                <label className="relative cursor-pointer rounded-md bg-transparent font-medium text-indigo-500 hover:text-indigo-500">
-                  <span>Upload a file</span>
-                </label>
-                <input
-                  type="file"
-                  className="sr-only"
-                  accept="application/pdf"
-                  {...getInputProps()}
-                />
-                <p className="pl-1">or drag and drop</p>
+            
+            <Document
+              // file={contextValues.selectedFile}
+              file={"http://localhost:4000/document/pdf/1737528220454.pdf"}
+              onLoadSuccess={onDocumentLoadSuccess}
+              className="flex justify-center"
+            >
+              <div id="doc">
+                <div
+                  className="absolute z-[9] p-0"
+                  id="canvasWrapper"
+                  style={{ visibility: "visible" }}
+                >
+                  <canvas id="canvas" />
+                  {showCheckboxSettingForm.show && <Checkboxgroup 
+                            showCheckboxSettingForm={showCheckboxSettingForm} 
+                            setShowCheckboxSettingForm={setShowCheckboxSettingForm} 
+                  />}
+                </div>
+                <div
+                  className={`${
+                    !contextValues.isExporting && contextValues.theme
+                      ? "bg-[rgb(25,25,25)] shadow-[0px_0px_16px_rgb(0,0,0)] border-none"
+                      : "shadow-lg border"
+                  }`}
+                >
+                  <Page
+                    pageNumber={contextValues.currPage}
+                    width={868}
+                    height={842}
+                  />
+                </div>
               </div>
-              <p className="text-sm">PDF</p>
-            </div>
+            </Document>
           </div>
         </div>
-      )}
+        <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">
+          {contextValues.currPage > 1 && (
+            <button
+              onClick={() => changePage(-1)}
+              className="px-4 py-2 bg-gray-700 rounded-md text-white"
+            >
+              {'<'}
+            </button>
+          )}
+          <div className="px-4 py-2 bg-gray-700 rounded-md text-white">
+            Page {contextValues.currPage} of {contextValues.numPages}
+          </div>
+          {contextValues.currPage < contextValues.numPages! && (
+            <button
+              onClick={() => changePage(1)}
+              className="px-4 py-2 bg-gray-700 rounded-md text-white"
+            >
+              {'>'}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
