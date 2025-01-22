@@ -71,8 +71,4 @@ export const siteConfig = {
       },
     ],
   },
-  links: {
-    server: "http://localhost:4000",
-    base_url: "http://localhost:3000",
-  },
 };

@@ -246,3 +246,8 @@ export const users = [
     email: "mia.robinson@example.com",
   },
 ];
+
+export const allowedUploadFile = {
+  extention: ['application/pdf'],
+  size: 1024*1024*10//10mb
+}

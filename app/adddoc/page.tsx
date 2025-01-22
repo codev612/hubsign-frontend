@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useActionState } from "react";
 import { Tabs, Tab, Button } from "@heroui/react";
 import { Checkbox } from "@heroui/react";
 import Cookies from "js-cookie";
-import { signin } from "../(auth)/signin/action";
-import FileUpload from "@/components/pages/adddoc/fileadd";
-import Recipients from "@/components/pages/adddoc/recipients";
+import { Upload } from "upload";
+
 import { Recipient } from "@/interface/interface";
-import { upload, Upload } from "upload";
+import { allowedUploadFile } from "@/constants/common";
+import FileAdd from "@/components/pages/adddoc/fileadd";
+import Recipients from "@/components/pages/adddoc/recipients";
 
 interface InitialState {
   message: string;
@@ -24,10 +24,6 @@ const initialState: InitialState = {
 
 const AddDoc = () => {
   const router = useRouter();
-  const [state, formAction] = useActionState(signin, initialState);
-  // visible password
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const toggleVisibility = () => setIsVisible(!isVisible);
 
   // // email format validation
   // const [value, setEmailValue] = useState<string>("");
@@ -58,6 +54,7 @@ const AddDoc = () => {
     name: "",
     email: ""
   });
+
   const [filteredContacts, setFilteredContacts] = useState<any[]>([]);
 
   const [customSigningOrder, setCustomSigningOrder] = useState<boolean>(false);
@@ -67,10 +64,6 @@ const AddDoc = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [activeTab, setActiveTab] = useState<string>("document");
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, [state]);
 
   useEffect(() => {
     const fetchContactsData = async () => {
@@ -137,11 +130,26 @@ const AddDoc = () => {
     (recpts.length && (selectedFile || selectedTemplate)) ? setDisable(false) : setDisable(true);
   },[recpts, selectedFile, selectedTemplate])
 
+  // check if recipients has empty value
   const hasEmptyFields = () => {
     return recpts.some(
       (recipient) => !recipient.email || recipient.email === "" || !recipient.name || recipient.name === ""
     );
   };
+
+  // check file size and type
+  const fileCheck = (file:File) => {
+    return ( file && file!.size > allowedUploadFile.size || !allowedUploadFile.extention.includes(file!.type) ) ?  false : true;
+  }
+
+  const handleSetFile = (file:File) => {
+    if (file && fileCheck(file)) {
+      setFile(file)
+    } else {
+      setFile(null);
+      setFilename("");
+    }
+  }
 
   useEffect(() => {
     if(uploadDone){
@@ -182,6 +190,7 @@ const AddDoc = () => {
         setUploadedFilename(json.filename);
         setUploadedFilepath(json.filepath);
       }
+      setIsLoading(false);
     } catch(error) {
       console.log(error);
       setIsLoading(false);
@@ -202,6 +211,7 @@ const AddDoc = () => {
           filename: uploadedFilename,
           filepath: uploadedFilepath,
           recipients: recpts,
+          signingOrder: customSigningOrder,
         }),
       })
 
@@ -229,9 +239,9 @@ const AddDoc = () => {
         size="lg"
       >
         <Tab key={"document"} title="Upload a document" onClick={()=>setActiveTab("document")}>
-          <FileUpload
+          <FileAdd
             filename={filename}
-            setFile={setFile}
+            setFile={handleSetFile}
             setFilename={setFilename}
           />
         </Tab>

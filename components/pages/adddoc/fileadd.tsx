@@ -6,7 +6,7 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import { Button } from "@heroui/button";
 import { FileAddBoardProps } from "@/interface/interface";
 
-const FileUplaod: React.FC<FileAddBoardProps> = ({
+const FileAdd: React.FC<FileAddBoardProps> = ({
   setFile,
   filename,
   setFilename,
@@ -50,4 +50,4 @@ const FileUplaod: React.FC<FileAddBoardProps> = ({
   );
 };
 
-export default FileUplaod;
+export default FileAdd;
