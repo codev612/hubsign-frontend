@@ -5,12 +5,9 @@ import { Input } from "@heroui/input";
 import { redirect, useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { Button } from "@heroui/button";
-import Cookies from "js-cookie";
 import { updateContact } from "../action";
 import LoadingButton from "@/components/common/loadingbutton";
 import StateBoard from "@/components/common/stateboard";
-import { siteConfig } from "@/config/site";
-import { usePathname } from "next/navigation";
 import { useParams } from "next/navigation";
 import { ActionInitialState } from "@/interface/interface";
 
@@ -20,12 +17,6 @@ const initialState: ActionInitialState = {
   message: "",
   isLoading: false,
 };
-
-// Define Params type
-interface Params {
-  id: string | number | readonly string[] | undefined;
-  slug: string;
-}
 
 const EditContact = () => {
   const params = useParams()

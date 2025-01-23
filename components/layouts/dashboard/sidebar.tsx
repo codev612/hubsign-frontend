@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 
 import { Logo } from "@/components/icons";
 import UserAvatar from "@/components/common/user";
+import { useEffect } from "react";
 
 // Define the props for the Sidebar component
 interface SidebarProps {

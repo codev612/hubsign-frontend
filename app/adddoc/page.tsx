@@ -102,6 +102,7 @@ const AddDoc = () => {
           },
         );
 
+        console.log(response.body)
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -111,7 +112,6 @@ const AddDoc = () => {
           name: `${result.firstname} ${result.lastname}`,
           email: result.email,
         });
-        // setData(result); // Set the fetched data to state
       } catch (error) {
         // setError("Failed to fetch data");
         console.error(error);

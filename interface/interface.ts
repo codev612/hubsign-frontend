@@ -63,3 +63,9 @@ export interface FileAddBoardProps {
   setFile: (file: any) => void;
   setFilename: (filename: string) => void;
 }
+
+//document data
+export interface DocData {
+  filename: string,
+  recipients: Recipient[],
+}

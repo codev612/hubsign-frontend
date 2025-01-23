@@ -1,7 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
+import { generateColorForRecipient } from '../randomcolor';
+import { fabric } from 'fabric';
 
 class CheckboxManager {
     private recipient: string = "";
+    private signMode: boolean = false;
+    private color: string;
     private defaultTick: boolean = true;
     private checkedBydefault: boolean = true;
     private required: boolean = true;
@@ -20,6 +24,7 @@ class CheckboxManager {
     private checkboxElements: fabric.Object[] = [];
     private addButtonElement: fabric.Object[] = [];
     private checkboxGroup: fabric.Group;
+    private ticketPattern: fabric.Pattern;
     private setCheckboxItems: React.Dispatch<React.SetStateAction<number>>;
     private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
    
@@ -28,6 +33,8 @@ class CheckboxManager {
       startLeft: number,
       startTop: number,
       numCheckboxes: number,
+      recipient: string,
+      signMode: boolean,
       setCheckboxItems: React.Dispatch<React.SetStateAction<number>>,
       setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
     ) {
@@ -39,7 +46,11 @@ class CheckboxManager {
       this.scaleY = 1.0;
       this.currentTop = startTop;
       this.numCheckboxes = numCheckboxes;
-      
+
+      this.recipient = recipient;
+      this.signMode = signMode;
+      this.color = generateColorForRecipient(recipient);
+
       this.checkboxGroup = this.createCheckboxGroup();
   
       this.setCheckboxItems = setCheckboxItems;
@@ -49,13 +60,33 @@ class CheckboxManager {
   
       // Track events of the checkbox group
       this.trackCheckboxGroup();
+
+      const patternCanvas = document.createElement('canvas');
+      patternCanvas.width = 20; // Width of the pattern
+      patternCanvas.height = 20; // Height of the pattern
+      const ctx = patternCanvas.getContext('2d')!;
+      
+      // Draw a tick mark on the canvas
+      ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
+      ctx.strokeStyle = this.color; // Use recipient's color
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(4, 10); // Start of the tick
+      ctx.lineTo(8, 14); // Middle point of the tick
+      ctx.lineTo(16, 4); // End of the tick
+      ctx.stroke();
+
+      const patternDataURL = patternCanvas.toDataURL();
+      // Create the Fabric.js pattern
+      this.ticketPattern = new fabric.Pattern({
+          source: patternDataURL,
+          repeat: 'repeat',
+      });
     }
   
-    private createCheckboxes() {
+    private createCheckboxes () {
       this.checkboxElements = [];
       this.containerTop = this.currentTop;
-
-      console.log(this.recipient )
       
       for (let i = 0; i < this.numCheckboxes; i++) {
         const checkbox = new fabric.Rect({
@@ -63,54 +94,31 @@ class CheckboxManager {
           top: this.containerTop + 40 * (i+1) + 20 * i,
           width: 20,
           height: 20,
-          fill: this.checkedBydefault ? 'black' : 'white',
-          stroke: '#000',
+          // fill: this.checkedBydefault ? "white" : "#000",
+          fill: this.checkedBydefault ? this.ticketPattern : "white",
+          opacity: 1,
+          borderColor: `${this.color}`,
+          stroke: `${this.color}`,
           strokeWidth: 2,
           selectable: true,
           hasControls: false,
           lockMovementX: true,
+          hasBorders: false,
           lockMovementY: true,
         });
-  
-        // const label = new fabric.Text(`Option ${i + 1}`, {
-        //   left: this.containerLeft + 30,
-        //   top: this.containerTop,
-        //   fontSize: 16,
-        //   fill: '#000',
-        // });
   
         let isChecked = this.checkboxesState[i];
   
         checkbox.on('mousedown', () => {
           isChecked = !isChecked;
           this.checkboxesState[i] = isChecked;
-          checkbox.set('fill', isChecked ? '#000' : 'white');
-  
-          // Remove existing checkmarks
-          this.checkboxObjects.forEach((obj) => {
-            if (obj instanceof fabric.Text && obj.text === '✔' && obj.left === checkbox.left && obj.top === checkbox.top) {
-              this.checkboxObjects.splice(this.checkboxObjects.indexOf(obj), 1);
-            }
-          });
-  
-          if (isChecked) {
-            const checkmark = new fabric.Text('✔', {
-              left: checkbox.left! + 3,
-              top: checkbox.top! + 2,
-              fontSize: 18,
-              fill: '#fff',
-            });
-            this.checkboxObjects.push(checkmark);
-            this.canvi.add(checkmark);
-          }
+          checkbox.set('fill', isChecked ? this.ticketPattern : "white");
+
           this.canvi.renderAll();
         });
-  
         // Add checkbox and label to elements
         this.checkboxElements.push(checkbox);
-        // this.containerTop += 40; // Adjust the top position for the next checkbox
       }
-      // this.containerTop += 40;
     }
   
     private createAddCheckboxButton() {
@@ -132,8 +140,8 @@ class CheckboxManager {
     }
   
     private addNewCheckbox() {
-      this.scaleX = this.scaleX*this.checkboxGroup.scaleX!;
-      this.scaleY = this.scaleY*this.checkboxGroup.scaleY!;
+      this.scaleX = this.scaleX * this.checkboxGroup.scaleX!;
+      this.scaleY = this.scaleY * this.checkboxGroup.scaleY!;
   
       const checkbox = new fabric.Rect({
         left: this.containerLeft,
@@ -154,7 +162,7 @@ class CheckboxManager {
       checkbox.on('mousedown', () => {
         isChecked = !isChecked;
         this.checkboxesState[this.checkboxElements.length] = isChecked;
-        checkbox.set('fill', isChecked ? '#000' : 'white');
+        // checkbox.set('fill', isChecked ? '#000' : 'white');
   
         // Remove existing checkmarks
         this.checkboxObjects.forEach((obj) => {
@@ -165,10 +173,10 @@ class CheckboxManager {
   
         if (isChecked) {
           const checkmark = new fabric.Text('✔', {
-            left: checkbox.left! + 3,
-            top: checkbox.top! + 2,
+            left: this.containerLeft,
+            top: this.containerTop,
             fontSize: 18,
-            fill: '#fff',
+            fill: 'white',
           });
           this.checkboxObjects.push(checkmark);
           this.canvi.add(checkmark);
@@ -183,7 +191,7 @@ class CheckboxManager {
   
     private createCheckboxGroup(): fabric.Group {
       this.createCheckboxes(); // Initialize checkboxes
-      this.createAddCheckboxButton(); // Add the "+" button to add checkboxes
+      // this.createAddCheckboxButton(); // Add the "+" button to add checkboxes
       const checkboxtgroup = new fabric.Group(this.addButtonElement.concat(this.checkboxElements), {
         left: this.containerLeft,
         top: this.currentTop,

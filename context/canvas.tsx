@@ -45,6 +45,8 @@ type CanvasContextProps = {
   setEdits: (edits: Record<number, any>) => void;
   showCheckboxSettingForm: any,
   setShowCheckboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  activeRecipient:string;
+  setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
@@ -96,6 +98,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       required: true,
     },
   });
+
+  const [activeRecipient, setActiveRecipient] = useState<string>("")
 
   useEffect(() => {
     const wrapper = document.getElementById("canvasWrapper");
@@ -268,7 +272,16 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   //checkbox
   const addCheckbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
 
-    const checkboxManager = new CheckboxManager(canvi, startLeft, startTop, 1, setCheckboxItems, setShowCheckboxSettingForm); // Initialize with 3 checkboxes
+    const checkboxManager = new CheckboxManager(
+      canvi, 
+      startLeft, 
+      startTop, 
+      1, 
+      activeRecipient,
+      false,
+      setCheckboxItems, 
+      setShowCheckboxSettingForm
+    ); // Initialize with 1 checkboxes
     checkboxManager.addToCanvas(); // Add the group to the canvas
   
     // return checkboxGroup; // Return the group for future use if needed
@@ -329,6 +342,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setEdits,
         showCheckboxSettingForm,
         setShowCheckboxSettingForm,
+        activeRecipient,
+        setActiveRecipient,
       }}
     >
       {children}

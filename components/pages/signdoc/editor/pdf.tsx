@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { Document, Page, pdfjs } from 'react-pdf';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
-import { useDropzone } from 'react-dropzone';
 import { fabric } from 'fabric';
+import Cookies from 'js-cookie';
 import { useButtons } from '@/context/canvas';
-import { MdClose } from 'react-icons/md';
 import Loader from './Loader';
-import { Icon } from './Icon';
 import SideBar from '@/components/pages/signdoc/editor/SideBar';
 import ControlBar from './ControlBar';
 import Checkboxgroup from './settingforms/checkboxgroup';
+import { DocData } from '@/interface/interface';
 
 const PDFBoard: React.FC = () => {
+  const params = useParams();
   const contextValues = useButtons();
   const [docIsLoading, setDocIsLoading] = useState<boolean>(true);
+  const [docData, setDocData] = useState<DocData>({
+    filename:"",
+    recipients: []
+  })
 
   const showCheckboxSettingForm = contextValues.showCheckboxSettingForm;
   const setShowCheckboxSettingForm = contextValues.setShowCheckboxSettingForm;
@@ -29,6 +34,35 @@ const PDFBoard: React.FC = () => {
   //     'application/pdf': ['.pdf']
   //   }
   // });
+
+  useEffect(() => {
+    const fetchDocumentData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/document/${params.id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("session") || ""}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const json = await response.json();
+        setDocData({ ...docData, filename: json.filename, recipients: json.recipients });
+      } catch (error) {
+        // setError("Failed to fetch data");
+        console.error(error);
+      } finally {
+        // setLoading(false); // Set loading to false when fetching is done
+      }
+    };
+    fetchDocumentData();
+  }, [])
 
   function onDocumentLoadSuccess({ numPages }: PDFDocumentProxy): void {
     contextValues.setEdits({});
@@ -80,7 +114,7 @@ const PDFBoard: React.FC = () => {
 
   return (
     <div className='min-h-[100vh]'>
-      <SideBar />
+      <SideBar docData={docData} />
       <div className="w-full">
         <div className="flex flex-col justify-center items-center">
           <div className='w-[868]'>
@@ -96,9 +130,9 @@ const PDFBoard: React.FC = () => {
               </>
             )}
             
-            <Document
+            {docData.filename ? <Document
               // file={contextValues.selectedFile}
-              file={"http://localhost:4000/document/pdf/1737528220454.pdf"}
+              file={`${process.env.NEXT_PUBLIC_SERVER_URL}/document/pdf/${docData.filename}`}
               onLoadSuccess={onDocumentLoadSuccess}
               className="flex justify-center"
             >
@@ -128,7 +162,7 @@ const PDFBoard: React.FC = () => {
                   />
                 </div>
               </div>
-            </Document>
+            </Document> : ""}
           </div>
         </div>
         <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">

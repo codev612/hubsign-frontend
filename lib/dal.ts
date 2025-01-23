@@ -22,7 +22,7 @@ export const getUser = cache(async () => {
   if (!session) return null;
 
   try {
-    const response = await fetch(`${siteConfig.links.server}/auth/profile`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/profile`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export const getContacts = async () => {
   if (!session) return null;
 
   try {
-    const response = await fetch(`${siteConfig.links.server}/contacts`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

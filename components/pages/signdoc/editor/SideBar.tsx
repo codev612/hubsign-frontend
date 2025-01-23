@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CgFormatText } from 'react-icons/cg';
 import { TbBookDownload } from 'react-icons/tb';
 import { BiHide, BiImageAdd, BiShow } from 'react-icons/bi';
@@ -13,15 +13,25 @@ import Tooltip from '@mui/material/Tooltip';
 import { SketchPicker, ColorResult } from 'react-color';
 import ExportPopup from './ExportPopup';
 import { Select, SelectItem } from '@heroui/react';
+import { DocData } from '@/interface/interface';
+// import { DocData } from '@/interface/interface';
 
 type AnchorElement = HTMLElement | null;
 
-const SideBar: React.FC = () => {
+type SideBarProps = {
+    docData: DocData;
+};
+
+const SideBar: React.FC<SideBarProps> = ({docData}) => {
     const contextValues = useButtons();
     const [openColor, setOpenColor] = useState<AnchorElement>(null);
     const [openBorderColor, setOpenBorderColor] = useState<AnchorElement>(null);
     const [openStroke, setOpenStroke] = useState<AnchorElement>(null);
     const [openExporter, setOpenExporter] = useState<boolean>(false);
+
+    useEffect(()=>{
+        if(docData.recipients.length) contextValues.setActiveRecipient(docData.recipients[0].email)
+    }, [docData])
 
     return (
         <div className="fixed z-50 top-20 md:top-20 left-0 md:h-[100vh] md:w-max h-[15vh] w-full flex md:flex-col flex-row items-center pl-6">
@@ -47,11 +57,14 @@ const SideBar: React.FC = () => {
                         <option>Myself</option>
                         <option>Myself</option>
                     </select> */}
-                    <Select defaultSelectedKeys={["dmytrozaiets66@gmail.com"]}>
-                        <SelectItem key="dmytrozaiets66@gmail.com">Myself</SelectItem>
-                        <SelectItem>Myself</SelectItem>
-                        <SelectItem>Myself</SelectItem>
-                    </Select>
+                    {docData.recipients.length ? <Select aria-label="recipients" defaultSelectedKeys={[docData.recipients[0].email]} onChange={(e)=>contextValues.setActiveRecipient(e.target.value)}>
+                        {docData.recipients.map((item, index) => (
+                            <SelectItem key={item.email || index} value={item.email}>
+                                {item.name}
+                            </SelectItem>
+                        ))}
+                    </Select> : ""}
+
                 </div>
                 <h1>Fields</h1>
                 <Tooltip title="TextBox">
