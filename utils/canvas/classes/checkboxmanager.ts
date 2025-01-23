@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { generateColorForRecipient } from '../randomcolor';
 import { fabric } from 'fabric';
 
@@ -10,7 +9,7 @@ class CheckboxManager {
     private checkedBydefault: boolean = true;
     private required: boolean = true;
     private controlType = "checkbox";
-    private id: string;
+    private uid: string;
     private canvi: fabric.Canvas;
     private containerLeft: number;
     private containerTop: number;
@@ -24,11 +23,13 @@ class CheckboxManager {
     private checkboxElements: fabric.Object[] = [];
     private addButtonElement: fabric.Object[] = [];
     private checkboxGroup: fabric.Group;
-    private ticketPattern: fabric.Pattern;
+    private tickPattern: fabric.Pattern;
+    private crossPattern: fabric.Pattern;
     private setCheckboxItems: React.Dispatch<React.SetStateAction<number>>;
     private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
    
     constructor(
+      uid: string,
       canvi: fabric.Canvas,
       startLeft: number,
       startTop: number,
@@ -38,7 +39,7 @@ class CheckboxManager {
       setCheckboxItems: React.Dispatch<React.SetStateAction<number>>,
       setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
     ) {
-      this.id = uuidv4();
+      this.uid = uid;
       this.canvi = canvi;
       this.containerLeft = startLeft;
       this.containerTop = startTop;
@@ -61,27 +62,9 @@ class CheckboxManager {
       // Track events of the checkbox group
       this.trackCheckboxGroup();
 
-      const patternCanvas = document.createElement('canvas');
-      patternCanvas.width = 20; // Width of the pattern
-      patternCanvas.height = 20; // Height of the pattern
-      const ctx = patternCanvas.getContext('2d')!;
-      
-      // Draw a tick mark on the canvas
-      ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
-      ctx.strokeStyle = this.color; // Use recipient's color
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(4, 10); // Start of the tick
-      ctx.lineTo(8, 14); // Middle point of the tick
-      ctx.lineTo(16, 4); // End of the tick
-      ctx.stroke();
-
-      const patternDataURL = patternCanvas.toDataURL();
-      // Create the Fabric.js pattern
-      this.ticketPattern = new fabric.Pattern({
-          source: patternDataURL,
-          repeat: 'repeat',
-      });
+      this.tickPattern = new fabric.Pattern({ source: '', repeat: 'no-repeat' });
+      this.crossPattern = new fabric.Pattern({ source: '', repeat: 'no-repeat' });
+      this.createTickPattern();
     }
   
     private createCheckboxes () {
@@ -94,8 +77,7 @@ class CheckboxManager {
           top: this.containerTop + 40 * (i+1) + 20 * i,
           width: 20,
           height: 20,
-          // fill: this.checkedBydefault ? "white" : "#000",
-          fill: this.checkedBydefault ? this.ticketPattern : "white",
+          fill: this.checkedBydefault ? this.tickPattern : this.crossPattern,
           opacity: 1,
           borderColor: `${this.color}`,
           stroke: `${this.color}`,
@@ -105,6 +87,8 @@ class CheckboxManager {
           lockMovementX: true,
           hasBorders: false,
           lockMovementY: true,
+          rx: 5, // Border radius for horizontal corners
+          ry: 5,
         });
   
         let isChecked = this.checkboxesState[i];
@@ -112,7 +96,7 @@ class CheckboxManager {
         checkbox.on('mousedown', () => {
           isChecked = !isChecked;
           this.checkboxesState[i] = isChecked;
-          checkbox.set('fill', isChecked ? this.ticketPattern : "white");
+          checkbox.set('fill', isChecked ? this.defaultTick? this.tickPattern : this.crossPattern : "white");
 
           this.canvi.renderAll();
         });
@@ -155,6 +139,7 @@ class CheckboxManager {
         hasControls: false,
         lockMovementX: true,
         lockMovementY: true,
+        
       });
   
       let isChecked = this.checkboxesState[this.checkboxElements.length];
@@ -220,16 +205,17 @@ class CheckboxManager {
     private showShowSettingForm() {
       const groupPosition = this.checkboxGroup.getBoundingRect();
       this.setShowSettingForm({
+        uid: this.uid,
         show: true,
         position: {
           left: groupPosition.left, // Position horizontally below the group
           top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
         },
         value: {
-            recipient: this.recipient,
-            defaultTick: this.defaultTick,
-            checkedBydefault: this.checkedBydefault,
-            required: this.required,
+          recipient: this.recipient,
+          defaultTick: this.defaultTick,
+          checkedBydefault: this.checkedBydefault,
+          required: this.required,
         }
       });
     }
@@ -241,7 +227,76 @@ class CheckboxManager {
   
     public updateCheckboxGroup() {
       console.log("updated");
-      this.canvi.renderAll(); // Re-render canvas
+      // Update the color of each checkbox individually
+      this.checkboxElements.forEach((checkbox, index) => {
+        checkbox.set({
+            stroke: this.color,
+            borderColor: this.color,
+            fill: "white", // Update the fill based on the state
+          });
+      });
+
+      this.canvi.renderAll() // Re-render canvas
+    }
+
+    private createTickPattern () {
+
+      this.color = generateColorForRecipient(this.recipient);
+
+      const patternCanvas = document.createElement('canvas');
+      patternCanvas.width = 20;
+      patternCanvas.height = 20;
+      const ctx = patternCanvas.getContext('2d')!;
+
+      // Recreate the tick pattern
+      ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
+      ctx.strokeStyle = this.color; // Update the color
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(4, 10);
+      ctx.lineTo(8, 14);
+      ctx.lineTo(16, 4);
+      ctx.stroke();
+
+      const tickPatternDataURL = patternCanvas.toDataURL();
+      this.tickPattern = new fabric.Pattern({
+          source: tickPatternDataURL,
+          repeat: 'repeat',
+      });
+
+      ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
+      ctx.strokeStyle = this.color; // Update the color
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(4, 4);
+      ctx.lineTo(16, 16);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(16, 4);
+      ctx.lineTo(4, 16);
+      ctx.stroke();
+
+      const crossPatternDataURL = patternCanvas.toDataURL();
+      this.crossPattern = new fabric.Pattern({
+          source: crossPatternDataURL,
+          repeat: 'repeat',
+      });
+
+    }
+
+    public setValue(value:any) {
+      console.log("setValue", value);
+      this.recipient = value.recipient;
+      this.checkedBydefault = value.defaultCheck;
+      this.defaultTick = value.defaultTick==="tick" ? true:false;
+      this.required = value.required;
+
+      // Update the color and patterns based on the new recipient
+      this.createTickPattern()   
+
+      // // Refresh the checkbox group
+      this.updateCheckboxGroup();
     }
 }
 

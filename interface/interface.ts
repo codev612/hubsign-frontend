@@ -52,6 +52,7 @@ export interface CheckboxSettings {
 }
 
 export interface CheckboxSettingFormState {
+  uid: string,
   show: boolean;
   position: Position;
   value: CheckboxSettings;

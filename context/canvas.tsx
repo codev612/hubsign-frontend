@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState, createContext, useContext } from 'r
 import { fabric } from 'fabric';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { v4 as uuidv4 } from 'uuid';
 import { Roboto } from 'next/font/google';
 import CheckboxManager from '@/utils/canvas/classes/checkboxmanager';
 import { CheckboxSettingFormState } from '@/interface/interface';
@@ -47,6 +48,7 @@ type CanvasContextProps = {
   setShowCheckboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
   activeRecipient:string;
   setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
+  handleCanvasObjectSetValue: (payload:any) => void;
 };
 
 const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
@@ -86,9 +88,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [edits, setEdits] = React.useState({});
 
   const [checkboxItems, setCheckboxItems] = useState(1);
-  // const [showSettingForm, setShowSettingForm] = useState(false);
 
   const [showCheckboxSettingForm, setShowCheckboxSettingForm] = useState<CheckboxSettingFormState>({
+    uid: "",
     show: false,
     position: { left: 0, top: 0 },
     value: {
@@ -99,7 +101,21 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     },
   });
 
-  const [activeRecipient, setActiveRecipient] = useState<string>("")
+  const [activeRecipient, setActiveRecipient] = useState<string>("");
+
+  //stroe canvas objects
+  type CanvasObjects = {
+    uid:string;
+    object: any
+  }
+  const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([])
+
+  const handleCanvasObjectSetValue = (payload:any) => {
+    console.log(payload)
+    if(canvas) {
+      canvasObjects.filter(item=>item.uid===payload.uid)[0].object.setValue(payload.value)
+    }
+  }
 
   useEffect(() => {
     const wrapper = document.getElementById("canvasWrapper");
@@ -271,8 +287,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
 
   //checkbox
   const addCheckbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
-
-    const checkboxManager = new CheckboxManager(
+    const uid = uuidv4();
+    const checkboxGroup = new CheckboxManager(
+      uid,
       canvi, 
       startLeft, 
       startTop, 
@@ -282,7 +299,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       setCheckboxItems, 
       setShowCheckboxSettingForm
     ); // Initialize with 1 checkboxes
-    checkboxManager.addToCanvas(); // Add the group to the canvas
+    setCanvasObjects([...canvasObjects, {uid, object:checkboxGroup}]);
+    
+    checkboxGroup.addToCanvas(); // Add the group to the canvas
   
     // return checkboxGroup; // Return the group for future use if needed
   };
@@ -344,6 +363,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setShowCheckboxSettingForm,
         activeRecipient,
         setActiveRecipient,
+        handleCanvasObjectSetValue,
       }}
     >
       {children}

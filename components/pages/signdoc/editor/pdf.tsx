@@ -20,7 +20,7 @@ const PDFBoard: React.FC = () => {
   const [docData, setDocData] = useState<DocData>({
     filename:"",
     recipients: []
-  })
+  });
 
   const showCheckboxSettingForm = contextValues.showCheckboxSettingForm;
   const setShowCheckboxSettingForm = contextValues.setShowCheckboxSettingForm;
@@ -144,8 +144,10 @@ const PDFBoard: React.FC = () => {
                 >
                   <canvas id="canvas" />
                   {showCheckboxSettingForm.show && <Checkboxgroup 
-                            showCheckboxSettingForm={showCheckboxSettingForm} 
-                            setShowCheckboxSettingForm={setShowCheckboxSettingForm} 
+                    showCheckboxSettingForm={showCheckboxSettingForm} 
+                    setShowCheckboxSettingForm={setShowCheckboxSettingForm}
+                    recipients={docData.recipients}
+                    setCheckboxSetting={contextValues.handleCanvasObjectSetValue}
                   />}
                 </div>
                 <div
