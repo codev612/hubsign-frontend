@@ -71,7 +71,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
           <DropdownItem key="analytics">Analytics</DropdownItem>
           <DropdownItem key="system">System</DropdownItem>
           <DropdownItem key="configurations">Configurations</DropdownItem> */}
-          <DropdownItem key="gotodashboard">Go to the dashboard</DropdownItem>
+          <DropdownItem key="gotodashboard" onPress={()=>router.push("/dashboard/documents/pending")}>Go to the dashboard</DropdownItem>
           <DropdownItem key="logout" color="danger" onPress={handleLogout}>
             Log Out
           </DropdownItem>

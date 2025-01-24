@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { TextboxSettingFormState } from "@/interface/interface";
-import { Checkbox, Button } from "@heroui/react";
+import { Checkbox, Button, Input } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
@@ -33,7 +33,7 @@ const TextboxGroup: React.FC<TextboxGroupProps> = ({ showTextboxSettingForm, set
             left: showTextboxSettingForm.position.left,
             top: showTextboxSettingForm.position.top,
         }}
-        className="absolute bg-white p-5 rounded-lg shadow-lg flex flex-col w-[260] gap-2 text-text"
+        className="absolute bg-white p-5 rounded-lg shadow-lg flex flex-col w-[300] gap-2 text-text"
     >
         <select value={selectRecipient} onChange={(e)=>setSelectRecipient(e.target.value)} className="border-1 rounded-md p-2">
             {
@@ -48,6 +48,7 @@ const TextboxGroup: React.FC<TextboxGroupProps> = ({ showTextboxSettingForm, set
         >
             Edit the placeholder text
         </Switch>
+        {customPlaceholder && <Input variant="bordered" placeholder={`By default "Enter value"`} value={placeholder} onValueChange={setPlaceholder} />}
         <div className="flex flex-row items-center justify-between">
             <Checkbox className="text-white" isSelected={checkRequired} onValueChange={()=>setCheckRequired(!checkRequired)}>Required</Checkbox>
             <div className="flex flex-row">

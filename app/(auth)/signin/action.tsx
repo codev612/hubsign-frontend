@@ -21,7 +21,7 @@ export async function signin(prevState: any, formData: FormData) {
   userInfo.email = formData.get("email") as string as string;
   userInfo.password = formData.get("password") as string as string;
 
-  const response = await fetch(`${siteConfig.links.server}/auth/signin`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

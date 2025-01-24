@@ -86,7 +86,7 @@ export default function Newpass() {
       setIsLoading(false);
 
       const response = await fetch(
-        `${siteConfig.links.server}/users/resetpass`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/users/resetpass`,
         {
           method: "POST",
           headers: {

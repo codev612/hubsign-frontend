@@ -62,9 +62,8 @@ class CheckboxManager {
       // Track events of the checkbox group
       this.trackCheckboxGroup();
 
-      this.tickPattern = new fabric.Pattern({ source: '', repeat: 'no-repeat' });
-      this.crossPattern = new fabric.Pattern({ source: '', repeat: 'no-repeat' });
-      this.createTickPattern();
+      this.tickPattern = this.createPattern()['tick'];
+      this.crossPattern = this.createPattern()['cross'];
 
       this.setupDeleteKeyHandler();
     }
@@ -74,12 +73,14 @@ class CheckboxManager {
       this.containerTop = this.currentTop;
       
       for (let i = 0; i < this.numCheckboxes; i++) {
+        console.log(this.tickPattern)
         const checkbox = new fabric.Rect({
           left: this.containerLeft,
           top: this.containerTop + 40 * (i+1) + 20 * i,
           width: 20,
           height: 20,
-          fill: this.checkedBydefault ? this.tickPattern : this.crossPattern,
+          // fill: this.checkedBydefault ? (this.defaultTick ? this.tickPattern : this.crossPattern) : "transparent",
+          fill: this.tickPattern,
           // backgroundColor:this.color,
           borderColor: `${this.color}`,
           stroke: `${this.color}`,
@@ -253,16 +254,16 @@ class CheckboxManager {
       // Update the color of each checkbox individually
       this.checkboxElements.forEach((checkbox, index) => {
         checkbox.set({
-            stroke: this.color,
-            borderColor: this.color,
-            fill: "transparent", // Update the fill based on the state
-          });
+          stroke: this.color,
+          borderColor: this.color,
+          fill: this.checkedBydefault ? (this.defaultTick? this.tickPattern : this.crossPattern) : "transparent", // Update the fill based on the state
+        });
       });
 
       this.canvi.renderAll() // Re-render canvas
     }
 
-    private createTickPattern () {
+    private createPattern () {
 
       this.color = generateColorForRecipient(this.recipient);
 
@@ -282,9 +283,9 @@ class CheckboxManager {
       ctx.stroke();
 
       const tickPatternDataURL = patternCanvas.toDataURL();
-      this.tickPattern = new fabric.Pattern({
+      const tickPattern = new fabric.Pattern({
           source: tickPatternDataURL,
-          repeat: 'repeat',
+          repeat: 'no-repeat',
       });
 
       ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
@@ -301,22 +302,25 @@ class CheckboxManager {
       ctx.stroke();
 
       const crossPatternDataURL = patternCanvas.toDataURL();
-      this.crossPattern = new fabric.Pattern({
+      const crossPattern = new fabric.Pattern({
           source: crossPatternDataURL,
-          repeat: 'repeat',
+          repeat: 'no-repeat',
       });
 
+      return {
+        tick: tickPattern,
+        cross: crossPattern,
+      }
     }
 
     public setValue(value:any) {
-      console.log("setValue", value);
       this.recipient = value.recipient;
       this.checkedBydefault = value.defaultCheck;
       this.defaultTick = value.defaultTick==="tick" ? true:false;
       this.required = value.required;
 
       // Update the color and patterns based on the new recipient
-      this.createTickPattern()   
+      this.createPattern()   
 
       // // Refresh the checkbox group
       this.updateCheckboxGroup();
@@ -335,7 +339,7 @@ class CheckboxManager {
       const activeObject = this.canvi.getActiveObject();
       if (activeObject === this.checkboxGroup) {
         this.canvi.remove(this.checkboxGroup);
-      
+    
         // Optional: Clear related data if necessary
         this.checkboxElements = [];
         this.checkboxesState = [];
@@ -343,7 +347,6 @@ class CheckboxManager {
         this.elements = [];
         
         // Trigger React state updates if required
-        this.setCheckboxItems((prev) => prev - 1);
         this.setShowSettingForm({ show: false });
       
         this.canvi.renderAll();
@@ -404,7 +407,7 @@ class CheckboxManager {
       manager.checkboxesState = parsed.checkboxesState;
   
       // Recreate the checkbox group and patterns
-      manager.createTickPattern();
+      manager.createPattern();
       manager.updateCheckboxGroup();
   
       return manager;

@@ -146,11 +146,22 @@ class TextboxManager {
 
 
     public setValue(value:any) {
-      console.log("setValue", value);
       this.recipient = value.recipient;
-    //   this.checkedBydefault = value.defaultCheck;
-    //   this.defaultTick = value.defaultTick==="tick" ? true : false;
+      this.customPlaceholder = value.customPlaceholder;
+      this.placeholder = value.placeholder;
       this.required = value.required;
+
+      this.updateTextboxGroup();
+    }
+
+    public updateTextboxGroup() {
+        console.log("updated");
+        // Update the color of each checkbox individually
+        this.textbox.set({
+            backgroundColor: generateColorForRecipient(this.recipient), // Update the fill based on the state
+        });
+  
+        this.canvi.renderAll() // Re-render canvas
     }
 
     //for store on database
