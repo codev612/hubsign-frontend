@@ -58,6 +58,20 @@ export interface CheckboxSettingFormState {
   value: CheckboxSettings;
 }
 
+export interface TextboxSettings {
+  recipient: string;
+  customPlaceholder: boolean;
+  placeholder: string;
+  required: boolean;
+}
+
+export interface TextboxSettingFormState {
+  uid: string,
+  show: boolean;
+  position: Position;
+  value: TextboxSettings;
+}
+
 //adddoc component
 export interface FileAddBoardProps {
   filename: string;

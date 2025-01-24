@@ -1,25 +1,15 @@
-// fabric-custom.d.ts
-import { fabric } from 'fabric';
-console.log('fabric-custom.d.ts loaded');
-declare global {
-    namespace fabric {
-        export class CheckboxGroup extends fabric.Group {
-            checkboxes: fabric.Rect[];
-            buttonText: fabric.Text;
-            numCheckboxes: number;
-            
-            constructor(options: CheckboxGroupOptions);
-            
-            addCheckbox(): void;
-            removeCheckbox(): void;
-            isCheckboxChecked(index: number): boolean;
-            toggleCheckbox(index: number): void;
-        }
-        
-        export interface CheckboxGroupOptions extends fabric.IObjectOptions {
-            numCheckboxes: number;
-            startLeft: number;
-            startTop: number;
-        }
-    }
+import { fabric } from "fabric";
+import { ITextboxOptions } from "fabric/fabric-impl";
+
+declare module "fabric" {
+  export interface CustomTextboxOptions extends ITextboxOptions {
+    backgroundColor?: string;
+    borderColor?: string;
+  }
+
+  export class CustomTextbox extends fabric.Textbox {
+    constructor(text: string, options?: CustomTextboxOptions);
+    backgroundColor?: string;
+    borderColor?: string;
+  }
 }

@@ -7,14 +7,18 @@ import html2canvas from 'html2canvas';
 import { v4 as uuidv4 } from 'uuid';
 import { Roboto } from 'next/font/google';
 import CheckboxManager from '@/utils/canvas/classes/checkboxmanager';
-import { CheckboxSettingFormState } from '@/interface/interface';
+import TextboxManager from '@/utils/canvas/classes/textboxmanager';
+import { 
+  CheckboxSettingFormState,
+  TextboxSettingFormState
+} from '@/interface/interface';
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
   setCanvas: React.Dispatch<React.SetStateAction<fabric.Canvas | null>>;
   addRect: (canvi: fabric.Canvas) => void;
   addCircle: (canvi: fabric.Canvas) => void;
-  addText: (canvi: fabric.Canvas) => void;
+  addText: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
   addCheckbox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
   addImage: (e: React.ChangeEvent<HTMLInputElement>, canvi: fabric.Canvas) => void;
   addHighlight: (canvi: fabric.Canvas) => void;
@@ -44,8 +48,12 @@ type CanvasContextProps = {
   // canvas edits
   edits: Record<number, any>;
   setEdits: (edits: Record<number, any>) => void;
+  //setting form controls
   showCheckboxSettingForm: any,
   setShowCheckboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  showTextboxSettingForm: any,
+  setShowTextboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
+  //store form settings on canvas object
   activeRecipient:string;
   setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
   handleCanvasObjectSetValue: (payload:any) => void;
@@ -88,7 +96,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [edits, setEdits] = React.useState({});
 
   const [checkboxItems, setCheckboxItems] = useState(1);
-
+  //setting form controls
   const [showCheckboxSettingForm, setShowCheckboxSettingForm] = useState<CheckboxSettingFormState>({
     uid: "",
     show: false,
@@ -97,6 +105,18 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       recipient: "",
       defaultTick: true,
       checkedBydefault: true,
+      required: true,
+    },
+  });
+
+  const [showTextboxSettingForm, setShowTextboxSettingForm] = useState<TextboxSettingFormState>({
+    uid: "",
+    show: false,
+    position: { left: 0, top: 0 },
+    value: {
+      recipient: "",
+      customPlaceholder: false,
+      placeholder: "Enter value",
       required: true,
     },
   });
@@ -246,43 +266,21 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     canvi.isDrawingMode = false;
   };
 
-  const addText = (canvi: fabric.Canvas) => {
-    const text = new fabric.Textbox("Enter a value...", {
-      fill: color,
-      fontFamily: roboto.style.fontFamily,
-    });
-    canvi.add(text);
-    canvi.renderAll();
-    canvi.isDrawingMode = false;
-
-    // Enable interactive resizing and moving of the textbox
-  text.setControlsVisibility({
-    tl: true, // top-left
-    tr: true, // top-right
-    bl: true, // bottom-left
-    br: true, // bottom-right
-    mt: true, // middle-top
-    mb: true, // middle-bottom
-    ml: true, // middle-left
-    mr: true, // middle-right
-  });
-
-    // Optionally, handle events for resizing or moving
-    text.on('moving', (e) => {
-      console.log('Textbox is moving:', e.target?.left, e.target?.top);
-    });
-
-    text.on('scaling', (e) => {
-      console.log('Textbox is scaling:', e.target?.scaleX, e.target?.scaleY);
-    });
-
-    text.on('modified', (e) => {
-      console.log('Textbox modified:', e);
-    });
-
-    text.on('selected', () => {
-      console.log('Textbox selected');
-    });
+  const addText = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+    const uid = uuidv4();
+    const textboxGroup = new TextboxManager(
+      uid,
+      canvi, 
+      startLeft, 
+      startTop, 
+      1, 
+      activeRecipient,
+      false,
+      setShowTextboxSettingForm
+    ); // Initialize with 1 checkboxes
+    setCanvasObjects([...canvasObjects, {uid, object:textboxGroup}]);
+    
+    textboxGroup.addToCanvas();
   };
 
   //checkbox
@@ -361,6 +359,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setEdits,
         showCheckboxSettingForm,
         setShowCheckboxSettingForm,
+        showTextboxSettingForm,
+        setShowTextboxSettingForm,
         activeRecipient,
         setActiveRecipient,
         handleCanvasObjectSetValue,

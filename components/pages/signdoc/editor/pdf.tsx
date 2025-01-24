@@ -12,6 +12,7 @@ import SideBar from '@/components/pages/signdoc/editor/SideBar';
 import ControlBar from './ControlBar';
 import Checkboxgroup from './settingforms/checkboxgroup';
 import { DocData } from '@/interface/interface';
+import TextboxGroup from './settingforms/textboxgroup';
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -21,9 +22,12 @@ const PDFBoard: React.FC = () => {
     filename:"",
     recipients: []
   });
-
+  //setting form controls 
   const showCheckboxSettingForm = contextValues.showCheckboxSettingForm;
   const setShowCheckboxSettingForm = contextValues.setShowCheckboxSettingForm;
+
+  const showTextboxSettingForm = contextValues.showTextboxSettingForm;
+  const setShowTextboxSettingForm = contextValues.setShowTextboxSettingForm;
 
   // const { getRootProps, getInputProps } = useDropzone({
   //   onDrop: (files: File[]) => {
@@ -143,11 +147,18 @@ const PDFBoard: React.FC = () => {
                   style={{ visibility: "visible" }}
                 >
                   <canvas id="canvas" />
+                  {/* setting form controls */}
                   {showCheckboxSettingForm.show && <Checkboxgroup 
                     showCheckboxSettingForm={showCheckboxSettingForm} 
                     setShowCheckboxSettingForm={setShowCheckboxSettingForm}
                     recipients={docData.recipients}
                     setCheckboxSetting={contextValues.handleCanvasObjectSetValue}
+                  />}
+                  {showTextboxSettingForm.show && <TextboxGroup 
+                    showTextboxSettingForm={showTextboxSettingForm} 
+                    setShowTextboxSettingForm={setShowTextboxSettingForm}
+                    recipients={docData.recipients}
+                    setTextboxSetting={contextValues.handleCanvasObjectSetValue}
                   />}
                 </div>
                 <div

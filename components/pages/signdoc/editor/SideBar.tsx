@@ -70,14 +70,14 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                 <Tooltip title="TextBox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/checkboxgroup.png' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)}/>
+                        <img src='/assets/img/controls/textbox.png' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!,100, 100, 4)}/>
                         <p className='text-text text-sm'>Textbox</p>
                     </div>
                 </Tooltip>
                 <Tooltip title="Checkbox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/textbox.png' className='cursor-pointer' onClick={() => contextValues.addCheckbox(contextValues.canvas!, 100, 100, 4)}/>
+                        <img src='/assets/img/controls/checkboxgroup.png' className='cursor-pointer' onClick={() => contextValues.addCheckbox(contextValues.canvas!, 100, 100, 4)}/>
                         <p className='text-text text-sm'>Checkbox</p>
                     </div>
                 </Tooltip> 

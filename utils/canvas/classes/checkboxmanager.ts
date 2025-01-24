@@ -65,6 +65,8 @@ class CheckboxManager {
       this.tickPattern = new fabric.Pattern({ source: '', repeat: 'no-repeat' });
       this.crossPattern = new fabric.Pattern({ source: '', repeat: 'no-repeat' });
       this.createTickPattern();
+
+      this.setupDeleteKeyHandler();
     }
   
     private createCheckboxes () {
@@ -78,7 +80,7 @@ class CheckboxManager {
           width: 20,
           height: 20,
           fill: this.checkedBydefault ? this.tickPattern : this.crossPattern,
-          opacity: 1,
+          // backgroundColor:this.color,
           borderColor: `${this.color}`,
           stroke: `${this.color}`,
           strokeWidth: 2,
@@ -96,7 +98,7 @@ class CheckboxManager {
         checkbox.on('mousedown', () => {
           isChecked = !isChecked;
           this.checkboxesState[i] = isChecked;
-          checkbox.set('fill', isChecked ? this.defaultTick? this.tickPattern : this.crossPattern : "white");
+          checkbox.set('fill', isChecked ? this.defaultTick? this.tickPattern : this.crossPattern : "transparent");
 
           this.canvi.renderAll();
         });
@@ -132,7 +134,7 @@ class CheckboxManager {
         top: this.containerTop + this.checkboxGroup.getScaledHeight() + 20 * this.scaleY ,
         width: 20 * this.scaleX,
         height: 20 * this.scaleY,
-        fill: 'white',
+        fill: 'transparent',
         stroke: '#000',
         strokeWidth: 2,
         selectable: true,
@@ -177,13 +179,13 @@ class CheckboxManager {
     private createCheckboxGroup(): fabric.Group {
       this.createCheckboxes(); // Initialize checkboxes
       // this.createAddCheckboxButton(); // Add the "+" button to add checkboxes
-      const checkboxtgroup = new fabric.Group(this.addButtonElement.concat(this.checkboxElements), {
+      const checkboxgroup = new fabric.Group(this.addButtonElement.concat(this.checkboxElements), {
         left: this.containerLeft,
         top: this.currentTop,
         selectable: true,
         subTargetCheck: true,
       });
-      return checkboxtgroup;
+      return checkboxgroup;
     }
   
     // Track scaling of the checkboxGroup
@@ -191,14 +193,17 @@ class CheckboxManager {
       this.checkboxGroup.on('scaling', () => {
         this.showShowSettingForm();
       });
-      this.checkboxGroup.on('selected', () => {
+      this.checkboxGroup.on('mouseup', () => {
         this.showShowSettingForm();
+      });
+      this.checkboxGroup.on('deselected', () => {
+        this.closeShowSettingForm();
       });
       this.checkboxGroup.on('moving', () => {
         // Get the position of the group
         this.containerLeft = this.checkboxGroup.left!;
         this.containerTop = this.checkboxGroup.top!;
-        this.showShowSettingForm();
+        this.closeShowSettingForm();
       });
     }
   
@@ -207,6 +212,24 @@ class CheckboxManager {
       this.setShowSettingForm({
         uid: this.uid,
         show: true,
+        position: {
+          left: groupPosition.left, // Position horizontally below the group
+          top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
+        },
+        value: {
+          recipient: this.recipient,
+          defaultTick: this.defaultTick,
+          checkedBydefault: this.checkedBydefault,
+          required: this.required,
+        }
+      });
+    }
+
+    private closeShowSettingForm() {
+      const groupPosition = this.checkboxGroup.getBoundingRect();
+      this.setShowSettingForm({
+        uid: this.uid,
+        show: false,
         position: {
           left: groupPosition.left, // Position horizontally below the group
           top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
@@ -232,7 +255,7 @@ class CheckboxManager {
         checkbox.set({
             stroke: this.color,
             borderColor: this.color,
-            fill: "white", // Update the fill based on the state
+            fill: "transparent", // Update the fill based on the state
           });
       });
 
@@ -298,6 +321,111 @@ class CheckboxManager {
       // // Refresh the checkbox group
       this.updateCheckboxGroup();
     }
+
+    private setupDeleteKeyHandler() {
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Delete' || event.key === 'Backspace') {
+          this.removeCheckboxGroup();
+        }
+      });
+    }
+
+    public removeCheckboxGroup() {
+      // Remove the checkbox group from the canvas
+      const activeObject = this.canvi.getActiveObject();
+      if (activeObject === this.checkboxGroup) {
+        this.canvi.remove(this.checkboxGroup);
+      
+        // Optional: Clear related data if necessary
+        this.checkboxElements = [];
+        this.checkboxesState = [];
+        this.addButtonElement = [];
+        this.elements = [];
+        
+        // Trigger React state updates if required
+        this.setCheckboxItems((prev) => prev - 1);
+        this.setShowSettingForm({ show: false });
+      
+        this.canvi.renderAll();
+      }
+    }    
+
+    //for store on database
+    // Serialize the object state
+    public serialize(): string {
+      const serializableState = {
+        uid: this.uid,
+        containerLeft: this.containerLeft,
+        containerTop: this.containerTop,
+        scaleX: this.scaleX,
+        scaleY: this.scaleY,
+        currentTop: this.currentTop,
+        numCheckboxes: this.numCheckboxes,
+        recipient: this.recipient,
+        signMode: this.signMode,
+        color: this.color,
+        checkedBydefault: this.checkedBydefault,
+        defaultTick: this.defaultTick,
+        required: this.required,
+        checkboxesState: this.checkboxesState,
+      };
+  
+      return JSON.stringify(serializableState);
+    }
+  
+    // Restore the object state
+    public static deserialize(
+      json: string,
+      canvi: fabric.Canvas,
+      setCheckboxItems: React.Dispatch<React.SetStateAction<number>>,
+      setShowSettingForm: React.Dispatch<React.SetStateAction<any>>
+    ): CheckboxManager {
+      const parsed = JSON.parse(json);
+  
+      const manager = new CheckboxManager(
+        parsed.uid,
+        canvi,
+        parsed.containerLeft,
+        parsed.containerTop,
+        parsed.numCheckboxes,
+        parsed.recipient,
+        parsed.signMode,
+        setCheckboxItems,
+        setShowSettingForm
+      );
+  
+      manager.scaleX = parsed.scaleX;
+      manager.scaleY = parsed.scaleY;
+      manager.currentTop = parsed.currentTop;
+      manager.color = parsed.color;
+      manager.checkedBydefault = parsed.checkedBydefault;
+      manager.defaultTick = parsed.defaultTick;
+      manager.required = parsed.required;
+      manager.checkboxesState = parsed.checkboxesState;
+  
+      // Recreate the checkbox group and patterns
+      manager.createTickPattern();
+      manager.updateCheckboxGroup();
+  
+      return manager;
+    }
 }
 
 export default CheckboxManager;
+
+// const manager = new CheckboxManager(...); // Create the manager
+// const serializedManager = manager.serialize();
+
+// // Store serializedManager in your database
+// Retrieve the serialized object from the database
+// const storedJson = /* Fetch from DB */;
+
+// const restoredManager = CheckboxManager.deserialize(
+//   storedJson,
+//   fabricCanvas, // Pass the fabric.Canvas instance
+//   setCheckboxItems, // React state setter
+//   setShowSettingForm // React state setter
+// );
+
+// // Add the restored manager to the canvas
+// restoredManager.addToCanvas();
