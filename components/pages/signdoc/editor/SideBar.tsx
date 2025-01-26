@@ -15,6 +15,8 @@ import ExportPopup from './ExportPopup';
 import { Select, SelectItem } from '@heroui/react';
 import { DocData } from '@/interface/interface';
 // import { DocData } from '@/interface/interface';
+import Dot from '@/components/common/dot';
+import { generateColorForRecipient } from '@/utils/canvas/randomcolor';
 
 type AnchorElement = HTMLElement | null;
 
@@ -57,12 +59,20 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         <option>Myself</option>
                         <option>Myself</option>
                     </select> */}
-                    {docData.recipients.length ? <Select aria-label="recipients" defaultSelectedKeys={[docData.recipients[0].email]} onChange={(e)=>contextValues.setActiveRecipient(e.target.value)}>
-                        {docData.recipients.map((item, index) => (
-                            <SelectItem key={item.email || index} value={item.email}>
-                                {item.name}
+                    {docData.recipients.length ? <Select aria-label="recipients" 
+                    items={docData.recipients} 
+                    defaultSelectedKeys={[docData.recipients[0].email]} 
+                    onChange={(e)=>contextValues.setActiveRecipient(e.target.value)}
+                    renderValue={(items)=>{
+                        return items.map((item)=><Dot key={item.data?.email} text={item.data!.name!} color={generateColorForRecipient(item.data!.email!)} textColor='text-text' />)
+                    }}
+                    >
+                        {(item) =>
+                            <SelectItem key={item.email} value={item.email}>
+                                {/* {item.name} */}
+                                <Dot text={item.name} color={generateColorForRecipient(item.email)} textColor='text-text' />
                             </SelectItem>
-                        ))}
+                        }
                     </Select> : ""}
 
                 </div>
@@ -70,21 +80,21 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                 <Tooltip title="TextBox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/textbox.png' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!,100, 100, 4)}/>
+                        <img src='/assets/img/controls/textbox.svg' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!,100, 100, 4)}/>
                         <p className='text-text text-sm'>Textbox</p>
                     </div>
                 </Tooltip>
                 <Tooltip title="Checkbox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/checkboxgroup.png' className='cursor-pointer' onClick={() => contextValues.addCheckbox(contextValues.canvas!, 100, 100, 4)}/>
+                        <img src='/assets/img/controls/checkbox.svg' className='cursor-pointer' onClick={() => contextValues.addCheckbox(contextValues.canvas!, 100, 100, 4)}/>
                         <p className='text-text text-sm'>Checkbox</p>
                     </div>
                 </Tooltip> 
                 <Tooltip title="Checkbox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/checkboxgroup.png' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/>
+                        <img src='/assets/img/controls/radiobox.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/>
                         <p className='text-text text-sm'>Radiobox</p>
                     </div>
                 </Tooltip> 
