@@ -106,6 +106,8 @@ const PDFBoard: React.FC = () => {
       height:1123,
       width: 868,
       backgroundColor: 'rgba(0,0,0,0)',
+      stopContextMenu: true,
+      selection: false,
     });
     
     return fabricCanvas;
