@@ -28,6 +28,7 @@ class TextboxManager {
     private textvalue: string="Text";
     private customPlaceholder: boolean=false;
     private controlIconFile: ControlIconFile;
+    private svgGroup: fabric.Object | null = null;
    
     constructor(
       uid: string,
@@ -68,17 +69,15 @@ class TextboxManager {
 
         // Load SVG into Fabric.js
         fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-            const svgGroup = fabric.util.groupSVGElements(objects, options);
-
-            // Change fill and stroke colors dynamically
-            // svgGroup.set({
-            //     scaleX: 0.5,
-            //     scaleY: 0.5,
-            //     selectable: true,
-            // });
-
-            this.canvi.add(svgGroup);
-            this.canvi.renderAll();
+          if (this.svgGroup) {
+              this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+          }
+  
+          this.svgGroup = fabric.util.groupSVGElements(objects, options);
+          (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+  
+          this.canvi.add(this.svgGroup);
+          this.canvi.renderAll();
         });
       
         // Create a border rectangle
@@ -222,6 +221,37 @@ class TextboxManager {
       this.required = value.required;
       
       this.updateTextboxGroup();
+
+      // Update SVG color and replace existing one
+      const svgString = this.controlIconFile.textbox;
+      const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
+
+      // Store the previous position of svgGroup
+      let prevLeft = this.svgGroup?.left || this.containerLeft;
+      let prevTop = this.svgGroup?.top || this.containerTop;
+      let prevScaleX = this.svgGroup?.scaleX || 1;
+      let prevScaleY = this.svgGroup?.scaleY || 1;
+
+      // Remove the old SVG before adding a new one
+      if (this.svgGroup) {
+          this.canvi.remove(this.svgGroup);
+      }
+
+      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+          this.svgGroup = fabric.util.groupSVGElements(objects, options);
+          (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+
+          // Restore the position and scale of the new SVG
+          this.svgGroup.set({
+              left: prevLeft,
+              top: prevTop,
+              scaleX: prevScaleX,
+              scaleY: prevScaleY,
+          });
+
+          this.canvi.add(this.svgGroup);
+          this.canvi.renderAll();
+      });
     }
 
     public updateTextboxGroup() {

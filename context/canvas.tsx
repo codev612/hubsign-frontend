@@ -157,7 +157,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         // Parse and set the file content
         const data = await response.json();
         setControlIconFile({...controlIconFile, textbox: data.content});
-        console.log(data.content, 'filecontent');
       } catch (err) {
         console.error(err);
           // setError('Failed to fetch the file content.');
