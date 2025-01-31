@@ -11,7 +11,8 @@ import TextboxManager from '@/utils/canvas/classes/textboxmanager';
 import RadioboxManager from '@/utils/canvas/classes/radioboxmanager';
 import { 
   CheckboxSettingFormState,
-  TextboxSettingFormState
+  TextboxSettingFormState,
+  ControlIconFile,
 } from '@/interface/interface';
 
 type CanvasContextProps = {
@@ -95,6 +96,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [hideCanvas, setHiddenCanvas] = useState(false);
   const exportPage = useRef<HTMLDivElement | null>(null);
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
+  const [controlIconFile, setControlIconFile] = useState<ControlIconFile>({
+    textbox: ""
+  })
   // canvas edits
   const [edits, setEdits] = React.useState({});
 
@@ -139,6 +143,29 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       canvasObjects.filter(item=>item.uid===payload.uid)[0].object.setValue(payload.value)
     }
   }
+
+  useEffect(() => {
+    const fetchFileContent = async () => {
+      try {
+        const response = await fetch('/api/readfile/controls/textbox?filename=textbox');
+        // Check if the response is OK
+        if (!response.ok) {
+            const errorData = await response.json();
+            // setError(errorData.error || 'An error occurred while fetching the file.');
+            return;
+        }
+        // Parse and set the file content
+        const data = await response.json();
+        setControlIconFile({...controlIconFile, textbox: data.content});
+        console.log(data.content, 'filecontent');
+      } catch (err) {
+        console.error(err);
+          // setError('Failed to fetch the file content.');
+      }
+    };
+
+    fetchFileContent();
+  }, [])
 
   useEffect(() => {
     const wrapper = document.getElementById("canvasWrapper");
@@ -270,17 +297,17 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
 
   //textbox
-  const addText = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+  const addText = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
     const uid = uuidv4();
     const textboxGroup = new TextboxManager(
       uid,
       canvi, 
       startLeft, 
       startTop, 
-      1, 
       activeRecipient,
       false,
-      setShowTextboxSettingForm
+      setShowTextboxSettingForm,
+      controlIconFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object:textboxGroup}]);
     

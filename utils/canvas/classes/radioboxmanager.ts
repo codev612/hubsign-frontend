@@ -1,4 +1,4 @@
-import { generateColorForRecipient, hexToRgba } from '../randomcolor';
+import { generateColorForRecipient, hexToRgba } from '../utils';
 import { fabric } from 'fabric';
 
 class RadioboxManager {

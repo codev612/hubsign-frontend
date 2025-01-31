@@ -16,7 +16,7 @@ import { Select, SelectItem } from '@heroui/react';
 import { DocData } from '@/interface/interface';
 // import { DocData } from '@/interface/interface';
 import Dot from '@/components/common/dot';
-import { generateColorForRecipient } from '@/utils/canvas/randomcolor';
+import { generateColorForRecipient } from '@/utils/canvas/utils';
 
 type AnchorElement = HTMLElement | null;
 

@@ -84,3 +84,8 @@ export interface DocData {
   filename: string,
   recipients: Recipient[],
 }
+
+//canvas control icon file
+export interface ControlIconFile {
+  textbox: string,
+}

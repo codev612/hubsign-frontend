@@ -20,3 +20,10 @@ export const hexToRgba = (hex: string, opacity: number) => {
   // Return the rgba string with the specified opacity
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
+
+// Function to replace fill and stroke colors dynamically
+export const updateSvgColors = (svg:string, newFill:string, newStroke:string) => {
+  return svg
+      .replace(/fill="[^"]*"/g, `fill="${newFill}"`)   // Replace fill color
+      .replace(/stroke="[^"]*"/g, `stroke="${newStroke}"`); // Replace stroke color
+}

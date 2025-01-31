@@ -1,6 +1,8 @@
-import { generateColorForRecipient, hexToRgba } from '../randomcolor';
+import { generateColorForRecipient, hexToRgba, updateSvgColors } from '../utils';
 import { fabric } from 'fabric';
 import { Text } from 'fabric/fabric-impl';
+import { parse } from 'svg-parser'
+import { ControlIconFile } from '@/interface/interface';
 
 class TextboxManager {
     
@@ -15,7 +17,6 @@ class TextboxManager {
     private scaleX: number;
     private scaleY: number;
     private currentTop: number;
-    private numtextboxes: number;
     private textboxesState: boolean[] = [];
     private textbox: fabric.Object;
     private border: fabric.Object;
@@ -26,16 +27,17 @@ class TextboxManager {
     private placeholder: string = "Enter value";
     private textvalue: string="Text";
     private customPlaceholder: boolean=false;
+    private controlIconFile: ControlIconFile;
    
     constructor(
       uid: string,
       canvi: fabric.Canvas,
       startLeft: number,
       startTop: number,
-      numtextboxes: number,
       recipient: string,
       signMode: boolean,
       setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
+      controlIconFile: ControlIconFile,
     ) {
       this.uid = uid;
       this.canvi = canvi;
@@ -44,10 +46,10 @@ class TextboxManager {
       this.scaleX = 1.0;
       this.scaleY = 1.0;
       this.currentTop = startTop;
-      this.numtextboxes = numtextboxes;
 
       this.recipient = recipient;
       this.signMode = signMode;
+      this.controlIconFile = controlIconFile;
       this.color = generateColorForRecipient(recipient);
   
       this.setShowSettingForm = setShowSettingForm;
@@ -61,11 +63,29 @@ class TextboxManager {
     private createtextboxes() {
         this.containerTop = this.currentTop;
 
+        const svgString = this.controlIconFile.textbox;
+        const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color,0.1), hexToRgba(this.color, 1));
+
+        // Load SVG into Fabric.js
+        fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+            const svgGroup = fabric.util.groupSVGElements(objects, options);
+
+            // Change fill and stroke colors dynamically
+            // svgGroup.set({
+            //     scaleX: 0.5,
+            //     scaleY: 0.5,
+            //     selectable: true,
+            // });
+
+            this.canvi.add(svgGroup);
+            this.canvi.renderAll();
+        });
+      
         // Create a border rectangle
         this.border = new fabric.Rect({
           left: this.containerLeft,
           top: this.containerTop,
-          width: 100 + 2,
+          width: 100 + 1,
           height: 14 + 2,
           stroke: hexToRgba(this.color, 1),
           strokeDashArray: [0, 0],
@@ -105,14 +125,22 @@ class TextboxManager {
         this.border.set({
             left: this.textbox.left,
             top: this.textbox.top,
-            width: this.textbox.width,
-            height: this.textbox.height,
-            scaleX: this.textbox.scaleX,
-            scaleY: this.textbox.scaleY,
+            width: (this.textbox.width! + 1) * this.textbox.scaleX!,
+            height: (this.textbox.height! + 1) * this.textbox.scaleY!,
+            // scaleX: this.textbox.scaleX,
+            // scaleY: this.textbox.scaleY,
         });
         this.canvi.renderAll();
       });
       this.textbox.on('scaling', () => {
+        // this.showShowSettingForm();  
+        this.closeShowSettingForm();
+        this.border.set({
+          strokeDashArray: [2, 2, 2, 2],
+          stroke: hexToRgba(this.color, 0.4),
+        })
+      });
+      this.textbox.on('resizing', () => {
         // this.showShowSettingForm();  
         this.closeShowSettingForm();
         this.border.set({
@@ -201,6 +229,7 @@ class TextboxManager {
         // Update the color of each checkbox individually
         this.textbox.set({
             backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
+            borderColor: this.color,
         });
 
         this.border.set({
@@ -220,7 +249,6 @@ class TextboxManager {
         scaleX: this.scaleX,
         scaleY: this.scaleY,
         currentTop: this.currentTop,
-        numtextboxes: this.numtextboxes,
         recipient: this.recipient,
         signMode: this.signMode,
         color: this.color,

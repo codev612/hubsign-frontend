@@ -1,4 +1,4 @@
-import { generateColorForRecipient } from '../randomcolor';
+import { generateColorForRecipient } from '../utils';
 import { fabric } from 'fabric';
 
 class CheckboxManager {
