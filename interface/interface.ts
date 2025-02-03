@@ -88,4 +88,5 @@ export interface DocData {
 //canvas control icon file
 export interface ControlIconFile {
   textbox: string,
+  textbox_edit: string,
 }

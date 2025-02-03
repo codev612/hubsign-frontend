@@ -97,7 +97,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const exportPage = useRef<HTMLDivElement | null>(null);
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
   const [controlIconFile, setControlIconFile] = useState<ControlIconFile>({
-    textbox: ""
+    textbox: "",
+    textbox_edit:"",
   })
   // canvas edits
   const [edits, setEdits] = React.useState({});
@@ -144,27 +145,35 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   }
 
+  const svgFiles = [
+    "textbox",
+    "textbox_edit",
+    "dropdown"
+  ]
+
   useEffect(() => {
     const fetchFileContent = async () => {
-      try {
-        const response = await fetch('/api/readfile/controls/textbox?filename=textbox');
-        // Check if the response is OK
-        if (!response.ok) {
-            const errorData = await response.json();
-            // setError(errorData.error || 'An error occurred while fetching the file.');
-            return;
+      for (const item of svgFiles) {
+        try {
+          const response = await fetch(`/api/readfile/controls/textbox?filename=${encodeURIComponent(item)}`);
+          if (!response.ok) {
+            console.error("Error fetching:", item);
+            continue;
+          }
+          const data = await response.json();
+  
+          setControlIconFile(prev => ({
+            ...prev,
+            [item]: data.content
+          }));
+        } catch (err) {
+          console.error(`Failed to fetch ${item}:`, err);
         }
-        // Parse and set the file content
-        const data = await response.json();
-        setControlIconFile({...controlIconFile, textbox: data.content});
-      } catch (err) {
-        console.error(err);
-          // setError('Failed to fetch the file content.');
       }
     };
-
+  
     fetchFileContent();
-  }, [])
+  }, []);
 
   useEffect(() => {
     const wrapper = document.getElementById("canvasWrapper");

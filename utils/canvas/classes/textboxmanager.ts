@@ -6,10 +6,9 @@ import { ControlIconFile } from '@/interface/interface';
 
 class TextboxManager {
     
+    private controlType = "textbox";
     private signMode: boolean = false;
     private color: string;
-    
-    private controlType = "textbox";
     private uid: string;
     private canvi: fabric.Canvas;
     private containerLeft: number;
@@ -28,7 +27,7 @@ class TextboxManager {
     private textvalue: string="Text";
     private customPlaceholder: boolean=false;
     private controlIconFile: ControlIconFile;
-    private svgGroup: fabric.Object | null = null;
+    private svgGroup: fabric.Object;
     private leftPadding: number = 10;
    
     constructor(
@@ -58,6 +57,7 @@ class TextboxManager {
       
       this.textbox = new fabric.Textbox("");
       this.border = new fabric.Rect();
+      this.svgGroup = new fabric.Object();
 
       this.tracktextboxGroup();
     }
@@ -65,71 +65,72 @@ class TextboxManager {
     private createtextboxes() {
         this.containerTop = this.currentTop;
 
-        const svgString = this.controlIconFile.textbox;
-        const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color,0.1), hexToRgba(this.color, 1));
+        if(!this.signMode) {
+          const svgString = this.signMode ? this.controlIconFile.textbox : this.controlIconFile.textbox_edit;
+          const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color,0.1), hexToRgba(this.color, 1));
 
-        // Load SVG into Fabric.js
-        fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-          if (this.svgGroup) {
-              this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
-          }
-  
-          this.svgGroup = fabric.util.groupSVGElements(objects, options);
-          (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
-          this.svgGroup.set({
-            left: this.containerLeft,
-            top: this.containerTop,
-            height: 10,
-            width: 10,
-          })
-  
-          this.canvi.add(this.svgGroup);
-          this.canvi.renderAll();
-        });
-      
-        // Create a border rectangle
-        this.border = new fabric.Rect({
-          left: this.containerLeft - this.leftPadding,
-          top: this.containerTop - this.leftPadding,
-          width: 200 + 1 + 2 * this.leftPadding,
-          height: 32 + 4 + 2 * this.leftPadding,
-          stroke: hexToRgba(this.color, 1),
-          strokeDashArray: [0, 0],
-          strokeWidth: 1,
-          fill: hexToRgba(this.color, 0.05),
-          selectable: false,
-          evented: true,
-          rx: 4,
-          ry: 4,
-        });
+          // Load SVG into Fabric.js
+          fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+            if (this.svgGroup) {
+                this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+            }
     
-        // Create the textbox
-        this.textbox = new fabric.Textbox(this.textvalue, {
-            left: this.containerLeft,
-            top: this.containerTop,
-            width: 200,
-            fontSize: 32,
-            textAlign: "left",
-            padding: this.leftPadding,
-            // backgroundColor: hexToRgba(this.color, 0.05),
-            backgroundColor: "transparent",
-            fill: "#000",
-            borderColor: 'transparent',
-            cornerStyle: "circle",
-            transparentCorners: false,
+            this.svgGroup = fabric.util.groupSVGElements(objects, options);
+            (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+            this.svgGroup.set({
+              left: this.containerLeft,
+              top: this.containerTop,
+              selectable: true,
+            })
+
+            this.trackSvgGroup();    
+            this.canvi.add(this.svgGroup);
+          });
+        } else {
+          // Create a border rectangle
+          this.border = new fabric.Rect({
+            left: this.containerLeft - this.leftPadding,
+            top: this.containerTop - this.leftPadding,
+            width: 200 + 1 + 2 * this.leftPadding,
+            height: 32 + 4 + 2 * this.leftPadding,
+            stroke: hexToRgba(this.color, 1),
+            strokeDashArray: [0, 0],
+            strokeWidth: 1,
+            fill: hexToRgba(this.color, 0.05),
+            selectable: false,
             evented: true,
-        });
+            rx: 4,
+            ry: 4,
+          });
+      
+          // Create the textbox
+          this.textbox = new fabric.Textbox(this.textvalue, {
+              left: this.containerLeft,
+              top: this.containerTop,
+              width: 200,
+              fontSize: 32,
+              textAlign: "left",
+              padding: this.leftPadding,
+              // backgroundColor: hexToRgba(this.color, 0.05),
+              backgroundColor: "transparent",
+              fill: "#000",
+              borderColor: 'transparent',
+              cornerStyle: "circle",
+              transparentCorners: false,
+              evented: true,
+          });
 
-        this.tracktextboxGroup();
+          this.tracktextboxGroup();
 
-        this.canvi.add(this.border, this.textbox);
+          this.canvi.add(this.border, this.textbox);
+        }  
+        
         this.canvi.renderAll();
     }
     
     // Track scaling of the textboxGroup
     private tracktextboxGroup() {
       this.textbox.on('modified', () => {
-        console.log(this.scaleX, this.scaleY);
         this.border.set({
             left: this.textbox.left! - this.leftPadding,
             top: this.textbox.top! - this.leftPadding,
@@ -177,9 +178,37 @@ class TextboxManager {
         this.closeShowSettingForm();
       });
     }
+
+    // Track scaling of the textboxGroup
+    private trackSvgGroup() {
+      this.svgGroup.on('modified', () => {
+        this.canvi.renderAll();
+      });
+      this.svgGroup.on('scaling', () => {
+        // this.showShowSettingForm();  
+        this.closeShowSettingForm();
+      });
+      this.svgGroup.on('resizing', () => {
+        // this.showShowSettingForm();  
+        this.closeShowSettingForm();
+      });
+      this.svgGroup.on('mouseup', () => {
+        this.showShowSettingForm();
+      });
+      this.svgGroup.on('deselected', () => {
+        this.closeShowSettingForm();
+      });
+      this.svgGroup.on('moving', () => {
+        // Get the position of the group
+        this.containerLeft = this.svgGroup.left!;
+        this.containerTop = this.svgGroup.top!;
+        console.log(this.svgGroup.top, this.svgGroup.left)
+        this.closeShowSettingForm();
+      });
+    }
   
     private showShowSettingForm() {
-      const groupPosition = this.textbox.getBoundingRect();
+      const groupPosition = this.signMode ? this.textbox.getBoundingRect() : this.svgGroup.getBoundingRect();
       this.setShowSettingForm({
         uid: this.uid,
         show: true,
@@ -236,7 +265,7 @@ class TextboxManager {
     private updateSvgColor() {
 
       // Update SVG color and replace existing one
-      const svgString = this.controlIconFile.textbox;
+      const svgString = this.controlIconFile.textbox_edit;
       const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
       // Store the previous position of svgGroup
@@ -264,6 +293,7 @@ class TextboxManager {
               scaleY: prevScaleY,
           });
 
+          this.trackSvgGroup();
           this.canvi.add(this.svgGroup);
           this.canvi.renderAll();
       });
@@ -273,12 +303,13 @@ class TextboxManager {
         console.log("updated");
         // Update the color of each checkbox individually
         this.textbox.set({
-            backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
+            // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
             borderColor: this.color,
         });
-
+      
         this.border.set({
           stroke: hexToRgba(this.color, 1), 
+          backgroundColor: hexToRgba(this.color, 0.05),
         });
   
         this.canvi.renderAll() // Re-render canvas
