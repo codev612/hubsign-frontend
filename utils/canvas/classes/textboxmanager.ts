@@ -18,8 +18,8 @@ class TextboxManager {
     private scaleY: number;
     private currentTop: number;
     private textboxesState: boolean[] = [];
-    private textbox: fabric.Object;
-    private border: fabric.Object;
+    private textbox: fabric.Textbox;
+    private border: fabric.Rect;
     private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
     //setting form properties
     private recipient: string = "";
@@ -29,6 +29,7 @@ class TextboxManager {
     private customPlaceholder: boolean=false;
     private controlIconFile: ControlIconFile;
     private svgGroup: fabric.Object | null = null;
+    private leftPadding: number = 10;
    
     constructor(
       uid: string,
@@ -75,6 +76,12 @@ class TextboxManager {
   
           this.svgGroup = fabric.util.groupSVGElements(objects, options);
           (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+          this.svgGroup.set({
+            left: this.containerLeft,
+            top: this.containerTop,
+            height: 10,
+            width: 10,
+          })
   
           this.canvi.add(this.svgGroup);
           this.canvi.renderAll();
@@ -82,30 +89,31 @@ class TextboxManager {
       
         // Create a border rectangle
         this.border = new fabric.Rect({
-          left: this.containerLeft,
+          left: this.containerLeft - this.leftPadding,
           top: this.containerTop,
-          width: 100 + 1,
-          height: 14 + 2,
+          width: 200 + 1 + this.leftPadding,
+          height: 32 + 4,
           stroke: hexToRgba(this.color, 1),
           strokeDashArray: [0, 0],
           strokeWidth: 1,
-          fill: 'transparent',
+          fill: hexToRgba(this.color, 0.05),
           selectable: false,
           evented: true,
-          // rx: 4,
-          // ry: 4,
+          rx: 4,
+          ry: 4,
         });
     
         // Create the textbox
         this.textbox = new fabric.Textbox(this.textvalue, {
             left: this.containerLeft,
             top: this.containerTop,
-            width: 100,
-            fontSize: 14,
-            textAlign: "center",
-            backgroundColor: hexToRgba(this.color, 0.05),
+            width: 200,
+            fontSize: 32,
+            textAlign: "left",
+            // backgroundColor: hexToRgba(this.color, 0.05),
+            backgroundColor: "transparent",
             fill: "#000",
-            borderColor: this.color,
+            borderColor: 'transparent',
             cornerStyle: "circle",
             transparentCorners: false,
             evented: true,
@@ -122,10 +130,10 @@ class TextboxManager {
       this.textbox.on('modified', () => {
         console.log(this.scaleX, this.scaleY);
         this.border.set({
-            left: this.textbox.left,
+            left: this.textbox.left! - this.leftPadding,
             top: this.textbox.top,
-            width: (this.textbox.width! + 1) * this.textbox.scaleX!,
-            height: (this.textbox.height! + 1) * this.textbox.scaleY!,
+            width: (this.textbox.width! + 1) * this.textbox.scaleX! + this.leftPadding,
+            height: (this.textbox.height! + 2) * this.textbox.scaleY!,
             // scaleX: this.textbox.scaleX,
             // scaleY: this.textbox.scaleY,
         });
@@ -221,6 +229,10 @@ class TextboxManager {
       this.required = value.required;
       
       this.updateTextboxGroup();
+      this.updateSvgColor();
+    }
+
+    private updateSvgColor() {
 
       // Update SVG color and replace existing one
       const svgString = this.controlIconFile.textbox;
@@ -234,7 +246,9 @@ class TextboxManager {
 
       // Remove the old SVG before adding a new one
       if (this.svgGroup) {
+        console.log('remove')
           this.canvi.remove(this.svgGroup);
+          this.canvi.renderAll();
       }
 
       fabric.loadSVGFromString(updatedSvgString, (objects, options) => {

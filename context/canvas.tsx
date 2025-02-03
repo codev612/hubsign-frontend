@@ -5,7 +5,7 @@ import { fabric } from 'fabric';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { v4 as uuidv4 } from 'uuid';
-import { Roboto } from 'next/font/google';
+// import { Roboto } from 'next/font/google';
 import CheckboxManager from '@/utils/canvas/classes/checkboxmanager';
 import TextboxManager from '@/utils/canvas/classes/textboxmanager';
 import RadioboxManager from '@/utils/canvas/classes/radioboxmanager';
@@ -73,11 +73,11 @@ export const useButtons = () => {
   return context;
 };
 
-const roboto = Roboto({
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-  subsets: ['latin'],
-});
+// const roboto = Roboto({
+//   weight: ['400', '700'],
+//   style: ['normal', 'italic'],
+//   subsets: ['latin'],
+// });
 
 type CanvasProviderProps = {
   children: React.ReactNode;
