@@ -90,9 +90,9 @@ class TextboxManager {
         // Create a border rectangle
         this.border = new fabric.Rect({
           left: this.containerLeft - this.leftPadding,
-          top: this.containerTop,
-          width: 200 + 1 + this.leftPadding,
-          height: 32 + 4,
+          top: this.containerTop - this.leftPadding,
+          width: 200 + 1 + 2 * this.leftPadding,
+          height: 32 + 4 + 2 * this.leftPadding,
           stroke: hexToRgba(this.color, 1),
           strokeDashArray: [0, 0],
           strokeWidth: 1,
@@ -110,6 +110,7 @@ class TextboxManager {
             width: 200,
             fontSize: 32,
             textAlign: "left",
+            padding: this.leftPadding,
             // backgroundColor: hexToRgba(this.color, 0.05),
             backgroundColor: "transparent",
             fill: "#000",
@@ -131,9 +132,9 @@ class TextboxManager {
         console.log(this.scaleX, this.scaleY);
         this.border.set({
             left: this.textbox.left! - this.leftPadding,
-            top: this.textbox.top,
-            width: (this.textbox.width! + 1) * this.textbox.scaleX! + this.leftPadding,
-            height: (this.textbox.height! + 2) * this.textbox.scaleY!,
+            top: this.textbox.top! - this.leftPadding,
+            width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
+            height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
             // scaleX: this.textbox.scaleX,
             // scaleY: this.textbox.scaleY,
         });
