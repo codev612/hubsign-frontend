@@ -517,8 +517,6 @@ class RadioboxManager {
 
     public setValue(value:any) {
       this.recipient = value.recipient;
-      this.checkedBydefault = value.defaultCheck;
-      this.defaultTick = value.defaultTick==="tick" ? true:false;
       this.required = value.required;
 
       // Refresh the radiobox group

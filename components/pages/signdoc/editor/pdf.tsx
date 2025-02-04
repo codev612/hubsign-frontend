@@ -10,16 +10,17 @@ import { useButtons } from '@/context/canvas';
 import Loader from './Loader';
 import SideBar from '@/components/pages/signdoc/editor/SideBar';
 import ControlBar from './ControlBar';
-import Checkboxgroup from './settingforms/checkboxgroup';
 import { DocData } from '@/interface/interface';
+import Checkboxgroup from './settingforms/checkboxgroup';
 import TextboxGroup from './settingforms/textboxgroup';
+import RadioboxGroup from './settingforms/radioboxgroup';
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
   const contextValues = useButtons();
   const [docIsLoading, setDocIsLoading] = useState<boolean>(true);
   const [docData, setDocData] = useState<DocData>({
-    filename:"",
+    filename: "",
     recipients: []
   });
   //setting form controls 
@@ -28,6 +29,9 @@ const PDFBoard: React.FC = () => {
 
   const showTextboxSettingForm = contextValues.showTextboxSettingForm;
   const setShowTextboxSettingForm = contextValues.setShowTextboxSettingForm;
+
+  const showRadioboxSettingForm = contextValues.showRadioboxSettingForm;
+  const setShowRadioboxSettingForm = contextValues.setShowRadioboxSettingForm;
 
   // const { getRootProps, getInputProps } = useDropzone({
   //   onDrop: (files: File[]) => {
@@ -161,6 +165,12 @@ const PDFBoard: React.FC = () => {
                     setShowTextboxSettingForm={setShowTextboxSettingForm}
                     recipients={docData.recipients}
                     setTextboxSetting={contextValues.handleCanvasObjectSetValue}
+                  />}
+                  {showRadioboxSettingForm.show && <RadioboxGroup 
+                    showRadioboxSettingForm={showRadioboxSettingForm} 
+                    setShowRadioboxSettingForm={setShowRadioboxSettingForm}
+                    recipients={docData.recipients}
+                    setRadioboxSetting={contextValues.handleCanvasObjectSetValue}
                   />}
                 </div>
                 <div

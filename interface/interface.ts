@@ -72,6 +72,18 @@ export interface TextboxSettingFormState {
   value: TextboxSettings;
 }
 
+export interface RadioboxSettings {
+  recipient: string;
+  required: boolean;
+}
+
+export interface RadioboxSettingFormState {
+  uid: string,
+  show: boolean;
+  position: Position;
+  value: RadioboxSettings;
+}
+
 //adddoc component
 export interface FileAddBoardProps {
   filename: string;
