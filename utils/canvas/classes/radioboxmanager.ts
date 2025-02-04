@@ -24,6 +24,7 @@ class RadioboxManager {
     private radioboxElements: fabric.Object[] = [];
     private addButtonElement: fabric.Object[] = [];
     private radioboxGroup: fabric.Group;
+    private radioboxWrapper: fabric.Rect;
     private tickPattern: fabric.Pattern;
     private crossPattern: fabric.Pattern;
     private setCheckboxItems: React.Dispatch<React.SetStateAction<number>>;
@@ -58,7 +59,7 @@ class RadioboxManager {
 
       this.tickPattern = new fabric.Pattern({ source: '', repeat: 'no-repeat' });
       this.crossPattern = new fabric.Pattern({ source: '', repeat: 'no-repeat' });
-      this.createPattern();
+      this.radioboxWrapper = new fabric.Rect();
 
       this.radioboxGroup = this.createRadioboxGroup();
   
@@ -88,6 +89,7 @@ class RadioboxManager {
           strokeWidth: 1,
           rx:10,
           ry:10,
+          backgroundColor: hexToRgba(this.color, 0.1),
         });
 
         const circle = new fabric.Circle({
@@ -95,10 +97,8 @@ class RadioboxManager {
           top: this.containerTop + 40 * (i+1) + 20 * i + 7,
           radius: 9,
           fill: "white",
-          // backgroundColor: "white",
           borderColor: `${this.color}`,
           stroke: `${this.color}`,
-
           strokeWidth: 2,
           selectable: true,
           hasControls: false,
@@ -108,19 +108,21 @@ class RadioboxManager {
         });
 
         const radiobox = new fabric.Circle({
-            left: this.containerLeft + 11.5,
-            top: this.containerTop + 40 * (i+1) + 20 * i + 11.5,
-            radius: 5,
-            fill: "transparent",
-            // backgroundColor:hexToRgba(this.color, 0.1),
-            borderColor: `${this.color}`,
-            stroke: `${this.color}`,
-            // strokeWidth: 2,
-            selectable: true,
-            hasControls: false,
-            lockMovementX: true,
-            hasBorders: false,
-            lockMovementY: true,
+          left: this.containerLeft + 11.5,
+          top: this.containerTop + 40 * (i+1) + 20 * i + 11.5,
+          radius: 5,
+          fill: "transparent",
+          // backgroundColor:hexToRgba(this.color, 0.1),
+          borderColor: `${this.color}`,
+          stroke: `${this.color}`,
+          // strokeWidth: 2,
+          selectable: true,
+          hasControls: false,
+          lockMovementX: true,
+          hasBorders: false,
+          lockMovementY: true,
+          hasRotatingPoint: false,
+          hoverCursor: "hand",
         });
 
         const group = new fabric.Group([rect, circle, radiobox], {
@@ -129,13 +131,12 @@ class RadioboxManager {
   
         let isChecked = this.checkboxesState[i];
   
-
         radiobox.on('mousedown', () => {
-            isChecked = !isChecked;
-            this.checkboxesState[i] = isChecked;
-            radiobox.set('fill', isChecked ? this.color : "transparent");
+          isChecked = !isChecked;
+          this.checkboxesState[i] = isChecked;
+          radiobox.set('fill', isChecked ? this.color : "transparent");
 
-            this.canvi.renderAll();
+          this.canvi.renderAll();
         });
         // Add radiobox and label to elements
         this.radioboxElements.push(group);
@@ -143,53 +144,53 @@ class RadioboxManager {
     }
   
     private createAddCheckboxButton() {
-        const buttonWidth = 32; // Desired width
-        const buttonHeight = 32; // Desired height
-      
-        // Create a rectangle for the button's background
-        const buttonBackground = new fabric.Rect({
-          left: this.containerLeft,
-          top: this.containerTop,
-          width: buttonWidth,
-          height: buttonHeight,
-          stroke: "#F4F4F4",
-          strokeWidth: 2,
-          fill: "#f4f4f4", // Background color of the button
-          rx: 10, // Rounded corners
-          ry: 10,
-          selectable: false,
-          hoverCursor: 'pointer',
-        });
-      
-        // Create the "+" text
-        const plusSymbol = new fabric.Text('+', {
-          fontSize: 24, // Adjust as needed for the symbol size
-          fill: '#000', // Color of the "+"
-          selectable: false,
-          hoverCursor: 'pointer',
-          originX: 'center',
-          originY: 'center',
-        });
-      
-        // Position the "+" text in the center of the button
-        plusSymbol.left = this.containerLeft + buttonWidth / 2 + 1;
-        plusSymbol.top = this.containerTop + buttonHeight / 2 + 1;
-      
-        // Group the rectangle and text together
-        const addCheckboxButton = new fabric.Group([buttonBackground, plusSymbol], {
-          left: this.containerLeft,
-          top: this.containerTop,
-          selectable: false,
-          hoverCursor: 'pointer',
-        });
-      
-        // Add click event
-        addCheckboxButton.on('mousedown', () => {
-          this.addNewCheckbox();
-          this.showShowSettingForm();
-        });
-      
-        this.addButtonElement.push(addCheckboxButton);
+      const buttonWidth = 32; // Desired width
+      const buttonHeight = 32; // Desired height
+    
+      // Create a rectangle for the button's background
+      const buttonBackground = new fabric.Rect({
+        left: this.containerLeft,
+        top: this.containerTop,
+        width: buttonWidth,
+        height: buttonHeight,
+        stroke: "#F4F4F4",
+        strokeWidth: 2,
+        fill: "white", // Background color of the button
+        rx: 10, // Rounded corners
+        ry: 10,
+        selectable: false,
+        hoverCursor: 'pointer',
+      });
+    
+      // Create the "+" text
+      const plusSymbol = new fabric.Text('+', {
+        fontSize: 24, // Adjust as needed for the symbol size
+        fill: '#000', // Color of the "+"
+        selectable: false,
+        hoverCursor: 'pointer',
+        originX: 'center',
+        originY: 'center',
+      });
+    
+      // Position the "+" text in the center of the button
+      plusSymbol.left = this.containerLeft + buttonWidth / 2 + 1;
+      plusSymbol.top = this.containerTop + buttonHeight / 2 + 1;
+    
+      // Group the rectangle and text together
+      const addCheckboxButton = new fabric.Group([buttonBackground, plusSymbol], {
+        left: this.containerLeft,
+        top: this.containerTop,
+        selectable: false,
+        hoverCursor: 'pointer',
+      });
+    
+      // Add click event
+      addCheckboxButton.on('mousedown', () => {
+        this.addNewCheckbox();
+        this.showShowSettingForm();
+      });
+    
+      this.addButtonElement.push(addCheckboxButton);
     }
 
     private createReduceCheckboxButton() {
@@ -204,7 +205,7 @@ class RadioboxManager {
           height: buttonHeight,
           stroke: "#F4F4F4",
           strokeWidth: 2,
-          fill: "#f4f4f4", // Background color of the button
+          fill: "white", // Background color of the button
           rx: 10, // Rounded corners
           ry: 10,
           selectable: false,
@@ -256,107 +257,160 @@ class RadioboxManager {
     }      
   
     private addNewCheckbox() {
-        this.scaleX = this.scaleX * this.radioboxGroup.scaleX!;
-        this.scaleY = this.scaleY * this.radioboxGroup.scaleY!;
+      this.scaleX = this.scaleX * this.radioboxGroup.scaleX!;
+      this.scaleY = this.scaleY * this.radioboxGroup.scaleY!;
 
-        // this.updatePattern();
-        const rect = new fabric.Rect({
-          left: this.containerLeft,
-          top: this.containerTop + this.radioboxGroup.getScaledHeight() + 5 * this.scaleY,
-          width: 32 * this.scaleX,
-          height: 32 * this.scaleY,
-          fill: "transparent",
-          stroke: this.color,
-          strokeWidth: 1,
-          rx: 10 * this.scaleX,
-          ry: 10 * this.scaleY,
-        });
+      // this.updatePattern();
+      const rect = new fabric.Rect({
+        left: this.containerLeft,
+        top: this.containerTop + this.radioboxGroup.getScaledHeight() + 5 * this.scaleY,
+        width: 32 * this.scaleX,
+        height: 32 * this.scaleY,
+        fill: "transparent",
+        stroke: this.color,
+        strokeWidth: 1,
+        rx: 10 * this.scaleX,
+        ry: 10 * this.scaleY,
+        backgroundColor: hexToRgba(this.color, 0.1),
+      });
 
-        const circle = new fabric.Circle({
-          left: this.containerLeft + 7 * this.scaleX,
-          top: this.containerTop + this.radioboxGroup.getScaledHeight() + 5 * this.scaleY + 7 * this.scaleY,
-          radius: 9 * this.scaleX,
-          fill: "white",
-          borderColor: `${this.color}`,
-          stroke: `${this.color}`,
-          strokeWidth: 2 * this.scaleX,
-          selectable: true,
-          hasControls: false,
-          lockMovementX: true,
-          hasBorders: false,
-          lockMovementY: true,
-        });
+      const circle = new fabric.Circle({
+        left: this.containerLeft + 7 * this.scaleX,
+        top: this.containerTop + this.radioboxGroup.getScaledHeight() + 5 * this.scaleY + 7 * this.scaleY,
+        radius: 9,
+        scaleX: this.scaleX,
+        scaleY: this.scaleY,
+        fill: "white",
+        borderColor: `${this.color}`,
+        stroke: `${this.color}`,
+        strokeWidth: 2,
+        selectable: true,
+        hasControls: false,
+        lockMovementX: true,
+        hasBorders: false,
+        lockMovementY: true,
+      });
 
-        const radiobox = new fabric.Circle({
-            left: this.containerLeft + 11.5 * this.scaleX,
-            top: this.containerTop + this.radioboxGroup.getScaledHeight() + 5 * this.scaleY + 11.5 * this.scaleY,
-            radius: 5 * this.scaleX,
-            fill: "transparent",
-            borderColor: `${this.color}`,
-            stroke: `${this.color}`,
-            selectable: true,
-            hasControls: false,
-            lockMovementX: true,
-            hasBorders: false,
-            lockMovementY: true,
-        });
+      const radiobox = new fabric.Circle({
+        left: this.containerLeft + 11.5 * this.scaleX,
+        top: this.containerTop + this.radioboxGroup.getScaledHeight() + 5 * this.scaleY + 11.5 * this.scaleY,
+        radius: 5,
+        scaleX: this.scaleX,
+        scaleY: this.scaleY,
+        fill: "transparent",
+        borderColor: `${this.color}`,
+        stroke: `${this.color}`,
+        selectable: true,
+        hasControls: false,
+        lockMovementX: true,
+        hasBorders: false,
+        lockMovementY: true,
+      });
   
-        let isChecked = this.checkboxesState[this.radioboxElements.length];
-    
-        radiobox.on('mousedown', () => {
-            isChecked = !isChecked;
-            this.checkboxesState[this.radioboxElements.length] = isChecked;    
-            // Remove existing checkmarks
-            radiobox.set('fill', isChecked ? this.color : "transparent");
+      let isChecked = this.checkboxesState[this.radioboxElements.length];
+  
+      radiobox.on('mousedown', () => {
+        isChecked = !isChecked;
+        this.checkboxesState[this.radioboxElements.length] = isChecked;    
+        // Remove existing checkmarks
+        radiobox.set('fill', isChecked ? this.color : "transparent");
 
-            this.canvi.renderAll();
-        });
-        
-        const group = new fabric.Group([rect, circle, radiobox], {
-          subTargetCheck: true,
-        });
-
-
-        this.radioboxElements.push(group);
-        this.radioboxGroup.addWithUpdate(group);
         this.canvi.renderAll();
+      });
+      
+      const group = new fabric.Group([rect, circle, radiobox], {
+        subTargetCheck: true,
+      });
+
+      this.radioboxElements.push(group);
+      this.radioboxGroup.addWithUpdate(group);
+      this.canvi.renderAll();
+
+      this.radioboxWrapper.set({
+        height: this.radioboxGroup.height! * this.radioboxGroup.scaleY! + 16
+      });
+      
+      this.canvi.renderAll();
     }
 
     private createRadioboxGroup(): fabric.Group {
     
-        this.createRadioboxes(); // Initialize checkboxes
-        this.createAddCheckboxButton(); // Add the "+" button to add checkboxes
-        this.createReduceCheckboxButton(); // Add the "-" button to remove checkboxes
-      
-        const radioboxGroup = new fabric.Group([...this.addButtonElement, ...this.radioboxElements], {
-          left: this.containerLeft,
-          top: this.currentTop,
-          transparentCorners: false,
-          cornerStyle: "circle",
-          backgroundColor: hexToRgba(this.color, 1),
-          fill: hexToRgba(this.color, 1),
-          selectable: true,
-          subTargetCheck: true,
-        });
-        return radioboxGroup;
+      this.createRadioboxes(); // Initialize checkboxes
+      this.createAddCheckboxButton(); // Add the "+" button to add checkboxes
+      this.createReduceCheckboxButton(); // Add the "-" button to remove checkboxes
+
+      this.radioboxWrapper = new fabric.Rect({
+        left: this.containerLeft - 8,
+        top: this.containerTop - 8,
+        width: 83,
+        height: 88,
+        fill: "transparent",
+        stroke: this.color,
+        strokeDashArray: [2, 2, 2, 2],
+        strokeWidth: 1,
+        rx: 10 * this.scaleX,
+        ry: 10 * this.scaleY,
+        backgroundColor: hexToRgba(this.color, 0.05),
+        selectable: false,
+        evented: true,
+      })
+
+      this.canvi.add(this.radioboxWrapper);
+    
+      const radioboxGroup = new fabric.Group([...this.addButtonElement, ...this.radioboxElements], {
+        left: this.containerLeft,
+        top: this.currentTop,
+        borderDashArray: [2, 2, 2, 2],
+        padding: 8,
+        transparentCorners: false,
+        cornerStyle: "circle",
+        selectable: true,
+        subTargetCheck: true,
+        evented: true,
+        hasControls: true,
+        hasRotatingPoint: false,
+        // lockScalingX: true,
+        // lockScalingY: true,
+        // lockUniScaling: true,
+      });
+
+      return radioboxGroup;
     }
   
     // Track scaling of the radioboxGroup
     private trackRadioboxGroup() {
+      this.radioboxGroup.on('modified', () => {
+        this.radioboxWrapper.set({
+          left: this.radioboxGroup.left! - 8,
+          top: this.radioboxGroup.top! - 8,
+          width: this.radioboxGroup.width! * this.radioboxGroup.scaleX! + 16,
+          height: this.radioboxGroup.height! * this.radioboxGroup.scaleY! + 16,
+        });
+      })
+
       this.radioboxGroup.on('scaling', () => {
         this.showShowSettingForm();
         // this.canvi.renderAll();
       });
+
       this.radioboxGroup.on('mouseup', () => {
         this.showShowSettingForm();
       });
+
       this.radioboxGroup.on('deselected', () => {
         this.closeShowSettingForm();
       });
+
       this.radioboxGroup.on('moving', () => {
         // Get the position of the group
         this.containerLeft = this.radioboxGroup.left!;
         this.containerTop = this.radioboxGroup.top!;
+
+        this.radioboxWrapper.set({
+          left: this.containerLeft - 8,
+          top: this.containerTop - 8
+        });
+
         this.closeShowSettingForm();
       });
     }
@@ -461,62 +515,13 @@ class RadioboxManager {
       });
     }
 
-    private updatePattern() {
-
-      this.color = generateColorForRecipient(this.recipient);
-    
-      const patternCanvas = document.createElement('canvas');
-      patternCanvas.width = 20 * this.scaleX;  // Adjust width based on scale
-      patternCanvas.height = 20 * this.scaleY; // Adjust height based on scale
-      const ctx = patternCanvas.getContext('2d')!;
-    
-      // Recreate the tick pattern
-      ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
-      ctx.strokeStyle = this.color; // Update the color
-      ctx.lineWidth = 2 * this.scaleX; // Adjust stroke width based on scale
-      ctx.beginPath();
-      ctx.moveTo(4 * this.scaleX, 10 * this.scaleY);
-      ctx.lineTo(8 * this.scaleX, 14 * this.scaleY);
-      ctx.lineTo(16 * this.scaleX, 4 * this.scaleY);
-      ctx.stroke();
-    
-      const tickPatternDataURL = patternCanvas.toDataURL();
-      this.tickPattern = new fabric.Pattern({
-          source: tickPatternDataURL,
-          repeat: 'no-repeat',
-      });
-    
-      ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
-      ctx.strokeStyle = this.color;
-      ctx.lineWidth = 2 * this.scaleX;
-      ctx.beginPath();
-      ctx.moveTo(4 * this.scaleX, 4 * this.scaleY);
-      ctx.lineTo(16 * this.scaleX, 16 * this.scaleY);
-      ctx.stroke();
-    
-      ctx.beginPath();
-      ctx.moveTo(16 * this.scaleX, 4 * this.scaleY);
-      ctx.lineTo(4 * this.scaleX, 16 * this.scaleY);
-      ctx.stroke();
-    
-      const crossPatternDataURL = patternCanvas.toDataURL();
-      this.crossPattern = new fabric.Pattern({
-          source: crossPatternDataURL,
-          repeat: 'no-repeat',
-      });
-    }
-    
-
     public setValue(value:any) {
       this.recipient = value.recipient;
       this.checkedBydefault = value.defaultCheck;
       this.defaultTick = value.defaultTick==="tick" ? true:false;
       this.required = value.required;
 
-      // Update the color and patterns based on the new recipient
-      this.createPattern()   
-
-      // // Refresh the radiobox group
+      // Refresh the radiobox group
       this.updateCheckboxGroup();
     }
 
@@ -533,6 +538,7 @@ class RadioboxManager {
       const activeObject = this.canvi.getActiveObject();
       if (activeObject === this.radioboxGroup) {
         this.canvi.remove(this.radioboxGroup);
+        this.canvi.remove(this.radioboxWrapper);
     
         // Optional: Clear related data if necessary
         this.radioboxElements = [];

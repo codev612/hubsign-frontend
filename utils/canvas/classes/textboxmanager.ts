@@ -139,8 +139,6 @@ class TextboxManager {
             top: this.textbox.top! - this.leftPadding,
             width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
             height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
-            // scaleX: this.textbox.scaleX,
-            // scaleY: this.textbox.scaleY,
         });
 
         this.canvi.renderAll();
