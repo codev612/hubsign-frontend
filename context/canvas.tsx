@@ -12,7 +12,7 @@ import RadioboxManager from '@/utils/canvas/classes/radioboxmanager';
 import { 
   CheckboxSettingFormState,
   TextboxSettingFormState,
-  ControlIconFile,
+  ControlSVGFile,
 } from '@/interface/interface';
 
 type CanvasContextProps = {
@@ -96,9 +96,14 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [hideCanvas, setHiddenCanvas] = useState(false);
   const exportPage = useRef<HTMLDivElement | null>(null);
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
-  const [controlIconFile, setControlIconFile] = useState<ControlIconFile>({
+  const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
     textbox: "",
     textbox_edit:"",
+    radiobox_empty:"",
+    radiobox_filled:"",
+    radiobox_edit:"",
+    dropdown:"",
+    radio_add_button: "",
   })
   // canvas edits
   const [edits, setEdits] = React.useState({});
@@ -139,7 +144,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([])
 
   const handleCanvasObjectSetValue = (payload:any) => {
-    console.log(payload)
     if(canvas) {
       canvasObjects.filter(item=>item.uid===payload.uid)[0].object.setValue(payload.value)
     }
@@ -148,8 +152,10 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const svgFiles = [
     "textbox",
     "textbox_edit",
-    "dropdown"
+    "radio_add_button",
+    "dropdown",
   ]
+
 
   useEffect(() => {
     const fetchFileContent = async () => {
@@ -162,7 +168,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
           }
           const data = await response.json();
   
-          setControlIconFile(prev => ({
+          setControlSVGFile(prev => ({
             ...prev,
             [item]: data.content
           }));
@@ -315,7 +321,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       activeRecipient,
       false,
       setShowTextboxSettingForm,
-      controlIconFile,
+      controlSVGFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object:textboxGroup}]);
     
@@ -355,10 +361,12 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       activeRecipient,
       false,
       setCheckboxItems, 
-      setShowCheckboxSettingForm
+      setShowCheckboxSettingForm,
+      controlSVGFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
     
+
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   
     // return checkboxGroup; // Return the group for future use if needed

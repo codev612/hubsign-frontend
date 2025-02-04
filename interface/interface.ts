@@ -86,7 +86,12 @@ export interface DocData {
 }
 
 //canvas control icon file
-export interface ControlIconFile {
+export interface ControlSVGFile {
   textbox: string,
   textbox_edit: string,
+  radiobox_empty: string,
+  radiobox_filled: string,
+  radiobox_edit: string,
+  radio_add_button: string,
+  dropdown: string,
 }

@@ -320,7 +320,7 @@ class CheckboxManager {
       this.required = value.required;
 
       // Update the color and patterns based on the new recipient
-      this.createPattern()   
+      this.createPattern();   
 
       // // Refresh the checkbox group
       this.updateCheckboxGroup();

@@ -2,7 +2,7 @@ import { generateColorForRecipient, hexToRgba, updateSvgColors } from '../utils'
 import { fabric } from 'fabric';
 import { Text } from 'fabric/fabric-impl';
 import { parse } from 'svg-parser'
-import { ControlIconFile } from '@/interface/interface';
+import { ControlSVGFile } from '@/interface/interface';
 
 class TextboxManager {
     
@@ -24,9 +24,10 @@ class TextboxManager {
     private recipient: string = "";
     private required: boolean = true;
     private placeholder: string = "Enter value";
-    private textvalue: string="Text";
+    private textvalue: string = "Text";
+    private enteredText: string = "";
     private customPlaceholder: boolean=false;
-    private controlIconFile: ControlIconFile;
+    private controlSVGFile: ControlSVGFile;
     private svgGroup: fabric.Object;
     private leftPadding: number = 10;
    
@@ -38,7 +39,7 @@ class TextboxManager {
       recipient: string,
       signMode: boolean,
       setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
-      controlIconFile: ControlIconFile,
+      controlSVGFile: ControlSVGFile,
     ) {
       this.uid = uid;
       this.canvi = canvi;
@@ -50,7 +51,7 @@ class TextboxManager {
 
       this.recipient = recipient;
       this.signMode = signMode;
-      this.controlIconFile = controlIconFile;
+      this.controlSVGFile = controlSVGFile;
       this.color = generateColorForRecipient(recipient);
   
       this.setShowSettingForm = setShowSettingForm;
@@ -66,13 +67,13 @@ class TextboxManager {
         this.containerTop = this.currentTop;
 
         if(!this.signMode) {
-          const svgString = this.signMode ? this.controlIconFile.textbox : this.controlIconFile.textbox_edit;
-          const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color,0.1), hexToRgba(this.color, 1));
+          const svgString = this.signMode ? this.controlSVGFile.textbox : this.controlSVGFile.textbox_edit;
+          const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
           // Load SVG into Fabric.js
           fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
             if (this.svgGroup) {
-                this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+              this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
             }
     
             this.svgGroup = fabric.util.groupSVGElements(objects, options);
@@ -104,7 +105,9 @@ class TextboxManager {
           });
       
           // Create the textbox
-          this.textbox = new fabric.Textbox(this.textvalue, {
+          this.textbox = new fabric.Textbox(
+            this.enteredText==="" ? this.placeholder : this.enteredText, 
+            {
               left: this.containerLeft,
               top: this.containerTop,
               width: 200,
@@ -113,7 +116,7 @@ class TextboxManager {
               padding: this.leftPadding,
               // backgroundColor: hexToRgba(this.color, 0.05),
               backgroundColor: "transparent",
-              fill: "#000",
+              fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
               borderColor: 'transparent',
               cornerStyle: "circle",
               transparentCorners: false,
@@ -139,6 +142,7 @@ class TextboxManager {
             // scaleX: this.textbox.scaleX,
             // scaleY: this.textbox.scaleY,
         });
+
         this.canvi.renderAll();
       });
       this.textbox.on('scaling', () => {
@@ -167,6 +171,7 @@ class TextboxManager {
       this.textbox.on('deselected', () => {
         this.closeShowSettingForm();
       });
+
       this.textbox.on('moving', () => {
         // Get the position of the group
         this.containerLeft = this.textbox.left!;
@@ -176,6 +181,32 @@ class TextboxManager {
           stroke: hexToRgba(this.color, 0.4),
         })
         this.closeShowSettingForm();
+      });
+
+      // Catch editing event
+      this.textbox.on('editing:entered', () => {
+        this.textbox.set({
+          fill: "#262626",
+        })
+        this.canvi.renderAll();
+      });
+
+      this.textbox.on('editing:exited', () => {
+        if(this.textbox.text === this.placeholder || this.textbox.text === "") {
+          this.textbox.set({
+            fill: "#6F6F6F",
+            text: this.placeholder,
+          })
+        } else {
+          this.textbox.set({
+            fill: "#262626",
+            
+          })
+
+          this.enteredText = this.textbox.text || '';
+        }
+
+        this.canvi.renderAll();
       });
     }
 
@@ -202,7 +233,6 @@ class TextboxManager {
         // Get the position of the group
         this.containerLeft = this.svgGroup.left!;
         this.containerTop = this.svgGroup.top!;
-        console.log(this.svgGroup.top, this.svgGroup.left)
         this.closeShowSettingForm();
       });
     }
@@ -255,17 +285,21 @@ class TextboxManager {
       this.recipient = value.recipient;
       this.color = generateColorForRecipient(this.recipient);
       this.customPlaceholder = value.customPlaceholder;
+      console.log(value.placeholder)
       this.placeholder = value.placeholder;
       this.required = value.required;
       
-      this.updateTextboxGroup();
-      this.updateSvgColor();
+      if(!this.signMode) {
+        this.updateSvgColor();
+      } else {
+        this.updateTextboxGroup();
+      }      
     }
 
     private updateSvgColor() {
 
       // Update SVG color and replace existing one
-      const svgString = this.controlIconFile.textbox_edit;
+      const svgString = this.controlSVGFile.textbox_edit;
       const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
       // Store the previous position of svgGroup
@@ -305,6 +339,8 @@ class TextboxManager {
         this.textbox.set({
             // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
             borderColor: this.color,
+            fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
+            text: this.enteredText==="" ? this.placeholder : this.enteredText,
         });
       
         this.border.set({
