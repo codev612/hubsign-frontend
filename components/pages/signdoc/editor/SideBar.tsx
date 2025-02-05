@@ -19,6 +19,8 @@ import Dot from '@/components/common/dot';
 import { generateColorForRecipient, hexToRgba } from '@/utils/canvas/utils';
 import { TextBoxIcon } from '../sidebaricons/textbox';
 import { CheckBoxIcon } from '../sidebaricons/checkbox';
+import { RadioBoxIcon } from '../sidebaricons/radiobox';
+import { DropdownIcon } from '../sidebaricons/dropdown';
 
 type AnchorElement = HTMLElement | null;
 
@@ -78,7 +80,6 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                             </SelectItem>
                         }
                     </Select> : ""}
-
                 </div>
                 <h1>Fields</h1>
                 <Tooltip title="TextBox">
@@ -115,14 +116,30 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                 <Tooltip title="Checkbox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/radiobox.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/>
+                        {/* <img src='/assets/img/controls/radiobox.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/> */}
+                        <Button 
+                        isIconOnly 
+                        className='p-0 bg-white'
+                        size='sm'
+                        onPress={() => contextValues.addRadiobox(contextValues.canvas!,100, 100, 4)}
+                        >
+                            <RadioBoxIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
+                        </Button>
                         <p className='text-text text-sm'>Radiobox</p>
                     </div>
                 </Tooltip> 
                 <Tooltip title="Checkbox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/dropdown.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/>
+                        {/* <img src='/assets/img/controls/dropdown.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/> */}
+                        <Button 
+                        isIconOnly 
+                        className='p-0 bg-white'
+                        size='sm'
+                        onPress={() => contextValues.addRadiobox(contextValues.canvas!,100, 100, 4)}
+                        >
+                        <DropdownIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
+                        </Button>
                         <p className='text-text text-sm'>Dropdown</p>
                     </div>
                 </Tooltip> 
