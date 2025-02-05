@@ -23,13 +23,14 @@ class DropdownboxManager {
     //setting form properties
     private recipient: string = "";
     private required: boolean = true;
-    private placeholder: string = "Enter value";
+    private placeholder: string = "Select value";
     private textvalue: string = "Text";
-    private enteredText: string = "";
+    private selectedItem: string = "";
     private dropdownItems: string[] = [];
     private customPlaceholder: boolean=false;
     private controlSVGFile: ControlSVGFile;
     private svgGroup: fabric.Object;
+    private arrowBottom: fabric.Object;
     private leftPadding: number = 10;
    
     constructor(
@@ -60,6 +61,7 @@ class DropdownboxManager {
         this.textbox = new fabric.Textbox("");
         this.border = new fabric.Rect();
         this.svgGroup = new fabric.Object();
+        this.arrowBottom = new fabric.Object();
 
         this.tracktextboxGroup();
     }
@@ -68,27 +70,42 @@ class DropdownboxManager {
         this.containerTop = this.currentTop;
 
         if(!this.signMode) {
-            const svgString = this.signMode ? this.controlSVGFile.textbox : this.controlSVGFile.dropdownbox;
+            const svgString = this.controlSVGFile.dropdownbox;
             const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
             // Load SVG into Fabric.js
             fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
                 if (this.svgGroup) {
-                this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+                    this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
                 }
         
                 this.svgGroup = fabric.util.groupSVGElements(objects, options);
                 (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
                 this.svgGroup.set({
-                left: this.containerLeft,
-                top: this.containerTop,
-                selectable: true,
+                    left: this.containerLeft,
+                    top: this.containerTop,
+                    selectable: true,
                 })
 
                 this.trackSvgGroup();    
                 this.canvi.add(this.svgGroup);
             });
-            } else {
+        } else {
+            const svgString = this.controlSVGFile.arrow_bottom;
+            const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.05), hexToRgba("#8D8D8D", 1));
+
+            // Load SVG into Fabric.js
+            fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+                this.arrowBottom = fabric.util.groupSVGElements(objects, options);
+                (this.arrowBottom as fabric.Object & { isSvg?: boolean }).isSvg = true;
+                this.arrowBottom.set({
+                    left: this.containerLeft + 200 - this.leftPadding,
+                    top: this.containerTop + 12,
+                    selectable: false,
+                })
+
+                this.canvi.add(this.arrowBottom);
+            });
             // Create a border rectangle
             this.border = new fabric.Rect({
                 left: this.containerLeft - this.leftPadding,
@@ -101,28 +118,29 @@ class DropdownboxManager {
                 fill: hexToRgba(this.color, 0.05),
                 selectable: false,
                 evented: true,
-                rx: 4,
-                ry: 4,
+                rx: 10,
+                ry: 10,
             });
         
             // Create the textbox
             this.textbox = new fabric.Textbox(
-                this.enteredText==="" ? this.placeholder : this.enteredText, 
+                this.selectedItem==="" ? this.placeholder : this.selectedItem, 
                 {
-                left: this.containerLeft,
-                top: this.containerTop,
-                width: 200,
-                fontSize: 32,
-                textAlign: "left",
-                padding: this.leftPadding,
-                // backgroundColor: hexToRgba(this.color, 0.05),
-                backgroundColor: "transparent",
-                fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
-                borderColor: 'transparent',
-                cornerStyle: "circle",
-                transparentCorners: false,
-                evented: true,
-            });
+                    left: this.containerLeft,
+                    top: this.containerTop,
+                    width: 200,
+                    fontSize: 24,
+                    textAlign: "left",
+                    padding: this.leftPadding,
+                    backgroundColor: "transparent",
+                    fill: this.selectedItem==="" ? "#6F6F6F" : "#262626",
+                    borderColor: 'transparent',
+                    cornerStyle: "circle",
+                    transparentCorners: false,
+                    evented: true,
+                    editable: false,
+                }
+            );
 
             this.tracktextboxGroup();
 
@@ -142,22 +160,28 @@ class DropdownboxManager {
                 height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
             });
 
+            this.arrowBottom.set({
+                left: this.textbox.left! + this.textbox.width! * this.textbox.scaleX! - this.leftPadding,
+                top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY!,
+            });
+
             this.canvi.renderAll();
         });
+
         this.textbox.on('scaling', () => {
             // this.showShowSettingForm();  
             this.closeShowSettingForm();
             this.border.set({
-            strokeDashArray: [2, 2, 2, 2],
-            stroke: hexToRgba(this.color, 0.4),
+                strokeDashArray: [2, 2, 2, 2],
+                stroke: hexToRgba(this.color, 0.4),
             })
         });
         this.textbox.on('resizing', () => {
             // this.showShowSettingForm();  
             this.closeShowSettingForm();
             this.border.set({
-            strokeDashArray: [2, 2, 2, 2],
-            stroke: hexToRgba(this.color, 0.4),
+                strokeDashArray: [2, 2, 2, 2],
+                stroke: hexToRgba(this.color, 0.4),
             })
         });
         this.textbox.on('mouseup', () => {
@@ -202,7 +226,7 @@ class DropdownboxManager {
                 
             })
 
-            this.enteredText = this.textbox.text || '';
+            this.selectedItem = this.textbox.text || '';
             }
 
             this.canvi.renderAll();
@@ -243,11 +267,13 @@ class DropdownboxManager {
         show: true,
         position: {
             left: groupPosition.left, // Position horizontally below the group
-            top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
+            top: groupPosition.top + groupPosition.height + 5, // Position vertically below the group
         },
+        width: this.border.width!,
         value: {
             recipient: this.recipient,
             items: this.dropdownItems,
+            selectedItem: this.selectedItem,
             required: this.required,
         }
       });
@@ -265,11 +291,12 @@ class DropdownboxManager {
         value: {
             recipient: this.recipient,
             items: this.dropdownItems,
+            selectedItem: this.selectedItem,
             required: this.required,
         }
       });
     }
-  
+
     public addToCanvas() {
         this.createtextboxes();
         this.canvi.add(this.textbox);
@@ -280,6 +307,7 @@ class DropdownboxManager {
         this.color = generateColorForRecipient(this.recipient);
         this.dropdownItems = value.items;
         this.required = value.required;
+        this.selectedItem = value.selectedItem;
         
         if(!this.signMode) {
             this.updateSvgColor();
@@ -331,8 +359,8 @@ class DropdownboxManager {
         this.textbox.set({
             // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
             borderColor: this.color,
-            fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
-            text: this.enteredText==="" ? this.placeholder : this.enteredText,
+            fill: this.selectedItem==="" ? "#6F6F6F" : "#262626",
+            text: this.selectedItem==="" ? this.placeholder : this.selectedItem,
         });
       
         this.border.set({

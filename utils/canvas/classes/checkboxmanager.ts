@@ -151,7 +151,6 @@ class CheckboxManager {
         isChecked = !isChecked;
         this.checkboxesState[this.checkboxElements.length] = isChecked;
         // checkbox.set('fill', isChecked ? '#000' : 'white');
-  
         // Remove existing checkmarks
         this.checkboxObjects.forEach((obj) => {
           if (obj instanceof fabric.Text && obj.text === '✔' && obj.left === checkbox.left && obj.top === checkbox.top) {

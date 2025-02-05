@@ -181,6 +181,7 @@ const PDFBoard: React.FC = () => {
                     setShowDropdownboxSettingForm={setShowDropdownboxSettingForm}
                     recipients={docData.recipients}
                     setDropdownboxSetting={contextValues.handleCanvasObjectSetValue}
+                    signMode={contextValues.signMode}
                   />}
                 </div>
                 <div

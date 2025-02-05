@@ -70,6 +70,8 @@ type CanvasContextProps = {
   activeRecipient:string;
   setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
   handleCanvasObjectSetValue: (payload:any) => void;
+
+  signMode: boolean;
 };
 
 const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
@@ -99,6 +101,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [hideCanvas, setHiddenCanvas] = useState(false);
   const exportPage = useRef<HTMLDivElement | null>(null);
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
+  const [signMode, setSignMode] = useState<boolean>(true);
   const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
     textbox: "",
     textbox_edit:"",
@@ -107,6 +110,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     radiobox_edit:"",
     dropdownbox:"",
     radio_add_button: "",
+    arrow_bottom: "",
   })
   // canvas edit object
   const [edits, setEdits] = React.useState({});
@@ -153,12 +157,13 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     uid: "",
     show: false,
     position: { left: 0, top: 0 },
+    width: 200,
     value: {
       recipient: "",
       items: [],
+      selectedItem: "",
       required: true,
     },
-
   });
 
   // current selected recipient
@@ -182,6 +187,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     "textbox",
     "textbox_edit",
     "dropdownbox",
+    "arrow_bottom",
   ]
 
   //fetching svg files for canvas object
@@ -189,7 +195,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     const fetchFileContent = async () => {
       for (const item of svgFiles) {
         try {
-          const response = await fetch(`/api/readfile/controls/textbox?filename=${encodeURIComponent(item)}`);
+          const response = await fetch(`/api/readfile/controls?filename=${encodeURIComponent(item)}`);
           if (!response.ok) {
             console.error("Error fetching:", item);
             continue;
@@ -347,7 +353,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startLeft, 
       startTop, 
       activeRecipient,
-      false,
+      signMode,
       setShowRadioboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
@@ -366,7 +372,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startTop, 
       1, 
       activeRecipient,
-      false,
+      signMode,
       setCheckboxItems, 
       setShowCheckboxSettingForm
     ); // Initialize with 1 checkboxes
@@ -385,7 +391,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startTop, 
       1, 
       activeRecipient,
-      false,
+      signMode,
       setRadioboxItems, 
       setShowRadioboxSettingForm,
       controlSVGFile,
@@ -404,7 +410,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startLeft, 
       startTop, 
       activeRecipient,
-      false,
+      signMode,
       setShowDropdownboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
@@ -479,6 +485,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         activeRecipient,
         setActiveRecipient,
         handleCanvasObjectSetValue,
+        signMode,
       }}
     >
       {children}

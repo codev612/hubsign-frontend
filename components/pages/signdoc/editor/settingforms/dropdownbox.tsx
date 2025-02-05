@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { DropdownboxSettingFormState } from "@/interface/interface";
-import { Checkbox, Button, Input } from "@heroui/react";
+import { Checkbox, Button, Input, Listbox, ListboxItem } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 import { Recipient } from "@/interface/interface";
@@ -13,20 +14,24 @@ interface DropdownboxGroupProps {
   setShowDropdownboxSettingForm: React.Dispatch<React.SetStateAction<DropdownboxSettingFormState>>;
   recipients: Recipient[];
   setDropdownboxSetting: (payload: any) => void;
+  signMode: boolean;
 }
 
-const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSettingForm, setShowDropdownboxSettingForm, recipients, setDropdownboxSetting }) => {
+
+const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSettingForm, setShowDropdownboxSettingForm, recipients, setDropdownboxSetting, signMode }) => {
   useEffect(() => {
     setSelectRecipient(showDropdownboxSettingForm.value.recipient);
     setCheckRequired(showDropdownboxSettingForm.value.required);
   }, [showDropdownboxSettingForm]);
+
+  const testItems = ['1', '2', '3']
 
   const [selectRecipient, setSelectRecipient] = useState<string>(showDropdownboxSettingForm.value.recipient);
   const [checkRequired, setCheckRequired] = useState<boolean>(showDropdownboxSettingForm.value.required);
   const [items, setItems] = useState<string[]>(showDropdownboxSettingForm.value.items);
   const [addItem, setAddItem] = useState<string>("");
 
-  return (
+  return !signMode ? (
     <div
         style={{
             left: showDropdownboxSettingForm.position.left,
@@ -43,22 +48,23 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
         </select>
         <div className="flex flex-col gap-1">
             <p>Dropdown Items</p>   
-
             {items.map((item,index) =>
                 <div className="flex flex-row justify-between" key={index}>
                     <input 
                     type="text"
                     placeholder="Item value"
-                    className="border-1 rounded-md p-1"       
-                    value={item}
-                    onChange={(e)=>setItems(items.map((item, i) => i === index ? e.target.value : item))}
+                    className="border-1 rounded-md p-1"
+                    value={`[${item}]`}  // Just use the `item` value directly
+                    onChange={(e) => {
+                        const newValue = e.target.value.replace(/[\[\]]/g, '');  // Remove brackets
+                        setItems(items.map((item, i) => i === index ? newValue : item));
+                    }}
                     />
                     <button
                     className="border-1 rounded-md w-[33]"
                     onClick={()=>setItems(items.filter((_, i) => i !== index))}
                     ><RemoveOutlinedIcon /></button>
                 </div>
-
             )}
             <div className="flex flex-row justify-between">
                 <input 
@@ -71,10 +77,8 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
                 <button
                 className="border-1 rounded-md w-[33]"
                 onClick={()=>{
-                    if( addItem !== "") {
-                        setItems([...items, addItem]); 
-                        setAddItem(""); 
-                    }
+                    setItems((prevItems) => addItem ? [...prevItems, addItem] : prevItems);
+                    setAddItem("");
                 }}
                 ><AddOutlinedIcon /></button>
             </div>
@@ -97,8 +101,10 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
                     value: {
                         recipient: selectRecipient,
                         items: items,
+                        selectedItem: "",
                         required: checkRequired,
                     }
+
                 });
                 setShowDropdownboxSettingForm({...showDropdownboxSettingForm, show:false});
             }}
@@ -117,7 +123,37 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
             </Button>
         </div>
     </div>
+  ) : (
+    <div
+        style={{
+            left: showDropdownboxSettingForm.position.left,
+            top: showDropdownboxSettingForm.position.top,
+            width: showDropdownboxSettingForm.width,
+        }}
+        className="absolute bg-white p-1 rounded-lg shadow-lg flex flex-col w-[300] gap-2 text-text"
+    >
+        {testItems.length > 0 && <Listbox 
+            aria-label="Actions" 
+            onAction={(key) => {
+                setDropdownboxSetting({
+                    uid: showDropdownboxSettingForm.uid,
+                    value: {
+                        recipient: selectRecipient,
+                        items: items,
+                        selectedItem: key,
+                        required: checkRequired,
+                    }
+
+                });
+                setShowDropdownboxSettingForm({...showDropdownboxSettingForm, show:false});
+            }}
+            >
+            {testItems.map((item) => <ListboxItem key={item}>{`[${item}]`}</ListboxItem>)}
+        </Listbox>}
+    </div>
   );
+
 };
+
 
 export default DropdownboxGroup;

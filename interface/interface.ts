@@ -87,6 +87,7 @@ export interface RadioboxSettingFormState {
 export interface DropdownboxSettings {
   recipient: string;
   items: string[];
+  selectedItem: string;
   required: boolean;
 }
 
@@ -94,6 +95,7 @@ export interface DropdownboxSettingFormState {
   uid: string,
   show: boolean;
   position: Position;
+  width: number;
   value: DropdownboxSettings;
 }
 
@@ -119,4 +121,5 @@ export interface ControlSVGFile {
   radiobox_edit: string,
   radio_add_button: string,
   dropdownbox: string,
+  arrow_bottom: string,
 }
