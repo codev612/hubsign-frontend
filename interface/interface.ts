@@ -84,6 +84,19 @@ export interface RadioboxSettingFormState {
   value: RadioboxSettings;
 }
 
+export interface DropdownboxSettings {
+  recipient: string;
+  items: string[];
+  required: boolean;
+}
+
+export interface DropdownboxSettingFormState {
+  uid: string,
+  show: boolean;
+  position: Position;
+  value: DropdownboxSettings;
+}
+
 //adddoc component
 export interface FileAddBoardProps {
   filename: string;

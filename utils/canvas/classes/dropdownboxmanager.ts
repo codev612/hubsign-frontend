@@ -26,106 +26,107 @@ class DropdownboxManager {
     private placeholder: string = "Enter value";
     private textvalue: string = "Text";
     private enteredText: string = "";
+    private dropdownItems: string[] = [];
     private customPlaceholder: boolean=false;
     private controlSVGFile: ControlSVGFile;
     private svgGroup: fabric.Object;
     private leftPadding: number = 10;
    
     constructor(
-      uid: string,
-      canvi: fabric.Canvas,
-      startLeft: number,
-      startTop: number,
-      recipient: string,
-      signMode: boolean,
-      setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
-      controlSVGFile: ControlSVGFile,
+        uid: string,
+        canvi: fabric.Canvas,
+        startLeft: number,
+        startTop: number,
+        recipient: string,
+        signMode: boolean,
+        setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
+        controlSVGFile: ControlSVGFile,
     ) {
-      this.uid = uid;
-      this.canvi = canvi;
-      this.containerLeft = startLeft;
-      this.containerTop = startTop;
-      this.scaleX = 1.0;
-      this.scaleY = 1.0;
-      this.currentTop = startTop;
+        this.uid = uid;
+        this.canvi = canvi;
+        this.containerLeft = startLeft;
+        this.containerTop = startTop;
+        this.scaleX = 1.0;
+        this.scaleY = 1.0;
+        this.currentTop = startTop;
 
-      this.recipient = recipient;
-      this.signMode = signMode;
-      this.controlSVGFile = controlSVGFile;
-      this.color = generateColorForRecipient(recipient);
-  
-      this.setShowSettingForm = setShowSettingForm;
-      
-      this.textbox = new fabric.Textbox("");
-      this.border = new fabric.Rect();
-      this.svgGroup = new fabric.Object();
+        this.recipient = recipient;
+        this.signMode = signMode;
+        this.controlSVGFile = controlSVGFile;
+        this.color = generateColorForRecipient(recipient);
+    
+        this.setShowSettingForm = setShowSettingForm;
+        
+        this.textbox = new fabric.Textbox("");
+        this.border = new fabric.Rect();
+        this.svgGroup = new fabric.Object();
 
-      this.tracktextboxGroup();
+        this.tracktextboxGroup();
     }
     
     private createtextboxes() {
         this.containerTop = this.currentTop;
 
         if(!this.signMode) {
-          const svgString = this.signMode ? this.controlSVGFile.textbox : this.controlSVGFile.dropdownbox;
-          const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
+            const svgString = this.signMode ? this.controlSVGFile.textbox : this.controlSVGFile.dropdownbox;
+            const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
-          // Load SVG into Fabric.js
-          fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-            if (this.svgGroup) {
-              this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
-            }
-    
-            this.svgGroup = fabric.util.groupSVGElements(objects, options);
-            (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
-            this.svgGroup.set({
-              left: this.containerLeft,
-              top: this.containerTop,
-              selectable: true,
-            })
+            // Load SVG into Fabric.js
+            fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+                if (this.svgGroup) {
+                this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+                }
+        
+                this.svgGroup = fabric.util.groupSVGElements(objects, options);
+                (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+                this.svgGroup.set({
+                left: this.containerLeft,
+                top: this.containerTop,
+                selectable: true,
+                })
 
-            this.trackSvgGroup();    
-            this.canvi.add(this.svgGroup);
-          });
-        } else {
-          // Create a border rectangle
-          this.border = new fabric.Rect({
-            left: this.containerLeft - this.leftPadding,
-            top: this.containerTop - this.leftPadding,
-            width: 200 + 1 + 2 * this.leftPadding,
-            height: 32 + 4 + 2 * this.leftPadding,
-            stroke: hexToRgba(this.color, 1),
-            strokeDashArray: [0, 0],
-            strokeWidth: 1,
-            fill: hexToRgba(this.color, 0.05),
-            selectable: false,
-            evented: true,
-            rx: 4,
-            ry: 4,
-          });
-      
-          // Create the textbox
-          this.textbox = new fabric.Textbox(
-            this.enteredText==="" ? this.placeholder : this.enteredText, 
-            {
-              left: this.containerLeft,
-              top: this.containerTop,
-              width: 200,
-              fontSize: 32,
-              textAlign: "left",
-              padding: this.leftPadding,
-              // backgroundColor: hexToRgba(this.color, 0.05),
-              backgroundColor: "transparent",
-              fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
-              borderColor: 'transparent',
-              cornerStyle: "circle",
-              transparentCorners: false,
-              evented: true,
-          });
+                this.trackSvgGroup();    
+                this.canvi.add(this.svgGroup);
+            });
+            } else {
+            // Create a border rectangle
+            this.border = new fabric.Rect({
+                left: this.containerLeft - this.leftPadding,
+                top: this.containerTop - this.leftPadding,
+                width: 200 + 1 + 2 * this.leftPadding,
+                height: 32 + 4 + 2 * this.leftPadding,
+                stroke: hexToRgba(this.color, 1),
+                strokeDashArray: [0, 0],
+                strokeWidth: 1,
+                fill: hexToRgba(this.color, 0.05),
+                selectable: false,
+                evented: true,
+                rx: 4,
+                ry: 4,
+            });
+        
+            // Create the textbox
+            this.textbox = new fabric.Textbox(
+                this.enteredText==="" ? this.placeholder : this.enteredText, 
+                {
+                left: this.containerLeft,
+                top: this.containerTop,
+                width: 200,
+                fontSize: 32,
+                textAlign: "left",
+                padding: this.leftPadding,
+                // backgroundColor: hexToRgba(this.color, 0.05),
+                backgroundColor: "transparent",
+                fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
+                borderColor: 'transparent',
+                cornerStyle: "circle",
+                transparentCorners: false,
+                evented: true,
+            });
 
-          this.tracktextboxGroup();
+            this.tracktextboxGroup();
 
-          this.canvi.add(this.border, this.textbox);
+            this.canvi.add(this.border, this.textbox);
         }  
         
         this.canvi.renderAll();
@@ -133,106 +134,106 @@ class DropdownboxManager {
     
     // Track scaling of the DropdownboxGroup
     private tracktextboxGroup() {
-      this.textbox.on('modified', () => {
-        this.border.set({
-            left: this.textbox.left! - this.leftPadding,
-            top: this.textbox.top! - this.leftPadding,
-            width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
-            height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
+        this.textbox.on('modified', () => {
+            this.border.set({
+                left: this.textbox.left! - this.leftPadding,
+                top: this.textbox.top! - this.leftPadding,
+                width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
+                height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
+            });
+
+            this.canvi.renderAll();
+        });
+        this.textbox.on('scaling', () => {
+            // this.showShowSettingForm();  
+            this.closeShowSettingForm();
+            this.border.set({
+            strokeDashArray: [2, 2, 2, 2],
+            stroke: hexToRgba(this.color, 0.4),
+            })
+        });
+        this.textbox.on('resizing', () => {
+            // this.showShowSettingForm();  
+            this.closeShowSettingForm();
+            this.border.set({
+            strokeDashArray: [2, 2, 2, 2],
+            stroke: hexToRgba(this.color, 0.4),
+            })
+        });
+        this.textbox.on('mouseup', () => {
+            this.showShowSettingForm();
+            this.border.set({
+            strokeDashArray: [0, 0],
+            stroke: hexToRgba(this.color, 1),
+            })
+        });
+        this.textbox.on('deselected', () => {
+            this.closeShowSettingForm();
         });
 
-        this.canvi.renderAll();
-      });
-      this.textbox.on('scaling', () => {
-        // this.showShowSettingForm();  
-        this.closeShowSettingForm();
-        this.border.set({
-          strokeDashArray: [2, 2, 2, 2],
-          stroke: hexToRgba(this.color, 0.4),
-        })
-      });
-      this.textbox.on('resizing', () => {
-        // this.showShowSettingForm();  
-        this.closeShowSettingForm();
-        this.border.set({
-          strokeDashArray: [2, 2, 2, 2],
-          stroke: hexToRgba(this.color, 0.4),
-        })
-      });
-      this.textbox.on('mouseup', () => {
-        this.showShowSettingForm();
-        this.border.set({
-          strokeDashArray: [0, 0],
-          stroke: hexToRgba(this.color, 1),
-        })
-      });
-      this.textbox.on('deselected', () => {
-        this.closeShowSettingForm();
-      });
+        this.textbox.on('moving', () => {
+            // Get the position of the group
+            this.containerLeft = this.textbox.left!;
+            this.containerTop = this.textbox.top!;
+            this.border.set({
+            strokeDashArray: [2, 2, 2, 2],
+            stroke: hexToRgba(this.color, 0.4),
+            })
+            this.closeShowSettingForm();
+        });
 
-      this.textbox.on('moving', () => {
-        // Get the position of the group
-        this.containerLeft = this.textbox.left!;
-        this.containerTop = this.textbox.top!;
-        this.border.set({
-          strokeDashArray: [2, 2, 2, 2],
-          stroke: hexToRgba(this.color, 0.4),
-        })
-        this.closeShowSettingForm();
-      });
-
-      // Catch editing event
-      this.textbox.on('editing:entered', () => {
-        this.textbox.set({
-          fill: "#262626",
-        })
-        this.canvi.renderAll();
-      });
-
-      this.textbox.on('editing:exited', () => {
-        if(this.textbox.text === this.placeholder || this.textbox.text === "") {
-          this.textbox.set({
-            fill: "#6F6F6F",
-            text: this.placeholder,
-          })
-        } else {
-          this.textbox.set({
+        // Catch editing event
+        this.textbox.on('editing:entered', () => {
+            this.textbox.set({
             fill: "#262626",
-            
-          })
+            })
+            this.canvi.renderAll();
+        });
 
-          this.enteredText = this.textbox.text || '';
-        }
+        this.textbox.on('editing:exited', () => {
+            if(this.textbox.text === this.placeholder || this.textbox.text === "") {
+            this.textbox.set({
+                fill: "#6F6F6F",
+                text: this.placeholder,
+            })
+            } else {
+            this.textbox.set({
+                fill: "#262626",
+                
+            })
 
-        this.canvi.renderAll();
-      });
+            this.enteredText = this.textbox.text || '';
+            }
+
+            this.canvi.renderAll();
+        });
     }
 
     // Track scaling of the DropdownboxGroup
     private trackSvgGroup() {
-      this.svgGroup.on('modified', () => {
-        this.canvi.renderAll();
-      });
-      this.svgGroup.on('scaling', () => {
-        // this.showShowSettingForm();  
-        this.closeShowSettingForm();
-      });
-      this.svgGroup.on('resizing', () => {
-        // this.showShowSettingForm();  
-        this.closeShowSettingForm();
-      });
-      this.svgGroup.on('mouseup', () => {
-        this.showShowSettingForm();
-      });
-      this.svgGroup.on('deselected', () => {
-        this.closeShowSettingForm();
-      });
-      this.svgGroup.on('moving', () => {
-        // Get the position of the group
-        this.containerLeft = this.svgGroup.left!;
-        this.containerTop = this.svgGroup.top!;
-        this.closeShowSettingForm();
-      });
+        this.svgGroup.on('modified', () => {
+            this.canvi.renderAll();
+        });
+        this.svgGroup.on('scaling', () => {
+            // this.showShowSettingForm();  
+            this.closeShowSettingForm();
+        });
+        this.svgGroup.on('resizing', () => {
+            // this.showShowSettingForm();  
+            this.closeShowSettingForm();
+        });
+        this.svgGroup.on('mouseup', () => {
+            this.showShowSettingForm();
+        });
+        this.svgGroup.on('deselected', () => {
+            this.closeShowSettingForm();
+        });
+        this.svgGroup.on('moving', () => {
+            // Get the position of the group
+            this.containerLeft = this.svgGroup.left!;
+            this.containerTop = this.svgGroup.top!;
+            this.closeShowSettingForm();
+        });
     }
   
     private showShowSettingForm() {
@@ -246,8 +247,7 @@ class DropdownboxManager {
         },
         value: {
             recipient: this.recipient,
-            customPlaceholder: this.customPlaceholder,
-            placeholder: this.placeholder,
+            items: this.dropdownItems,
             required: this.required,
         }
       });
@@ -264,71 +264,65 @@ class DropdownboxManager {
         },
         value: {
             recipient: this.recipient,
-            customPlaceholder: this.customPlaceholder,
-            placeholder: this.placeholder,
+            items: this.dropdownItems,
             required: this.required,
         }
       });
     }
   
     public addToCanvas() {
-    //   this.canvi.add(this.DropdownboxGroup);
         this.createtextboxes();
         this.canvi.add(this.textbox);
-    //   this.canvi.renderAll();
     }
 
-
     public setValue(value:any) {
-      this.recipient = value.recipient;
-      this.color = generateColorForRecipient(this.recipient);
-      this.customPlaceholder = value.customPlaceholder;
-      console.log(value.placeholder)
-      this.placeholder = value.placeholder;
-      this.required = value.required;
-      
-      if(!this.signMode) {
-        this.updateSvgColor();
-      } else {
-        this.updateTextboxGroup();
-      }      
+        this.recipient = value.recipient;
+        this.color = generateColorForRecipient(this.recipient);
+        this.dropdownItems = value.items;
+        this.required = value.required;
+        
+        if(!this.signMode) {
+            this.updateSvgColor();
+        } else {
+            this.updateTextboxGroup();
+        }      
     }
 
     private updateSvgColor() {
 
-      // Update SVG color and replace existing one
-      const svgString = this.controlSVGFile.dropdownbox;
-      const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
+        // Update SVG color and replace existing one
+        const svgString = this.controlSVGFile.dropdownbox;
+        const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
-      // Store the previous position of svgGroup
-      let prevLeft = this.svgGroup?.left || this.containerLeft;
-      let prevTop = this.svgGroup?.top || this.containerTop;
-      let prevScaleX = this.svgGroup?.scaleX || 1;
-      let prevScaleY = this.svgGroup?.scaleY || 1;
+        // Store the previous position of svgGroup
+        let prevLeft = this.svgGroup?.left || this.containerLeft;
+        let prevTop = this.svgGroup?.top || this.containerTop;
+        let prevScaleX = this.svgGroup?.scaleX || 1;
+        let prevScaleY = this.svgGroup?.scaleY || 1;
 
-      // Remove the old SVG before adding a new one
-      if (this.svgGroup) {
-        console.log('remove')
-          this.canvi.remove(this.svgGroup);
-          this.canvi.renderAll();
-      }
+        // Remove the old SVG before adding a new one
+        if (this.svgGroup) {
+            console.log('remove')
+            this.canvi.remove(this.svgGroup);
+            this.canvi.renderAll();
+        }
 
-      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-          this.svgGroup = fabric.util.groupSVGElements(objects, options);
-          (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+            this.svgGroup = fabric.util.groupSVGElements(objects, options);
+            (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
 
-          // Restore the position and scale of the new SVG
-          this.svgGroup.set({
-              left: prevLeft,
-              top: prevTop,
-              scaleX: prevScaleX,
-              scaleY: prevScaleY,
-          });
+            // Restore the position and scale of the new SVG
+            this.svgGroup.set({
+                left: prevLeft,
+                top: prevTop,
+                scaleX: prevScaleX,
+                scaleY: prevScaleY,
+            });
 
-          this.trackSvgGroup();
-          this.canvi.add(this.svgGroup);
-          this.canvi.renderAll();
-      });
+            this.trackSvgGroup();
+            this.canvi.add(this.svgGroup);
+            this.canvi.renderAll();
+        });
     }
 
     public updateTextboxGroup() {

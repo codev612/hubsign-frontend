@@ -14,6 +14,7 @@ import { DocData } from '@/interface/interface';
 import Checkboxgroup from './settingforms/checkboxgroup';
 import TextboxGroup from './settingforms/textboxgroup';
 import RadioboxGroup from './settingforms/radioboxgroup';
+import DropdownboxGroup from './settingforms/dropdownbox';
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -23,7 +24,7 @@ const PDFBoard: React.FC = () => {
     filename: "",
     recipients: []
   });
-  //setting form controls 
+  //variables for setting forms
   const showCheckboxSettingForm = contextValues.showCheckboxSettingForm;
   const setShowCheckboxSettingForm = contextValues.setShowCheckboxSettingForm;
 
@@ -32,6 +33,9 @@ const PDFBoard: React.FC = () => {
 
   const showRadioboxSettingForm = contextValues.showRadioboxSettingForm;
   const setShowRadioboxSettingForm = contextValues.setShowRadioboxSettingForm;
+
+  const showDropdownboxSettingForm = contextValues.showDropdownboxSettingForm;
+  const setShowDropdownboxSettingForm = contextValues.setShowDropdownboxSettingForm;
 
   // const { getRootProps, getInputProps } = useDropzone({
   //   onDrop: (files: File[]) => {
@@ -171,6 +175,12 @@ const PDFBoard: React.FC = () => {
                     setShowRadioboxSettingForm={setShowRadioboxSettingForm}
                     recipients={docData.recipients}
                     setRadioboxSetting={contextValues.handleCanvasObjectSetValue}
+                  />}
+                  {showDropdownboxSettingForm.show && <DropdownboxGroup 
+                    showDropdownboxSettingForm={showDropdownboxSettingForm} 
+                    setShowDropdownboxSettingForm={setShowDropdownboxSettingForm}
+                    recipients={docData.recipients}
+                    setDropdownboxSetting={contextValues.handleCanvasObjectSetValue}
                   />}
                 </div>
                 <div

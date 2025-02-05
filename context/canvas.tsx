@@ -14,6 +14,7 @@ import {
   CheckboxSettingFormState,
   TextboxSettingFormState,
   RadioboxSettingFormState,
+  DropdownboxSettingFormState,
   ControlSVGFile,
 } from '@/interface/interface';
 
@@ -62,7 +63,10 @@ type CanvasContextProps = {
   setShowTextboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
   showRadioboxSettingForm: any,
   setShowRadioboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
+  showDropdownboxSettingForm: any,
+  setShowDropdownboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
   //store form settings on canvas object
+
   activeRecipient:string;
   setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
   handleCanvasObjectSetValue: (payload:any) => void;
@@ -104,11 +108,12 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     dropdownbox:"",
     radio_add_button: "",
   })
-  // canvas edits
+  // canvas edit object
   const [edits, setEdits] = React.useState({});
 
   const [checkboxItems, setCheckboxItems] = useState(1);
   const [radioboxItems, setRadioboxItems] = useState(1);
+
   //setting form controls
   const [showCheckboxSettingForm, setShowCheckboxSettingForm] = useState<CheckboxSettingFormState>({
     uid: "",
@@ -144,6 +149,19 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     },
   });
 
+  const [showDropdownboxSettingForm, setShowDropdownboxSettingForm] = useState<DropdownboxSettingFormState>({
+    uid: "",
+    show: false,
+    position: { left: 0, top: 0 },
+    value: {
+      recipient: "",
+      items: [],
+      required: true,
+    },
+
+  });
+
+  // current selected recipient
   const [activeRecipient, setActiveRecipient] = useState<string>("");
 
   //stroe canvas objects
@@ -153,6 +171,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   }
   const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([])
 
+  //transfer setting values from setting form to canvas object
   const handleCanvasObjectSetValue = (payload:any) => {
     if(canvas) {
       canvasObjects.filter(item=>item.uid===payload.uid)[0].object.setValue(payload.value)
@@ -162,10 +181,10 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const svgFiles = [
     "textbox",
     "textbox_edit",
-    "radio_add_button",
     "dropdownbox",
   ]
 
+  //fetching svg files for canvas object
   useEffect(() => {
     const fetchFileContent = async () => {
       for (const item of svgFiles) {
@@ -386,7 +405,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startTop, 
       activeRecipient,
       false,
-      setShowRadioboxSettingForm,
+      setShowDropdownboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
@@ -444,15 +463,18 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setStrokeWidth,
         hideCanvas,
         setHiddenCanvas,
+
         edits,
         setEdits,
-
+        //state variables for setting form controls
         showCheckboxSettingForm,
         setShowCheckboxSettingForm,
         showTextboxSettingForm,
         setShowTextboxSettingForm,
         showRadioboxSettingForm,
         setShowRadioboxSettingForm,
+        showDropdownboxSettingForm,
+        setShowDropdownboxSettingForm,
 
         activeRecipient,
         setActiveRecipient,
