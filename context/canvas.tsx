@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import CheckboxManager from '@/utils/canvas/classes/checkboxmanager';
 import TextboxManager from '@/utils/canvas/classes/textboxmanager';
 import RadioboxManager from '@/utils/canvas/classes/radioboxmanager';
+import DropdownboxManager from '@/utils/canvas/classes/dropdownboxmanager';
 import { 
   CheckboxSettingFormState,
   TextboxSettingFormState,
@@ -25,6 +26,7 @@ type CanvasContextProps = {
   addText: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
   addCheckbox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
   addRadiobox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
+  addDropdownbox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
   addImage: (e: React.ChangeEvent<HTMLInputElement>, canvi: fabric.Canvas) => void;
   addHighlight: (canvi: fabric.Canvas) => void;
   toggleDraw: (canvi: fabric.Canvas) => void;
@@ -99,7 +101,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     radiobox_empty:"",
     radiobox_filled:"",
     radiobox_edit:"",
-    dropdown:"",
+    dropdownbox:"",
     radio_add_button: "",
   })
   // canvas edits
@@ -161,7 +163,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     "textbox",
     "textbox_edit",
     "radio_add_button",
-    "dropdown",
+    "dropdownbox",
   ]
 
   useEffect(() => {
@@ -352,8 +354,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     setCanvasObjects([...canvasObjects, {uid, object:checkboxGroup}]);
     
     checkboxGroup.addToCanvas(); // Add the group to the canvas
-  
-    // return checkboxGroup; // Return the group for future use if needed
   };
 
   //radiobox
@@ -373,12 +373,27 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
     
-
     radioboxGroup.addToCanvas(); // Add the group to the canvas
-  
-    // return checkboxGroup; // Return the group for future use if needed
   };
   
+  //dropdownbox
+  const addDropdownbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+    const uid = uuidv4();
+    const radioboxGroup = new DropdownboxManager(
+      uid,
+      canvi, 
+      startLeft, 
+      startTop, 
+      activeRecipient,
+      false,
+      setShowRadioboxSettingForm,
+      controlSVGFile,
+    ); // Initialize with 1 checkboxes
+    setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
+    
+    radioboxGroup.addToCanvas(); // Add the group to the canvas
+  };
+
   const toggleDraw = (canvi: fabric.Canvas) => {
     canvi.isDrawingMode = !canvi.isDrawingMode;
     if (canvas) {
@@ -403,6 +418,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         addText,
         addCheckbox,
         addRadiobox,
+        addDropdownbox,
         addImage,
         numPages,
         setNumPages,

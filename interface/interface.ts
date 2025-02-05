@@ -105,5 +105,5 @@ export interface ControlSVGFile {
   radiobox_filled: string,
   radiobox_edit: string,
   radio_add_button: string,
-  dropdown: string,
+  dropdownbox: string,
 }

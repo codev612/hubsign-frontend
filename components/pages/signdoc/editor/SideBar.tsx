@@ -20,7 +20,7 @@ import { generateColorForRecipient, hexToRgba } from '@/utils/canvas/utils';
 import { TextBoxIcon } from '../sidebaricons/textbox';
 import { CheckBoxIcon } from '../sidebaricons/checkbox';
 import { RadioBoxIcon } from '../sidebaricons/radiobox';
-import { DropdownIcon } from '../sidebaricons/dropdown';
+import { DropdownIcon } from '../sidebaricons/dropdownbox';
 
 type AnchorElement = HTMLElement | null;
 
@@ -65,7 +65,8 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         <option>Myself</option>
                         <option>Myself</option>
                     </select> */}
-                    {docData.recipients.length ? <Select aria-label="recipients" 
+                    {docData.recipients.length ? <Select 
+                    aria-label="recipients" 
                     items={docData.recipients} 
                     defaultSelectedKeys={[docData.recipients[0].email]} 
                     onChange={(e)=>contextValues.setActiveRecipient(e.target.value)}
@@ -128,7 +129,7 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         <p className='text-text text-sm'>Radiobox</p>
                     </div>
                 </Tooltip> 
-                <Tooltip title="Checkbox">
+                <Tooltip title="Dropdown">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
                         {/* <img src='/assets/img/controls/dropdown.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/> */}
@@ -136,7 +137,7 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         isIconOnly 
                         className='p-0 bg-white'
                         size='sm'
-                        onPress={() => contextValues.addRadiobox(contextValues.canvas!,100, 100, 4)}
+                        onPress={() => contextValues.addDropdownbox(contextValues.canvas!,100, 100, 4)}
                         >
                         <DropdownIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
                         </Button>
