@@ -456,10 +456,11 @@ class RadioboxManager {
       this.canvi.renderAll();
     }
   
-    public updateCheckboxGroup() {
+    public updateRadioboxGroup() {
       console.log("updated");
       // Update the color of each radiobox individually
       this.radioboxElements.forEach((radiobox, index) => {
+        console.log(radiobox)
         radiobox.set({
           stroke: this.color,
           borderColor: this.color,
@@ -467,7 +468,12 @@ class RadioboxManager {
         });
       });
 
-      this.canvi.renderAll() // Re-render canvas
+      this.radioboxWrapper.set({
+        backgroundColor: hexToRgba(this.color, 0.05),
+        stroke: this.color,
+      });
+
+      this.canvi.renderAll();
     }
 
     private createPattern () {
@@ -518,9 +524,10 @@ class RadioboxManager {
     public setValue(value:any) {
       this.recipient = value.recipient;
       this.required = value.required;
+      this.color = generateColorForRecipient(value.recipient);
 
       // Refresh the radiobox group
-      this.updateCheckboxGroup();
+      this.updateRadioboxGroup();
     }
 
     private setupDeleteKeyHandler() {
@@ -608,8 +615,7 @@ class RadioboxManager {
       manager.checkboxesState = parsed.checkboxesState;
   
       // Recreate the radiobox group and patterns
-      manager.createPattern();
-      manager.updateCheckboxGroup();
+      manager.updateRadioboxGroup();
   
       return manager;
     }

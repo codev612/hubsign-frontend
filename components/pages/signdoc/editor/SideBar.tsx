@@ -12,11 +12,12 @@ import { Popover, Slider } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { SketchPicker, ColorResult } from 'react-color';
 import ExportPopup from './ExportPopup';
-import { Select, SelectItem } from '@heroui/react';
+import { Button, Select, SelectItem } from '@heroui/react';
 import { DocData } from '@/interface/interface';
 // import { DocData } from '@/interface/interface';
 import Dot from '@/components/common/dot';
-import { generateColorForRecipient } from '@/utils/canvas/utils';
+import { generateColorForRecipient, hexToRgba } from '@/utils/canvas/utils';
+import { TextBoxIcon } from '../sidebaricons/textbox';
 
 type AnchorElement = HTMLElement | null;
 
@@ -30,6 +31,8 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
     const [openBorderColor, setOpenBorderColor] = useState<AnchorElement>(null);
     const [openStroke, setOpenStroke] = useState<AnchorElement>(null);
     const [openExporter, setOpenExporter] = useState<boolean>(false);
+
+    const activeRecipient = contextValues.activeRecipient;
 
     useEffect(()=>{
         if(docData.recipients.length) contextValues.setActiveRecipient(docData.recipients[0].email)
@@ -80,7 +83,15 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                 <Tooltip title="TextBox">
                     <div className='flex flex-row items-center justify-center gap-1'>
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
-                        <img src='/assets/img/controls/textbox.svg' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!,100, 100, 4)}/>
+                        {/* <img src='/assets/img/controls/textbox.svg' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!,100, 100, 4)}/>
+                        <p className='text-text text-sm'>Textbox</p> */}
+                        <Button 
+                        isIconOnly 
+                        className='p-0 bg-white'
+                        onPress={() => contextValues.addText(contextValues.canvas!,100, 100, 4)}
+                        >
+                            <TextBoxIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
+                        </Button>
                         <p className='text-text text-sm'>Textbox</p>
                     </div>
                 </Tooltip>
@@ -96,6 +107,13 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
                         <img src='/assets/img/controls/radiobox.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/>
                         <p className='text-text text-sm'>Radiobox</p>
+                    </div>
+                </Tooltip> 
+                <Tooltip title="Checkbox">
+                    <div className='flex flex-row items-center justify-center gap-1'>
+                        {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
+                        <img src='/assets/img/controls/dropdown.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/>
+                        <p className='text-text text-sm'>Dropdown</p>
                     </div>
                 </Tooltip> 
 
