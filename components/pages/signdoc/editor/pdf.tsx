@@ -15,11 +15,14 @@ import Checkboxgroup from './settingforms/checkboxgroup';
 import TextboxGroup from './settingforms/textboxgroup';
 import RadioboxGroup from './settingforms/radioboxgroup';
 import DropdownboxGroup from './settingforms/dropdownbox';
+import DateboxGroup from './settingforms/dateboxgroup';
 import { 
   CheckboxGroupProps, 
   TextboxGroupProps, 
   RadioboxGroupProps, 
-  DropdownboxGroupProps } from '@/interface/interface';
+  DropdownboxGroupProps,
+  DateboxGroupProps
+} from '@/interface/interface';
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -29,6 +32,7 @@ const PDFBoard: React.FC = () => {
     filename: "",
     recipients: []
   });
+
   //variables for setting forms
   const showCheckboxSettingForm = contextValues.showCheckboxSettingForm;
   const setShowCheckboxSettingForm = contextValues.setShowCheckboxSettingForm;
@@ -42,12 +46,16 @@ const PDFBoard: React.FC = () => {
   const showDropdownboxSettingForm = contextValues.showDropdownboxSettingForm;
   const setShowDropdownboxSettingForm = contextValues.setShowDropdownboxSettingForm;
 
+  const showDateboxSettingForm = contextValues.showDateboxSettingForm;
+  const setShowDateboxSettingForm = contextValues.setShowDateboxSettingForm;
+
   // Create a type for our form configuration
   type FormConfig = {
     show: boolean;
     Component: React.ComponentType<any>;
-    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps;
+    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps | DateboxGroupProps;
   }
+  
   // Now use these types in your component
   const settingForms: FormConfig[] = [
     {
@@ -88,6 +96,17 @@ const PDFBoard: React.FC = () => {
         setShowDropdownboxSettingForm,
         recipients: docData.recipients,
         setDropdownboxSetting: contextValues.handleCanvasObjectSetValue,
+        signMode: contextValues.signMode
+      }
+    },
+    {
+      show: showDateboxSettingForm.show,
+      Component: DateboxGroup,
+      props: {
+        showDateboxSettingForm,
+        setShowDateboxSettingForm,
+        recipients: docData.recipients,
+        setDateboxSetting: contextValues.handleCanvasObjectSetValue,
         signMode: contextValues.signMode
       }
     }

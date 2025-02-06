@@ -150,6 +150,14 @@ export interface DropdownboxGroupProps {
   signMode: boolean;
 }
 
+export interface DateboxGroupProps {
+  showDateboxSettingForm: DropdownboxSettingFormState;
+  setShowDateboxSettingForm: React.Dispatch<React.SetStateAction<DropdownboxSettingFormState>>;
+  recipients: Recipient[];
+  setDateboxSetting: (payload: any) => void;
+  signMode: boolean;
+}
+
 //document data
 export interface DocData {
   filename: string,
