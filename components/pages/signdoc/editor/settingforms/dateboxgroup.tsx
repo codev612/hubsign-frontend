@@ -87,7 +87,7 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
             left: showDateboxSettingForm.position.left,
             top: showDateboxSettingForm.position.top,
         }}
-        className="absolute bg-white p-1 rounded-lg flex flex-col w-[350px] gap-2 text-text"
+        className="absolute bg-white rounded-lg flex flex-col w-[300px] text-text"
     >
         <Calendar />
     </div>

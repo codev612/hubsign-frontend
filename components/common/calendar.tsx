@@ -1,9 +1,21 @@
 import React, { useState } from "react";
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import * as dateFns from "date-fns";
+
 
 const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  // Months array
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  // Years range (2000 to 2050)
+  const years = Array.from({ length: 51 }, (_, i) => 2000 + i);
 
   // Get start and end of the current month
   const monthStart = dateFns.startOfMonth(currentDate);
@@ -23,18 +35,64 @@ const Calendar: React.FC = () => {
     return days;
   };
 
+  // Handle month change
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMonth = parseInt(e.target.value);
+    setCurrentDate(dateFns.setMonth(currentDate, newMonth));
+  };
+
+  // Handle year change
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newYear = parseInt(e.target.value);
+    setCurrentDate(dateFns.setYear(currentDate, newYear));
+  };
+
   return (
-    <div className="p-4 border rounded-lg shadow-md w-[350px]">
+    <div className="p-2 border rounded-lg shadow-md w-[300px]">
       {/* Calendar Header */}
       <div className="flex justify-between items-center mb-4">
-        <button onClick={() => setCurrentDate(dateFns.subMonths(currentDate, 1))}>◀</button>
-        <h2 className="text-lg font-semibold">{dateFns.format(currentDate, "MMMM yyyy")}</h2>
-        <button onClick={() => setCurrentDate(dateFns.addMonths(currentDate, 1))}>▶</button>
+        {/* Month Select */}
+        <select 
+          className="border p-2 rounded-lg"
+          value={dateFns.getMonth(currentDate)}
+          onChange={handleMonthChange}
+        >
+          {months.map((month, index) => (
+            <option key={index} value={index}>{month}</option>
+          ))}
+        </select>
+
+        {/* Year Select */}
+        <select 
+          className="border p-2 rounded-lg"
+          value={dateFns.getYear(currentDate)}
+          onChange={handleYearChange}
+        >
+          {years.map((year) => (
+            <option key={year} value={year}>{year}</option>
+          ))}
+        </select>
+
+        {/* Buttons aligned to the right */}
+        <div className="flex gap-1">
+          <button 
+            className="p-0 rounded hover:bg-gray-300"
+            onClick={() => setCurrentDate(dateFns.subMonths(currentDate, 1))}
+          >
+            <KeyboardArrowLeftIcon />
+          </button>
+          <button 
+            className="p-0 rounded hover:bg-gray-300"
+            onClick={() => setCurrentDate(dateFns.addMonths(currentDate, 1))}
+          >
+            <KeyboardArrowRightIcon />
+          </button>
+        </div>
       </div>
 
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1 text-center text-sm font-medium">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
           <div key={day} className="p-2">{day}</div>
         ))}
         {generateDays().map((day, index) => (
@@ -49,6 +107,7 @@ const Calendar: React.FC = () => {
           </button>
         ))}
       </div>
+      <button className="w-full p-1 border-1 border-gray-100 rounded-lg hover:bg-gray-200">Today</button>
     </div>
   );
 };
