@@ -46,6 +46,13 @@ const Calendar: React.FC = () => {
     setCurrentDate(dateFns.setYear(currentDate, newYear));
   };
 
+  // Handle "Today" button click
+  const handleTodayClick = () => {
+    const today = new Date();
+    setCurrentDate(today); // Set the current date to today
+    setSelectedDate(today); // Optionally set the selected date to today as well
+  };
+
   return (
     <div className="p-2 border rounded-lg shadow-md w-[300px]">
       {/* Calendar Header */}
@@ -96,15 +103,20 @@ const Calendar: React.FC = () => {
         ))}
         {generateDays().map((day, index) => {
           const isCurrentMonth = dateFns.isSameMonth(day, currentDate);
+          const isToday = dateFns.isToday(day);
+          const isSelected = selectedDate && dateFns.isSameDay(day, selectedDate);
+
           return (
             <button
               key={index}
               className={`p-2 rounded-md ${
                 !isCurrentMonth ? "text-gray-400" : "" // Grey out days from previous/next month
               } ${
-                selectedDate && dateFns.isSameDay(day, selectedDate) ? "bg-blue-500 text-white" : "hover:bg-gray-200"
+                isToday ? "border-2 border-blue-500" : "" // Border for today's date
+              } ${
+                isSelected ? "bg-blue-500 text-white" : "hover:bg-gray-200"
               }`}
-              onClick={() => isCurrentMonth && setSelectedDate(day)} // Only allow selection of current month dates
+              onClick={() => setSelectedDate(day)} // Allow selecting any day
             >
               {dateFns.format(day, "d")}
             </button>
@@ -113,7 +125,12 @@ const Calendar: React.FC = () => {
       </div>
 
       {/* Today button */}
-      <button className="w-full p-1 border-1 border-gray-100 rounded-lg hover:bg-gray-200">Today</button>
+      <button 
+        className="w-full p-1 border-1 border-gray-100 rounded-lg hover:bg-gray-200"
+        onClick={handleTodayClick} // Call the function to go to today
+      >
+        Today
+      </button>
     </div>
   );
 };
