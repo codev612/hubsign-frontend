@@ -3,7 +3,6 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import * as dateFns from "date-fns";
 
-
 const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -95,18 +94,25 @@ const Calendar: React.FC = () => {
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
           <div key={day} className="p-2">{day}</div>
         ))}
-        {generateDays().map((day, index) => (
-          <button
-            key={index}
-            className={`p-2 rounded-md ${
-              selectedDate && dateFns.isSameDay(day, selectedDate) ? "bg-blue-500 text-white" : "hover:bg-gray-200"
-            }`}
-            onClick={() => setSelectedDate(day)}
-          >
-            {dateFns.format(day, "d")}
-          </button>
-        ))}
+        {generateDays().map((day, index) => {
+          const isCurrentMonth = dateFns.isSameMonth(day, currentDate);
+          return (
+            <button
+              key={index}
+              className={`p-2 rounded-md ${
+                !isCurrentMonth ? "text-gray-400" : "" // Grey out days from previous/next month
+              } ${
+                selectedDate && dateFns.isSameDay(day, selectedDate) ? "bg-blue-500 text-white" : "hover:bg-gray-200"
+              }`}
+              onClick={() => isCurrentMonth && setSelectedDate(day)} // Only allow selection of current month dates
+            >
+              {dateFns.format(day, "d")}
+            </button>
+          );
+        })}
       </div>
+
+      {/* Today button */}
       <button className="w-full p-1 border-1 border-gray-100 rounded-lg hover:bg-gray-200">Today</button>
     </div>
   );
