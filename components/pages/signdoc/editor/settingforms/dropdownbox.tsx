@@ -7,16 +7,7 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
-import { Recipient } from "@/interface/interface";
-
-interface DropdownboxGroupProps {
-  showDropdownboxSettingForm: DropdownboxSettingFormState;
-  setShowDropdownboxSettingForm: React.Dispatch<React.SetStateAction<DropdownboxSettingFormState>>;
-  recipients: Recipient[];
-  setDropdownboxSetting: (payload: any) => void;
-  signMode: boolean;
-}
-
+import { DropdownboxGroupProps } from "@/interface/interface";
 
 const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSettingForm, setShowDropdownboxSettingForm, recipients, setDropdownboxSetting, signMode }) => {
   useEffect(() => {

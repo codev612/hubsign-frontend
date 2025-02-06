@@ -1,7 +1,5 @@
 import { generateColorForRecipient, hexToRgba, updateSvgColors } from '../utils';
 import { fabric } from 'fabric';
-import { Text } from 'fabric/fabric-impl';
-import { parse } from 'svg-parser'
 import { ControlSVGFile } from '@/interface/interface';
 
 class DropdownboxManager {
@@ -200,8 +198,8 @@ class DropdownboxManager {
             this.containerLeft = this.textbox.left!;
             this.containerTop = this.textbox.top!;
             this.border.set({
-            strokeDashArray: [2, 2, 2, 2],
-            stroke: hexToRgba(this.color, 0.4),
+                strokeDashArray: [2, 2, 2, 2],
+                stroke: hexToRgba(this.color, 0.4),
             })
             this.closeShowSettingForm();
         });

@@ -99,11 +99,55 @@ export interface DropdownboxSettingFormState {
   value: DropdownboxSettings;
 }
 
+export interface DateboxSettings {
+  recipient: string;
+  format: string;
+  required: boolean;
+}
+
+export interface DateboxSettingFormState {
+  uid: string,
+  show: boolean;
+  position: Position;
+  width: number;
+  value: DateboxSettings;
+}
+
 //adddoc component
 export interface FileAddBoardProps {
   filename: string;
   setFile: (file: any) => void;
   setFilename: (filename: string) => void;
+}
+
+//setting form props
+export interface CheckboxGroupProps {
+  showCheckboxSettingForm: any;
+  setShowCheckboxSettingForm: React.Dispatch<any>;
+  recipients: Recipient[];
+  setCheckboxSetting: (payload: any) => void;
+}
+
+export interface TextboxGroupProps {
+  showTextboxSettingForm: any;
+  setShowTextboxSettingForm: React.Dispatch<any>;
+  recipients: Recipient[];
+  setTextboxSetting: (payload: any) => void;
+}
+
+export interface RadioboxGroupProps {
+  showRadioboxSettingForm: any;
+  setShowRadioboxSettingForm: React.Dispatch<any>;
+  recipients: Recipient[];
+  setRadioboxSetting: (payload: any) => void;
+}
+
+export interface DropdownboxGroupProps {
+  showDropdownboxSettingForm: any;
+  setShowDropdownboxSettingForm: React.Dispatch<any>;
+  recipients: Recipient[];
+  setDropdownboxSetting: (payload: any) => void;
+  signMode: boolean;
 }
 
 //document data

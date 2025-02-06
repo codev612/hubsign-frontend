@@ -1,11 +1,8 @@
 import { generateColorForRecipient, hexToRgba, updateSvgColors } from '../utils';
 import { fabric } from 'fabric';
-import { Text } from 'fabric/fabric-impl';
-import { parse } from 'svg-parser'
 import { ControlSVGFile } from '@/interface/interface';
 
 class DateboxManager {
-    
     private controlType = "datebox";
     private signMode: boolean = false;
     private color: string;

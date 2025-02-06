@@ -4,14 +4,7 @@ import { Select, SelectItem, Checkbox, Button } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import { Recipient } from "@/interface/interface";
-
-interface CheckboxGroupProps {
-  showCheckboxSettingForm: CheckboxSettingFormState;
-  setShowCheckboxSettingForm: React.Dispatch<React.SetStateAction<CheckboxSettingFormState>>;
-  recipients: Recipient[];
-  setCheckboxSetting: (payload: any) => void;
-}
+import { CheckboxGroupProps } from "@/interface/interface";
 
 const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ showCheckboxSettingForm, setShowCheckboxSettingForm, recipients, setCheckboxSetting }) => {
   useEffect(() => {

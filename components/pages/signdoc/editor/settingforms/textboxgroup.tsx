@@ -4,15 +4,8 @@ import { Checkbox, Button, Input } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import { Recipient } from "@/interface/interface";
+import { TextboxGroupProps } from "@/interface/interface";
 import { Switch } from "@heroui/react";
-
-interface TextboxGroupProps {
-  showTextboxSettingForm: TextboxSettingFormState;
-  setShowTextboxSettingForm: React.Dispatch<React.SetStateAction<TextboxSettingFormState>>;
-  recipients: Recipient[];
-  setTextboxSetting: (payload: any) => void;
-}
 
 const TextboxGroup: React.FC<TextboxGroupProps> = ({ showTextboxSettingForm, setShowTextboxSettingForm, recipients, setTextboxSetting }) => {
   useEffect(() => {

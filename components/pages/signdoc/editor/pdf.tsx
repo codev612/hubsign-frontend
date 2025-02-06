@@ -15,6 +15,11 @@ import Checkboxgroup from './settingforms/checkboxgroup';
 import TextboxGroup from './settingforms/textboxgroup';
 import RadioboxGroup from './settingforms/radioboxgroup';
 import DropdownboxGroup from './settingforms/dropdownbox';
+import { 
+  CheckboxGroupProps, 
+  TextboxGroupProps, 
+  RadioboxGroupProps, 
+  DropdownboxGroupProps } from '@/interface/interface';
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -36,6 +41,57 @@ const PDFBoard: React.FC = () => {
 
   const showDropdownboxSettingForm = contextValues.showDropdownboxSettingForm;
   const setShowDropdownboxSettingForm = contextValues.setShowDropdownboxSettingForm;
+
+  // Create a type for our form configuration
+  type FormConfig = {
+    show: boolean;
+    Component: React.ComponentType<any>;
+    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps;
+  }
+  // Now use these types in your component
+  const settingForms: FormConfig[] = [
+    {
+      show: showCheckboxSettingForm.show,
+      Component: Checkboxgroup,
+      props: {
+        showCheckboxSettingForm,
+        setShowCheckboxSettingForm,
+        recipients: docData.recipients,
+        setCheckboxSetting: contextValues.handleCanvasObjectSetValue
+      }
+    },
+    {
+      show: showTextboxSettingForm.show,
+      Component: TextboxGroup,
+      props: {
+        showTextboxSettingForm,
+        setShowTextboxSettingForm,
+        recipients: docData.recipients,
+        setTextboxSetting: contextValues.handleCanvasObjectSetValue
+      }
+    },
+    {
+      show: showRadioboxSettingForm.show,
+      Component: RadioboxGroup,
+      props: {
+        showRadioboxSettingForm,
+        setShowRadioboxSettingForm,
+        recipients: docData.recipients,
+        setRadioboxSetting: contextValues.handleCanvasObjectSetValue
+      }
+    },
+    {
+      show: showDropdownboxSettingForm.show,
+      Component: DropdownboxGroup,
+      props: {
+        showDropdownboxSettingForm,
+        setShowDropdownboxSettingForm,
+        recipients: docData.recipients,
+        setDropdownboxSetting: contextValues.handleCanvasObjectSetValue,
+        signMode: contextValues.signMode
+      }
+    }
+  ];
 
   // const { getRootProps, getInputProps } = useDropzone({
   //   onDrop: (files: File[]) => {
@@ -157,32 +213,10 @@ const PDFBoard: React.FC = () => {
                   style={{ visibility: "visible" }}
                 >
                   <canvas id="canvas" />
-                  {/* setting form controls */}
-                  {showCheckboxSettingForm.show && <Checkboxgroup 
-                    showCheckboxSettingForm={showCheckboxSettingForm} 
-                    setShowCheckboxSettingForm={setShowCheckboxSettingForm}
-                    recipients={docData.recipients}
-                    setCheckboxSetting={contextValues.handleCanvasObjectSetValue}
-                  />}
-                  {showTextboxSettingForm.show && <TextboxGroup 
-                    showTextboxSettingForm={showTextboxSettingForm} 
-                    setShowTextboxSettingForm={setShowTextboxSettingForm}
-                    recipients={docData.recipients}
-                    setTextboxSetting={contextValues.handleCanvasObjectSetValue}
-                  />}
-                  {showRadioboxSettingForm.show && <RadioboxGroup 
-                    showRadioboxSettingForm={showRadioboxSettingForm} 
-                    setShowRadioboxSettingForm={setShowRadioboxSettingForm}
-                    recipients={docData.recipients}
-                    setRadioboxSetting={contextValues.handleCanvasObjectSetValue}
-                  />}
-                  {showDropdownboxSettingForm.show && <DropdownboxGroup 
-                    showDropdownboxSettingForm={showDropdownboxSettingForm} 
-                    setShowDropdownboxSettingForm={setShowDropdownboxSettingForm}
-                    recipients={docData.recipients}
-                    setDropdownboxSetting={contextValues.handleCanvasObjectSetValue}
-                    signMode={contextValues.signMode}
-                  />}
+                  {/* Render setting form Components Dynamically */}
+                  {settingForms.map(({ show, Component, props }, index) => 
+                    show ? <Component key={index} {...props} /> : null
+                  )}
                 </div>
                 <div
                   className={`${

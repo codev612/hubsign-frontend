@@ -4,14 +4,7 @@ import { Select, SelectItem, Checkbox, Button } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import { Recipient } from "@/interface/interface";
-
-interface RadioboxGroupProps {
-  showRadioboxSettingForm: RadioboxSettingFormState;
-  setShowRadioboxSettingForm: React.Dispatch<React.SetStateAction<RadioboxSettingFormState>>;
-  recipients: Recipient[];
-  setRadioboxSetting: (payload: any) => void;
-}
+import { RadioboxGroupProps } from "@/interface/interface";
 
 const RadioboxGroup: React.FC<RadioboxGroupProps> = ({ showRadioboxSettingForm, setShowRadioboxSettingForm, recipients, setRadioboxSetting }) => {
   useEffect(() => {

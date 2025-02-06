@@ -16,12 +16,13 @@ import {
   RadioboxSettingFormState,
   DropdownboxSettingFormState,
   ControlSVGFile,
+  DateboxSettingFormState,
 } from '@/interface/interface';
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
   setCanvas: React.Dispatch<React.SetStateAction<fabric.Canvas | null>>;
-  //sidebar controls
+  //sidebar control functions
   addRect: (canvi: fabric.Canvas) => void;
   addCircle: (canvi: fabric.Canvas) => void;
   addText: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
@@ -67,7 +68,8 @@ type CanvasContextProps = {
   setShowRadioboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
   showDropdownboxSettingForm: any,
   setShowDropdownboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
-  //store form settings on canvas object
+  showDateboxSettingForm: any,
+  setShowDateboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
 
   activeRecipient:string;
   setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
@@ -103,7 +105,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [hideCanvas, setHiddenCanvas] = useState(false);
   const exportPage = useRef<HTMLDivElement | null>(null);
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
-  const [signMode, setSignMode] = useState<boolean>(true);
+  const [signMode, setSignMode] = useState<boolean>(false);
   const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
     textbox: "",
     textbox_edit: "",
@@ -166,6 +168,18 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       recipient: "",
       items: [],
       selectedItem: "",
+      required: true,
+    },
+  });
+
+  const [showDateboxSettingForm, setShowDateboxSettingForm] = useState<DateboxSettingFormState>({
+    uid: "",
+    show: false,
+    position: { left: 0, top: 0 },
+    width: 200,
+    value: {
+      recipient: "",
+      format: "mm/dd/yyyy",
       required: true,
     },
   });
@@ -435,7 +449,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startTop, 
       activeRecipient,
       signMode,
-      setShowDropdownboxSettingForm,
+      setShowDateboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
@@ -507,6 +521,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setShowRadioboxSettingForm,
         showDropdownboxSettingForm,
         setShowDropdownboxSettingForm,
+        showDateboxSettingForm,
+        setShowDateboxSettingForm,
 
         activeRecipient,
         setActiveRecipient,
