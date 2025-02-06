@@ -103,6 +103,7 @@ export interface DateboxSettings {
   recipient: string;
   format: string;
   required: boolean;
+  lockedToday:boolean;
 }
 
 export interface DateboxSettingFormState {
@@ -111,13 +112,6 @@ export interface DateboxSettingFormState {
   position: Position;
   width: number;
   value: DateboxSettings;
-}
-
-//adddoc component
-export interface FileAddBoardProps {
-  filename: string;
-  setFile: (file: any) => void;
-  setFilename: (filename: string) => void;
 }
 
 //setting form props
@@ -151,11 +145,18 @@ export interface DropdownboxGroupProps {
 }
 
 export interface DateboxGroupProps {
-  showDateboxSettingForm: DropdownboxSettingFormState;
-  setShowDateboxSettingForm: React.Dispatch<React.SetStateAction<DropdownboxSettingFormState>>;
+  showDateboxSettingForm: DateboxSettingFormState;
+  setShowDateboxSettingForm: React.Dispatch<React.SetStateAction<DateboxSettingFormState>>;
   recipients: Recipient[];
   setDateboxSetting: (payload: any) => void;
   signMode: boolean;
+}
+
+//adddoc component
+export interface FileAddBoardProps {
+  filename: string;
+  setFile: (file: any) => void;
+  setFilename: (filename: string) => void;
 }
 
 //document data

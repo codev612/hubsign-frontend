@@ -4,21 +4,21 @@ import { Checkbox, Button, Input, Listbox, ListboxItem } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 import { DateboxGroupProps } from "@/interface/interface";
+import Calendar from "@/components/common/calendar";
 
 const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, setShowDateboxSettingForm, recipients, setDateboxSetting, signMode }) => {
   useEffect(() => {
     setSelectRecipient(showDateboxSettingForm.value.recipient);
     setCheckRequired(showDateboxSettingForm.value.required);
+    setDateFormat(showDateboxSettingForm.value.format);
+    setLockedToday(showDateboxSettingForm.value.lockedToday);
   }, [showDateboxSettingForm]);
 
   const [selectRecipient, setSelectRecipient] = useState<string>(showDateboxSettingForm.value.recipient);
   const [checkRequired, setCheckRequired] = useState<boolean>(showDateboxSettingForm.value.required);
-  const [items, setItems] = useState<string[]>(showDateboxSettingForm.value.items);
-  const [addItem, setAddItem] = useState<string>("");
+  const [dateFormat, setDateFormat] = useState<string>(showDateboxSettingForm.value.format);
+  const [lockedToday, setLockedToday] = useState<boolean>(showDateboxSettingForm.value.lockedToday);
 
   return !signMode ? (
     <div
@@ -35,6 +35,12 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
                 </option>)
             }
         </select>
+        <select value={dateFormat} onChange={(e)=>setDateFormat(e.target.value)} className="border-1 rounded-md p-2">
+            <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+            <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+            <option value="yyyy/mm/dd">YYYY/MM/DD</option>
+        </select>
+        <Checkbox className="text-white" isSelected={lockedToday} onValueChange={()=>setLockedToday(!lockedToday)}>Lock to the date of signing</Checkbox>
          <div className="flex flex-row items-center justify-between">
             <Checkbox className="text-white" isSelected={checkRequired} onValueChange={()=>setCheckRequired(!checkRequired)}>Required</Checkbox>
             <div className="flex flex-row">
@@ -52,13 +58,13 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
                     uid: showDateboxSettingForm.uid,
                     value: {
                         recipient: selectRecipient,
-                        items: items,
-                        selectedItem: "",
+                        format: dateFormat,
                         required: checkRequired,
+                        lockedToday: lockedToday,
                     }
 
                 });
-                setShowDateboxSettingForm({...showDateboxSettingForm, show:false});
+                setShowDateboxSettingForm({...showDateboxSettingForm, show: false});
             }}
             size="sm"
             >
@@ -76,35 +82,19 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
         </div>
     </div>
   ) : (
-    items.length > 0 && <div
+    <div
         style={{
             left: showDateboxSettingForm.position.left,
             top: showDateboxSettingForm.position.top,
-            width: showDateboxSettingForm.width,
         }}
-        className="absolute bg-white p-1 rounded-lg shadow-lg flex flex-col w-[300] gap-2 text-text"
+        className="absolute bg-white p-1 rounded-lg flex flex-col w-[350px] gap-2 text-text"
     >
-        <Listbox 
-            aria-label="Actions" 
-            onAction={(key) => {
-                setDateboxSetting({
-                    uid: showDateboxSettingForm.uid,
-                    value: {
-                        recipient: selectRecipient,
-                        items: items,
-                        selectedItem: key,
-                        required: checkRequired,
-                    }
-
-                });
-                setShowDateboxSettingForm({...showDateboxSettingForm, show:false});
-            }}
-            >
-            {items.map((item) => <ListboxItem key={item}>{`[${item}]`}</ListboxItem>)}
-        </Listbox>
+        <Calendar />
     </div>
+
   );
 };
+
 
 
 export default DateboxGroup;

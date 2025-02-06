@@ -20,14 +20,13 @@ class DateboxManager {
     //setting form properties
     private recipient: string = "";
     private required: boolean = true;
+    private format: string = "mm/dd/yyyy";
+    private lockedToday: boolean = false;
     private placeholder: string = "Enter date";
-    private textvalue: string = "Text";
-    private selectedItem: string = "";
-    private dropdownItems: string[] = [];
-    private customPlaceholder: boolean=false;
+    private enteredDate: string = "";
     private controlSVGFile: ControlSVGFile;
     private svgGroup: fabric.Object;
-    private arrowBottom: fabric.Object;
+    private calendarIcon: fabric.Object;
     private leftPadding: number = 10;
    
     constructor(
@@ -58,7 +57,7 @@ class DateboxManager {
         this.textbox = new fabric.Textbox("");
         this.border = new fabric.Rect();
         this.svgGroup = new fabric.Object();
-        this.arrowBottom = new fabric.Object();
+        this.calendarIcon = new fabric.Object();
 
         this.tracktextboxGroup();
     }
@@ -93,15 +92,15 @@ class DateboxManager {
 
             // Load SVG into Fabric.js
             fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-                this.arrowBottom = fabric.util.groupSVGElements(objects, options);
-                (this.arrowBottom as fabric.Object & { isSvg?: boolean }).isSvg = true;
-                this.arrowBottom.set({
+                this.calendarIcon = fabric.util.groupSVGElements(objects, options);
+                (this.calendarIcon as fabric.Object & { isSvg?: boolean }).isSvg = true;
+                this.calendarIcon.set({
                     left: this.containerLeft + 200 - this.leftPadding,
                     top: this.containerTop + 6,
                     selectable: false,
                 })
 
-                this.canvi.add(this.arrowBottom);
+                this.canvi.add(this.calendarIcon);
             });
             // Create a border rectangle
             this.border = new fabric.Rect({
@@ -121,7 +120,7 @@ class DateboxManager {
         
             // Create the textbox
             this.textbox = new fabric.Textbox(
-                this.selectedItem==="" ? this.placeholder : this.selectedItem, 
+                this.enteredDate==="" ? this.placeholder : this.enteredDate, 
                 {
                     left: this.containerLeft,
                     top: this.containerTop,
@@ -130,7 +129,7 @@ class DateboxManager {
                     textAlign: "left",
                     padding: this.leftPadding,
                     backgroundColor: "transparent",
-                    fill: this.selectedItem==="" ? "#6F6F6F" : "#262626",
+                    fill: this.enteredDate==="" ? "#6F6F6F" : "#262626",
                     borderColor: 'transparent',
                     cornerStyle: "circle",
                     transparentCorners: false,
@@ -157,9 +156,9 @@ class DateboxManager {
                 height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
             });
 
-            this.arrowBottom.set({
+            this.calendarIcon.set({
                 left: this.textbox.left! + this.textbox.width! * this.textbox.scaleX! - this.leftPadding,
-                top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY! - this.arrowBottom.height!/2,
+                top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY! - this.calendarIcon.height!/2,
             });
 
 
@@ -214,17 +213,16 @@ class DateboxManager {
 
         this.textbox.on('editing:exited', () => {
             if(this.textbox.text === this.placeholder || this.textbox.text === "") {
-            this.textbox.set({
-                fill: "#6F6F6F",
-                text: this.placeholder,
-            })
-            } else {
-            this.textbox.set({
-                fill: "#262626",
-                
-            })
+                this.textbox.set({
+                    fill: "#6F6F6F",
+                    text: this.placeholder,
+                })
+                } else {
+                this.textbox.set({
+                    fill: "#262626",
+                })
 
-            this.selectedItem = this.textbox.text || '';
+                this.enteredDate = this.textbox.text || '';
             }
 
             this.canvi.renderAll();
@@ -270,12 +268,14 @@ class DateboxManager {
         width: this.border.width!,
         value: {
             recipient: this.recipient,
-            items: this.dropdownItems,
-            selectedItem: this.selectedItem,
+            enteredDate: this.enteredDate,
             required: this.required,
+            format: this.format,
+            lockedToday: this.lockedToday,
         }
       });
     }
+
 
     private closeShowSettingForm() {
       const groupPosition = this.textbox.getBoundingRect();
@@ -288,12 +288,14 @@ class DateboxManager {
         },
         value: {
             recipient: this.recipient,
-            items: this.dropdownItems,
-            selectedItem: this.selectedItem,
+            enteredDate: this.enteredDate,
             required: this.required,
+            format: this.format,
+            lockedToday: this.lockedToday,
         }
       });
     }
+
 
     public addToCanvas() {
         this.createtextboxes();
@@ -303,10 +305,11 @@ class DateboxManager {
     public setValue(value:any) {
         this.recipient = value.recipient;
         this.color = generateColorForRecipient(this.recipient);
-        this.dropdownItems = value.items;
         this.required = value.required;
-        this.selectedItem = value.selectedItem;
-        
+        this.enteredDate = value.enteredDate;
+        this.format = value.format;
+        this.lockedToday = value.lockedToday;
+
         if(!this.signMode) {
             this.updateSvgColor();
         } else {
@@ -357,8 +360,8 @@ class DateboxManager {
         this.textbox.set({
             // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
             borderColor: this.color,
-            fill: this.selectedItem==="" ? "#6F6F6F" : "#262626",
-            text: this.selectedItem==="" ? this.placeholder : this.selectedItem,
+            fill: this.enteredDate==="" ? "#6F6F6F" : "#262626",
+            text: this.enteredDate==="" ? this.placeholder : this.enteredDate,
         });
       
         this.border.set({
