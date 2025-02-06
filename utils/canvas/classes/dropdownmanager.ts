@@ -111,7 +111,7 @@ class DropdownboxManager {
                 left: this.containerLeft - this.leftPadding,
                 top: this.containerTop - this.leftPadding,
                 width: 200 + 1 + 2 * this.leftPadding,
-                height: 32 + 4 + 2 * this.leftPadding,
+                height: 32 + 2 * this.leftPadding - 3,
                 stroke: hexToRgba(this.color, 1),
                 strokeDashArray: [0, 0],
                 strokeWidth: 1,

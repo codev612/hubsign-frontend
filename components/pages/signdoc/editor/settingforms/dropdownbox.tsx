@@ -124,7 +124,7 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
         </div>
     </div>
   ) : (
-    <div
+    items.length > 0 && <div
         style={{
             left: showDropdownboxSettingForm.position.left,
             top: showDropdownboxSettingForm.position.top,
@@ -132,7 +132,7 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
         }}
         className="absolute bg-white p-1 rounded-lg shadow-lg flex flex-col w-[300] gap-2 text-text"
     >
-        {testItems.length > 0 && <Listbox 
+        <Listbox 
             aria-label="Actions" 
             onAction={(key) => {
                 setDropdownboxSetting({
@@ -148,11 +148,10 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
                 setShowDropdownboxSettingForm({...showDropdownboxSettingForm, show:false});
             }}
             >
-            {testItems.map((item) => <ListboxItem key={item}>{`[${item}]`}</ListboxItem>)}
-        </Listbox>}
+            {items.map((item) => <ListboxItem key={item}>{`[${item}]`}</ListboxItem>)}
+        </Listbox>
     </div>
   );
-
 };
 
 

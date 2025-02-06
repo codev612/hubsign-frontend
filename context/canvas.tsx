@@ -5,11 +5,11 @@ import { fabric } from 'fabric';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { v4 as uuidv4 } from 'uuid';
-// import { Roboto } from 'next/font/google';
 import CheckboxManager from '@/utils/canvas/classes/checkboxmanager';
 import TextboxManager from '@/utils/canvas/classes/textboxmanager';
 import RadioboxManager from '@/utils/canvas/classes/radioboxmanager';
-import DropdownboxManager from '@/utils/canvas/classes/dropdownboxmanager';
+import DropdownboxManager from '@/utils/canvas/classes/dropdownmanager';
+import DateboxManager from '@/utils/canvas/classes/dateboxmanager';
 import { 
   CheckboxSettingFormState,
   TextboxSettingFormState,
@@ -28,8 +28,10 @@ type CanvasContextProps = {
   addCheckbox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
   addRadiobox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
   addDropdownbox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
+  addDatebox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
   addImage: (e: React.ChangeEvent<HTMLInputElement>, canvi: fabric.Canvas) => void;
   addHighlight: (canvi: fabric.Canvas) => void;
+
   toggleDraw: (canvi: fabric.Canvas) => void;
   color: string;
   setColor: React.Dispatch<React.SetStateAction<string>>;
@@ -104,13 +106,15 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [signMode, setSignMode] = useState<boolean>(true);
   const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
     textbox: "",
-    textbox_edit:"",
-    radiobox_empty:"",
-    radiobox_filled:"",
-    radiobox_edit:"",
-    dropdownbox:"",
+    textbox_edit: "",
+    radiobox_empty: "",
+    radiobox_filled: "",
+    radiobox_edit: "",
+    dropdownbox: "",
     radio_add_button: "",
     arrow_bottom: "",
+    datebox: "",
+    calendar: "",
   })
   // canvas edit object
   const [edits, setEdits] = React.useState({});
@@ -188,6 +192,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     "textbox_edit",
     "dropdownbox",
     "arrow_bottom",
+    "datebox",
+    "calendar",
   ]
 
   //fetching svg files for canvas object
@@ -419,6 +425,24 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
+  //dropdownbox
+  const addDatebox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+    const uid = uuidv4();
+    const radioboxGroup = new DateboxManager(
+      uid,
+      canvi, 
+      startLeft, 
+      startTop, 
+      activeRecipient,
+      signMode,
+      setShowDropdownboxSettingForm,
+      controlSVGFile,
+    ); // Initialize with 1 checkboxes
+    setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
+    
+    radioboxGroup.addToCanvas(); // Add the group to the canvas
+  };
+
   const toggleDraw = (canvi: fabric.Canvas) => {
     canvi.isDrawingMode = !canvi.isDrawingMode;
     if (canvas) {
@@ -444,11 +468,13 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         addCheckbox,
         addRadiobox,
         addDropdownbox,
+        addDatebox,
         addImage,
         numPages,
         setNumPages,
         currPage,
         setCurrPage,
+
         selectedFile,
         setFile,
         addHighlight,

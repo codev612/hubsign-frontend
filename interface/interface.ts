@@ -122,4 +122,6 @@ export interface ControlSVGFile {
   radio_add_button: string,
   dropdownbox: string,
   arrow_bottom: string,
+  datebox: string,
+  calendar: string,
 }
