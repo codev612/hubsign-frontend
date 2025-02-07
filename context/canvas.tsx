@@ -10,13 +10,16 @@ import TextboxManager from '@/utils/canvas/classes/textboxmanager';
 import RadioboxManager from '@/utils/canvas/classes/radioboxmanager';
 import DropdownboxManager from '@/utils/canvas/classes/dropdownmanager';
 import DateboxManager from '@/utils/canvas/classes/dateboxmanager';
+import InitialsboxManager from '@/utils/canvas/classes/initialsboxmanager';
 import { 
   CheckboxSettingFormState,
   TextboxSettingFormState,
+
   RadioboxSettingFormState,
   DropdownboxSettingFormState,
-  ControlSVGFile,
   DateboxSettingFormState,
+  InitialsboxSettingFormState,
+  ControlSVGFile,
 } from '@/interface/interface';
 
 type CanvasContextProps = {
@@ -30,8 +33,11 @@ type CanvasContextProps = {
   addRadiobox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
   addDropdownbox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
   addDatebox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
+  addInitialsbox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
+
   addImage: (e: React.ChangeEvent<HTMLInputElement>, canvi: fabric.Canvas) => void;
   addHighlight: (canvi: fabric.Canvas) => void;
+
 
   toggleDraw: (canvi: fabric.Canvas) => void;
   color: string;
@@ -70,6 +76,8 @@ type CanvasContextProps = {
   setShowDropdownboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
   showDateboxSettingForm: any,
   setShowDateboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
+  showInitialsboxSettingForm: any,
+  setShowInitialsboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
 
   activeRecipient:string;
   setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
@@ -105,7 +113,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [hideCanvas, setHiddenCanvas] = useState(false);
   const exportPage = useRef<HTMLDivElement | null>(null);
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
-  const [signMode, setSignMode] = useState<boolean>(true);
+  const [signMode, setSignMode] = useState<boolean>(false);
 
   const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
     textbox: "",
@@ -118,6 +126,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     arrow_bottom: "",
     datebox: "",
     calendar: "",
+    initialsbox: "",
   })
   // canvas edit object
   const [edits, setEdits] = React.useState({});
@@ -183,6 +192,19 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       format: "mm/dd/yyyy",
       required: true,
       lockedToday: false,
+      selectedDate: null,
+    },
+  });
+
+  const [showInitialsboxSettingForm, setShowInitialsboxSettingForm] = useState<InitialsboxSettingFormState>({
+    uid: "",
+    show: false,
+    position: { left: 0, top: 0 },
+    width: 200,
+    value: {
+      recipient: "",
+      required: true,
+      initialImage: null,
     },
   });
 
@@ -210,6 +232,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     "arrow_bottom",
     "datebox",
     "calendar",
+    "initialsbox",
   ]
 
   //fetching svg files for canvas object
@@ -441,7 +464,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
-  //dropdownbox
+  //datebox
   const addDatebox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
     const uid = uuidv4();
     const radioboxGroup = new DateboxManager(
@@ -452,6 +475,24 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       activeRecipient,
       signMode,
       setShowDateboxSettingForm,
+      controlSVGFile,
+    ); // Initialize with 1 checkboxes
+    setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
+    
+    radioboxGroup.addToCanvas(); // Add the group to the canvas
+  };
+
+  //initialsbox
+  const addInitialsbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+    const uid = uuidv4();
+    const radioboxGroup = new InitialsboxManager(
+      uid,
+      canvi, 
+      startLeft, 
+      startTop, 
+      activeRecipient,
+      signMode,
+      setShowInitialsboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
@@ -485,6 +526,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         addRadiobox,
         addDropdownbox,
         addDatebox,
+        addInitialsbox,
+
         addImage,
         numPages,
         setNumPages,
@@ -525,6 +568,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setShowDropdownboxSettingForm,
         showDateboxSettingForm,
         setShowDateboxSettingForm,
+        showInitialsboxSettingForm,
+        setShowInitialsboxSettingForm,
 
         activeRecipient,
         setActiveRecipient,

@@ -3,27 +3,22 @@ import { Checkbox, Button, Input } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import { TextboxGroupProps } from "@/interface/interface";
-import { Switch } from "@heroui/react";
+import { InitialsboxGroupProps } from "@/interface/interface";
 
-const TextboxGroup: React.FC<TextboxGroupProps> = ({ showTextboxSettingForm, setShowTextboxSettingForm, recipients, setTextboxSetting }) => {
+const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSettingForm, setShowInitialsboxSettingForm, recipients, setInitialsboxSetting }) => {
   useEffect(() => {
-    setSelectRecipient(showTextboxSettingForm.value.recipient);
-    setCustomPlaceholder(showTextboxSettingForm.value.customPlaceholder);
-    setPlaceholder(showTextboxSettingForm.value.placeholder);
-    setCheckRequired(showTextboxSettingForm.value.required);
-  }, [showTextboxSettingForm]);
+    setSelectRecipient(showInitialsboxSettingForm.value.recipient);
+    setCheckRequired(showInitialsboxSettingForm.value.required);
+  }, [showInitialsboxSettingForm]);
 
-  const [selectRecipient, setSelectRecipient] = useState<string>(showTextboxSettingForm.value.recipient);
-  const [customPlaceholder, setCustomPlaceholder] = useState<boolean>(showTextboxSettingForm.value.customPlaceholder);
-  const [placeholder, setPlaceholder] = useState<string>(showTextboxSettingForm.value.placeholder);
-  const [checkRequired, setCheckRequired] = useState<boolean>(showTextboxSettingForm.value.required);
+  const [selectRecipient, setSelectRecipient] = useState<string>(showInitialsboxSettingForm.value.recipient);
+  const [checkRequired, setCheckRequired] = useState<boolean>(showInitialsboxSettingForm.value.required);
 
   return (
     <div
         style={{
-            left: showTextboxSettingForm.position.left,
-            top: showTextboxSettingForm.position.top,
+            left: showInitialsboxSettingForm.position.left,
+            top: showInitialsboxSettingForm.position.top,
         }}
         className="absolute bg-white p-5 rounded-lg shadow-lg flex flex-col w-[300] gap-2 text-text"
     >
@@ -34,14 +29,10 @@ const TextboxGroup: React.FC<TextboxGroupProps> = ({ showTextboxSettingForm, set
                 </option>)
             }
         </select>
-        <Switch 
-        isSelected={customPlaceholder} 
-        onValueChange={setCustomPlaceholder}
-        >
-            Edit the placeholder text
-        </Switch>
-        {customPlaceholder && <Input variant="bordered" placeholder={`By default "Enter value"`} value={placeholder} onValueChange={setPlaceholder} />}
-        <div className="flex flex-row items-center justify-between">
+        <button
+        className="border-1 rounded-md p-1 hover:bg-gray-100"
+        >Edit initials</button>
+         <div className="flex flex-row items-center justify-between">
             <Checkbox className="text-white" isSelected={checkRequired} onValueChange={()=>setCheckRequired(!checkRequired)}>Required</Checkbox>
             <div className="flex flex-row">
                 <Button isIconOnly startContent={<ContentCopyIcon />} size="sm" className="bg-white" />
@@ -54,16 +45,14 @@ const TextboxGroup: React.FC<TextboxGroupProps> = ({ showTextboxSettingForm, set
             className="text-white rounded-md"
             color="primary"
             onPress={() => {
-                setTextboxSetting({
-                    uid: showTextboxSettingForm.uid,
+                setInitialsboxSetting({
+                    uid: showInitialsboxSettingForm.uid,
                     value: {
                         recipient: selectRecipient,
-                        customPlaceholder: customPlaceholder,
-                        placeholder: placeholder,
                         required: checkRequired
                     }
                 });
-                setShowTextboxSettingForm({...showTextboxSettingForm, show:false});
+                setShowInitialsboxSettingForm({...showInitialsboxSettingForm, show:false});
             }}
             size="sm"
             >
@@ -73,7 +62,7 @@ const TextboxGroup: React.FC<TextboxGroupProps> = ({ showTextboxSettingForm, set
             className="rounded-md"
             size="sm"
             onPress={() =>
-                setShowTextboxSettingForm({...showTextboxSettingForm, show:false})
+                setShowInitialsboxSettingForm({...showInitialsboxSettingForm, show:false})
             }
             >
                 Cancel
@@ -83,4 +72,4 @@ const TextboxGroup: React.FC<TextboxGroupProps> = ({ showTextboxSettingForm, set
   );
 };
 
-export default TextboxGroup;
+export default InitialsboxGroup;

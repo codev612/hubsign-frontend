@@ -16,13 +16,16 @@ import TextboxGroup from './settingforms/textboxgroup';
 import RadioboxGroup from './settingforms/radioboxgroup';
 import DropdownboxGroup from './settingforms/dropdownbox';
 import DateboxGroup from './settingforms/dateboxgroup';
+import InitialsboxGroup from './settingforms/initialsboxgroup';
 import { 
   CheckboxGroupProps, 
   TextboxGroupProps, 
   RadioboxGroupProps, 
   DropdownboxGroupProps,
-  DateboxGroupProps
+  DateboxGroupProps,
+  InitialsboxGroupProps,
 } from '@/interface/interface';
+
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -49,11 +52,14 @@ const PDFBoard: React.FC = () => {
   const showDateboxSettingForm = contextValues.showDateboxSettingForm;
   const setShowDateboxSettingForm = contextValues.setShowDateboxSettingForm;
 
+  const showInitialsboxSettingForm = contextValues.showInitialsboxSettingForm;
+  const setShowInitialsboxSettingForm = contextValues.setShowInitialsboxSettingForm;
+
   // Create a type for our form configuration
   type FormConfig = {
     show: boolean;
     Component: React.ComponentType<any>;
-    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps | DateboxGroupProps;
+    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps | DateboxGroupProps | InitialsboxGroupProps;
   }
   
   // Now use these types in your component
@@ -109,7 +115,18 @@ const PDFBoard: React.FC = () => {
         setDateboxSetting: contextValues.handleCanvasObjectSetValue,
         signMode: contextValues.signMode
       }
-    }
+    },
+    {
+      show: showInitialsboxSettingForm.show,
+      Component: InitialsboxGroup,
+      props: {
+        showInitialsboxSettingForm,
+        setShowInitialsboxSettingForm,
+        recipients: docData.recipients,
+        setInitialsboxSetting: contextValues.handleCanvasObjectSetValue,
+        signMode: contextValues.signMode
+      }
+    },
   ];
 
   // const { getRootProps, getInputProps } = useDropzone({

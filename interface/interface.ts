@@ -115,6 +115,21 @@ export interface DateboxSettingFormState {
   value: DateboxSettings;
 }
 
+export interface InitialsboxSettings {
+  recipient: string;
+  required: boolean;
+  initialImage: fabric.Image | null;
+}
+
+
+export interface InitialsboxSettingFormState {
+  uid: string,
+  show: boolean;
+  position: Position;
+  width: number;
+  value: InitialsboxSettings;
+}
+
 //setting form props
 export interface CheckboxGroupProps {
   showCheckboxSettingForm: any;
@@ -153,6 +168,14 @@ export interface DateboxGroupProps {
   signMode: boolean;
 }
 
+export interface InitialsboxGroupProps {
+  showInitialsboxSettingForm: InitialsboxSettingFormState;
+  setShowInitialsboxSettingForm: React.Dispatch<React.SetStateAction<InitialsboxSettingFormState>>;
+  recipients: Recipient[];
+  setInitialsboxSetting: (payload: any) => void;
+  signMode: boolean;
+}
+
 //adddoc component
 export interface FileAddBoardProps {
   filename: string;
@@ -178,4 +201,5 @@ export interface ControlSVGFile {
   arrow_bottom: string,
   datebox: string,
   calendar: string,
+  initialsbox: string,
 }

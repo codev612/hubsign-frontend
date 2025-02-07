@@ -4,9 +4,9 @@ import { Text } from 'fabric/fabric-impl';
 import { parse } from 'svg-parser'
 import { ControlSVGFile } from '@/interface/interface';
 
-class TextboxManager {
+class InitialsboxManager {
     
-    private controlType = "textbox";
+    private controlType = "initialsbox";
     private signMode: boolean = false;
     private color: string;
     private uid: string;
@@ -23,7 +23,8 @@ class TextboxManager {
     //setting form properties
     private recipient: string = "";
     private required: boolean = true;
-    private placeholder: string = "Enter value";
+    private placeholder: string = "Signed by";
+    private initialImage: fabric.Image | null = null;
     private textvalue: string = "Text";
     private enteredText: string = "";
     private customPlaceholder: boolean=false;
@@ -66,8 +67,8 @@ class TextboxManager {
     private createtextboxes() {
         this.containerTop = this.currentTop;
 
-        if(!this.signMode) {
-          const svgString = this.controlSVGFile.textbox_edit;
+        if(!this.initialImage) {
+          const svgString = this.controlSVGFile.initialsbox;
           const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
           // Load SVG into Fabric.js
@@ -88,6 +89,7 @@ class TextboxManager {
             this.canvi.add(this.svgGroup);
           });
         } else {
+
           // Create a border rectangle
           this.border = new fabric.Rect({
             left: this.containerLeft - this.leftPadding,
@@ -198,7 +200,6 @@ class TextboxManager {
         } else {
           this.textbox.set({
             fill: "#262626",
-            
           })
 
           this.enteredText = this.textbox.text || '';
@@ -236,7 +237,7 @@ class TextboxManager {
     }
   
     private showShowSettingForm() {
-      const groupPosition = this.signMode ? this.textbox.getBoundingRect() : this.svgGroup.getBoundingRect();
+      const groupPosition = this.svgGroup.getBoundingRect();
       this.setShowSettingForm({
         uid: this.uid,
         show: true,
@@ -246,8 +247,6 @@ class TextboxManager {
         },
         value: {
             recipient: this.recipient,
-            customPlaceholder: this.customPlaceholder,
-            placeholder: this.placeholder,
             required: this.required,
         }
       });
@@ -282,22 +281,15 @@ class TextboxManager {
     public setValue(value:any) {
       this.recipient = value.recipient;
       this.color = generateColorForRecipient(this.recipient);
-      this.customPlaceholder = value.customPlaceholder;
-      console.log(value.placeholder)
-      this.placeholder = value.placeholder;
       this.required = value.required;
       
-      if(!this.signMode) {
-        this.updateSvgColor();
-      } else {
-        this.updateTextboxGroup();
-      }      
+      this.updateSvgColor();     
     }
 
     private updateSvgColor() {
 
       // Update SVG color and replace existing one
-      const svgString = this.controlSVGFile.textbox_edit;
+      const svgString = this.controlSVGFile.initialsbox;
       const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
       // Store the previous position of svgGroup
@@ -372,7 +364,7 @@ class TextboxManager {
     }
 }
 
-export default TextboxManager;
+export default InitialsboxManager;
 
 // const manager = new textboxManager(...); // Create the manager
 // const serializedManager = manager.serialize();
