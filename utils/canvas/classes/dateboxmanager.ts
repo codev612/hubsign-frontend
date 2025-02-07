@@ -1,5 +1,6 @@
 import { generateColorForRecipient, hexToRgba, updateSvgColors } from '../utils';
 import { fabric } from 'fabric';
+import { format } from 'date-fns';
 import { ControlSVGFile } from '@/interface/interface';
 
 class DateboxManager {
@@ -23,7 +24,9 @@ class DateboxManager {
     private format: string = "mm/dd/yyyy";
     private lockedToday: boolean = false;
     private placeholder: string = "Enter date";
-    private enteredDate: string = "";
+    private selectedDate: Date | null = null;
+    private formatedDate: string = "";
+
     private controlSVGFile: ControlSVGFile;
     private svgGroup: fabric.Object;
     private calendarIcon: fabric.Object;
@@ -120,7 +123,7 @@ class DateboxManager {
         
             // Create the textbox
             this.textbox = new fabric.Textbox(
-                this.enteredDate==="" ? this.placeholder : this.enteredDate, 
+                !this.selectedDate ? this.placeholder : this.formatedDate, 
                 {
                     left: this.containerLeft,
                     top: this.containerTop,
@@ -129,7 +132,7 @@ class DateboxManager {
                     textAlign: "left",
                     padding: this.leftPadding,
                     backgroundColor: "transparent",
-                    fill: this.enteredDate==="" ? "#6F6F6F" : "#262626",
+                    fill: !this.selectedDate ? "#6F6F6F" : "#262626",
                     borderColor: 'transparent',
                     cornerStyle: "circle",
                     transparentCorners: false,
@@ -153,14 +156,13 @@ class DateboxManager {
                 left: this.textbox.left! - this.leftPadding,
                 top: this.textbox.top! - this.leftPadding,
                 width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
-                height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
+                height: (this.textbox.height!) * this.textbox.scaleY! + 2 * this.leftPadding,
             });
 
             this.calendarIcon.set({
                 left: this.textbox.left! + this.textbox.width! * this.textbox.scaleX! - this.leftPadding,
                 top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY! - this.calendarIcon.height!/2,
             });
-
 
             this.canvi.renderAll();
         });
@@ -210,23 +212,6 @@ class DateboxManager {
             })
             this.canvi.renderAll();
         });
-
-        this.textbox.on('editing:exited', () => {
-            if(this.textbox.text === this.placeholder || this.textbox.text === "") {
-                this.textbox.set({
-                    fill: "#6F6F6F",
-                    text: this.placeholder,
-                })
-                } else {
-                this.textbox.set({
-                    fill: "#262626",
-                })
-
-                this.enteredDate = this.textbox.text || '';
-            }
-
-            this.canvi.renderAll();
-        });
     }
 
     // Track scaling of the DropdownboxGroup
@@ -268,7 +253,7 @@ class DateboxManager {
         width: this.border.width!,
         value: {
             recipient: this.recipient,
-            enteredDate: this.enteredDate,
+            selectedDate: this.selectedDate,
             required: this.required,
             format: this.format,
             lockedToday: this.lockedToday,
@@ -288,7 +273,7 @@ class DateboxManager {
         },
         value: {
             recipient: this.recipient,
-            enteredDate: this.enteredDate,
+            selectedDate: this.selectedDate,
             required: this.required,
             format: this.format,
             lockedToday: this.lockedToday,
@@ -306,9 +291,20 @@ class DateboxManager {
         this.recipient = value.recipient;
         this.color = generateColorForRecipient(this.recipient);
         this.required = value.required;
-        this.enteredDate = value.enteredDate;
+        this.selectedDate = value.selectedDate;
         this.format = value.format;
         this.lockedToday = value.lockedToday;
+
+        if (this.selectedDate) {
+            try {
+                this.formatedDate = format(this.selectedDate, this.format.replace(/m/g, 'M').replace(/d/g, 'd').replace(/y/g, 'y'));
+            } catch (error) {
+                console.error("Invalid date format:", this.format);
+                this.formatedDate = ""; // Fallback to empty string if formatting fails
+            }
+        } else {
+            this.formatedDate = "";
+        }    
 
         if(!this.signMode) {
             this.updateSvgColor();
@@ -355,13 +351,12 @@ class DateboxManager {
     }
 
     public updateTextboxGroup() {
-        console.log("updated");
         // Update the color of each checkbox individually
         this.textbox.set({
             // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
             borderColor: this.color,
-            fill: this.enteredDate==="" ? "#6F6F6F" : "#262626",
-            text: this.enteredDate==="" ? this.placeholder : this.enteredDate,
+            fill: !this.selectedDate ? "#6F6F6F" : "#262626",
+            text: !this.selectedDate ? this.placeholder : this.formatedDate,
         });
       
         this.border.set({
