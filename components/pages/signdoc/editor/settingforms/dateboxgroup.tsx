@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { DropdownboxSettingFormState } from "@/interface/interface";
-import { Checkbox, Button, Input, Listbox, ListboxItem } from "@heroui/react";
+import { Checkbox, Button } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
@@ -13,12 +12,15 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
     setCheckRequired(showDateboxSettingForm.value.required);
     setDateFormat(showDateboxSettingForm.value.format);
     setLockedToday(showDateboxSettingForm.value.lockedToday);
+    setSelectedDate(showDateboxSettingForm.value.selectedDate);
   }, [showDateboxSettingForm]);
+
 
   const [selectRecipient, setSelectRecipient] = useState<string>(showDateboxSettingForm.value.recipient);
   const [checkRequired, setCheckRequired] = useState<boolean>(showDateboxSettingForm.value.required);
   const [dateFormat, setDateFormat] = useState<string>(showDateboxSettingForm.value.format);
   const [lockedToday, setLockedToday] = useState<boolean>(showDateboxSettingForm.value.lockedToday);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(showDateboxSettingForm.value.selectedDate);
 
   return !signMode ? (
     <div
@@ -62,7 +64,6 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
                         required: checkRequired,
                         lockedToday: lockedToday,
                     }
-
                 });
                 setShowDateboxSettingForm({...showDateboxSettingForm, show: false});
             }}
@@ -87,14 +88,12 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
             left: showDateboxSettingForm.position.left,
             top: showDateboxSettingForm.position.top,
         }}
-        className="absolute bg-white rounded-lg flex flex-col w-[300px] text-text"
+        className="absolute"
     >
-        <Calendar />
+        <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
     </div>
 
   );
 };
-
-
 
 export default DateboxGroup;

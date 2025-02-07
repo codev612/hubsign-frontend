@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import * as dateFns from "date-fns";
 
-const Calendar: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+interface CalendarProps {
+  selectedDate: Date | null;
+  setSelectedDate: (date: Date | null) => void;
+}
+
+const Calendar: React.FC<CalendarProps> = ({ selectedDate, setSelectedDate }) => {
+  const [currentDate, setCurrentDate] = React.useState(new Date());
 
   // Months array
   const months = [
@@ -49,15 +53,16 @@ const Calendar: React.FC = () => {
   // Handle "Today" button click
   const handleTodayClick = () => {
     const today = new Date();
-    setCurrentDate(today); // Set the current date to today
-    setSelectedDate(today); // Optionally set the selected date to today as well
+    setCurrentDate(today); 
+    setSelectedDate(today); 
   };
 
   return (
-    <div className="p-2 border rounded-lg shadow-md w-[300px]">
+    <div className="border bg-[#F8F8F8] rounded-lg shadow-md w-[300px]">
       {/* Calendar Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex p-2 justify-between items-center mb-4">
         {/* Month Select */}
+
         <select 
           className="border p-2 rounded-lg"
           value={dateFns.getMonth(currentDate)}
@@ -97,9 +102,9 @@ const Calendar: React.FC = () => {
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1 text-center text-sm font-medium">
+      <div className="grid bg-white grid-cols-7 text-center text-sm font-medium">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-          <div key={day} className="p-2">{day}</div>
+          <div key={day} className="p-2 bg-[#F8F8F8]">{day}</div>
         ))}
         {generateDays().map((day, index) => {
           const isCurrentMonth = dateFns.isSameMonth(day, currentDate);
@@ -110,13 +115,13 @@ const Calendar: React.FC = () => {
             <button
               key={index}
               className={`p-2 rounded-md ${
-                !isCurrentMonth ? "text-gray-400" : "" // Grey out days from previous/next month
+                !isCurrentMonth ? "text-gray-400" : "" 
               } ${
-                isToday ? "border-2 border-blue-500" : "" // Border for today's date
+                isToday ? "border-2 border-blue-500" : "" 
               } ${
                 isSelected ? "bg-blue-500 text-white" : "hover:bg-gray-200"
               }`}
-              onClick={() => setSelectedDate(day)} // Allow selecting any day
+              onClick={() => setSelectedDate(day)} // Controlled by parent
             >
               {dateFns.format(day, "d")}
             </button>
@@ -125,12 +130,14 @@ const Calendar: React.FC = () => {
       </div>
 
       {/* Today button */}
-      <button 
-        className="w-full p-1 border-1 border-gray-100 rounded-lg hover:bg-gray-200"
-        onClick={handleTodayClick} // Call the function to go to today
-      >
-        Today
-      </button>
+      <div className="p-2 bg-white">
+        <button 
+          className="w-full p-1 border-1 border-gray-100 rounded-lg bg-white hover:bg-gray-200"
+          onClick={handleTodayClick}
+        >
+          Today
+        </button>
+      </div>
     </div>
   );
 };

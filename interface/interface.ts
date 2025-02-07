@@ -104,6 +104,7 @@ export interface DateboxSettings {
   format: string;
   required: boolean;
   lockedToday:boolean;
+  selectedDate: Date | null;
 }
 
 export interface DateboxSettingFormState {
