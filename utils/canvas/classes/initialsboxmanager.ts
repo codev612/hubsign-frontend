@@ -300,7 +300,6 @@ class InitialsboxManager {
 
       // Remove the old SVG before adding a new one
       if (this.svgGroup) {
-        console.log('remove')
           this.canvi.remove(this.svgGroup);
           this.canvi.renderAll();
       }

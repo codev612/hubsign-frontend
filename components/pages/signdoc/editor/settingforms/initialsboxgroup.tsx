@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Checkbox, Button, Input } from "@heroui/react";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import PostAddIcon from '@mui/icons-material/PostAdd';
+import { Checkbox, Button, Input, useDisclosure } from "@heroui/react";
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import { InitialsboxGroupProps } from "@/interface/interface";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
+import SignatureEditModal from "../../signatureedit";
 
 const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSettingForm, setShowInitialsboxSettingForm, recipients, setInitialsboxSetting }) => {
   useEffect(() => {
@@ -13,7 +15,9 @@ const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSett
 
   const [selectRecipient, setSelectRecipient] = useState<string>(showInitialsboxSettingForm.value.recipient);
   const [checkRequired, setCheckRequired] = useState<boolean>(showInitialsboxSettingForm.value.required);
-
+  //modal for edit initials and signature
+  const { isOpen:isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
+  
   return (
     <div
         style={{
@@ -22,6 +26,13 @@ const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSett
         }}
         className="absolute bg-white p-5 rounded-lg shadow-lg flex flex-col w-[300] gap-2 text-text"
     >
+        <SignatureEditModal 
+        isOpen={isEditOpen} 
+        onOpenChange={onEditOpenChange} 
+        title="Initials" 
+        item={showInitialsboxSettingForm} 
+        actionState={setInitialsboxSetting} 
+        />
         <select value={selectRecipient} onChange={(e)=>setSelectRecipient(e.target.value)} className="border-1 rounded-md p-2">
             {
                 recipients.map(item => <option key={item.email} value={item.email}>
@@ -30,8 +41,12 @@ const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSett
             }
         </select>
         <button
-        className="border-1 rounded-md p-1 hover:bg-gray-100"
-        >Edit initials</button>
+        className="border-1 rounded-md p-1 hover:bg-gray-100 gap-1 flex flex-row items-center justify-center"
+        onClick={()=>onEditOpen()}
+        >
+            <BorderColorOutlinedIcon fontSize="small" />
+            Edit initials
+        </button>
          <div className="flex flex-row items-center justify-between">
             <Checkbox className="text-white" isSelected={checkRequired} onValueChange={()=>setCheckRequired(!checkRequired)}>Required</Checkbox>
             <div className="flex flex-row">
