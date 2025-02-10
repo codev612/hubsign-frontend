@@ -30,7 +30,7 @@ const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSett
         isOpen={isEditOpen} 
         onOpenChange={onEditOpenChange} 
         title="Initials" 
-        item={showInitialsboxSettingForm} 
+        // item={showInitialsboxSettingForm} 
         actionState={setInitialsboxSetting} 
         />
         <select value={selectRecipient} onChange={(e)=>setSelectRecipient(e.target.value)} className="border-1 rounded-md p-2">

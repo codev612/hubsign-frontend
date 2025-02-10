@@ -84,5 +84,52 @@
     canvas {
         box-shadow: none !important;
     }
-  
+    /* Custom Font Utility Classes */
+    .font-playwrite {
+        font-family: "Playwrite Island", cursive;
+    }
+
+    .font-kalam {
+        font-family: "Kalam", sans-serif;
+    }
+
+    .font-rocksalt {
+        font-family: "Rock Salt", cursive;
+    }
+
+    .font-mrdafoe {
+        font-family: "Mr Dafoe", cursive;
+    }
+
+    .font-labelleaurore {
+        font-family: "La Belle Aurore", cursive;
+    }
 }
+
+@font-face {
+    font-family: "Playwrite Island";
+    src: url("/fonts/PlaywriteIS-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: "italic";
+}
+
+@font-face {
+    font-family: "Kalam";
+    src: url("/fonts/Kalam-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Rock Salt";
+    src: url("/fonts/RockSalt.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Mr Dafoe";
+    src: url("/fonts/MrDafoe-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "La Belle Aurore";
+    src: url("/fonts/La Belle Aurore.ttf") format("truetype");
+}
+  

@@ -203,7 +203,7 @@ const PDFBoard: React.FC = () => {
     // Initialize fabric canvas
     const fabricCanvas = new fabric.Canvas('canvas', {
       isDrawingMode: false,
-      height:1123,
+      height: 1123,
       width: 868,
       backgroundColor: 'rgba(0,0,0,0)',
       stopContextMenu: true,
@@ -245,7 +245,7 @@ const PDFBoard: React.FC = () => {
               <div id="doc">
                 <div
                   className="absolute z-[9] p-0"
-                  id="canvasWrapper"
+                  // id="canvasWrapper"
                   style={{ visibility: "visible" }}
                 >
                   <canvas id="canvas" />
