@@ -251,3 +251,8 @@ export const allowedUploadFile = {
   extention: ['application/pdf'],
   size: 1024*1024*10//10mb
 }
+
+export const allowedSignatureFile = {
+  extention: ['image/jpg', 'image/jpeg', 'image/png'],
+  size: 1024*1024*10//10mb
+}

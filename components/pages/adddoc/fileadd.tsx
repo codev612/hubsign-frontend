@@ -10,6 +10,8 @@ const FileAdd: React.FC<FileAddBoardProps> = ({
   setFile,
   filename,
   setFilename,
+  title,
+  description
 }) => {
   const handleFiles = (files: File[]) => {
     console.log(files);
@@ -27,10 +29,9 @@ const FileAdd: React.FC<FileAddBoardProps> = ({
           >
             <input {...getInputProps()} />
             {filename ? <CheckCircleOutlineOutlinedIcon fontSize="large" /> : <PostAddOutlinedIcon fontSize="large" />}
-            <h1 className="dropzone-title">{filename ? `${filename} selected` : "Add a document for signing" }</h1>
+            <h1 className="dropzone-title">{filename ? `${filename} selected` : `${title}` }</h1>
             <p className="dropzone-summary">
-              Click to upload a document from your device, or drag & drop it
-              here. Supported files: PDF, Word, PowerPoint, JPG, PNG
+              {description}
             </p>
             {filename ? <Button
               className="bg-forecolor rounded-md"

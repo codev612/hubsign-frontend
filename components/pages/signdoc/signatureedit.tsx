@@ -13,14 +13,8 @@ import {
 import BookmarkAddedOutlinedIcon from "@mui/icons-material/BookmarkAddedOutlined";
 import { fabric } from "fabric";
 import Dot from "@/components/common/dot";
-
-import { Kalam, Rock_Salt, Mr_Dafoe, La_Belle_Aurore } from 'next/font/google';
-// import { Font } from "next/dist/compiled/@vercel/og/satori";
-
-const kalam = Kalam({ subsets: ['latin'], weight: '400', variable: '--font-kalam' });
-const rockSalt = Rock_Salt({ subsets: ['latin'], weight: '400', variable: '--font-rockSalt' });
-const mrDafoe = Mr_Dafoe({ subsets: ['latin'], weight: '400', variable: '--font-mrDafoe' });
-const laBelleAurore = La_Belle_Aurore({ subsets: ['latin'], weight: '400', variable: '--font-laBelleAurore' });
+import FileAdd from "../adddoc/fileadd";
+import { allowedSignatureFile } from "@/constants/common";
 
 interface ModalProps {
   isOpen: boolean;
@@ -50,6 +44,9 @@ const SignatureEditModal: React.FC<ModalProps> = ({
   const [selectedColor, setSelectedColor] = useState<string>("#000");
   const [selectedFont, setSelectedFont] = useState<string>("Playwrite Island");
   const [textInput, setTextInput] = useState<string>("");
+
+  const [filename, setFilename] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<any>(null);
 
   // Initialize Fabric.js Canvas
   useEffect(() => {
@@ -83,7 +80,6 @@ const SignatureEditModal: React.FC<ModalProps> = ({
 
           const textBox = new fabric.Textbox(textInput, {
             fontFamily: selectedFont,
-            width: 464,
             top: 115,
             fontSize: 64,
             editable: false,
@@ -148,8 +144,110 @@ const SignatureEditModal: React.FC<ModalProps> = ({
     }
   };
 
+  // check file size and type
+  const fileCheck = (file:File) => {
+    return ( file && file!.size > allowedSignatureFile.size || !allowedSignatureFile.extention.includes(file!.type) ) ?  false : true;
+  };
+
+  const handleSetFile = (file:File) => {
+    if (file && fileCheck(file)) {
+      setSelectedFile(file)
+    } else {
+      setSelectedFile(null);
+      setFilename("");
+    }
+  };
+
+  const clearFile = () => {
+    setSelectedFile(null);
+    setFilename("");
+  };
+
+  const getCroppedDrawSignatureImage = () => {
+    if (!drawCanvas) return null;
+  
+    const objects = drawCanvas.getObjects();
+    if (objects.length === 0) return null; // No drawing
+  
+    drawCanvas.discardActiveObject();
+    drawCanvas.renderAll();
+  
+    // Get bounding box of all drawn objects
+    const boundingRect = drawCanvas.getObjects().reduce(
+      (acc, obj) => {
+        const objBounds = obj.getBoundingRect();
+        return {
+          left: Math.min(acc.left, objBounds.left),
+          top: Math.min(acc.top, objBounds.top),
+          right: Math.max(acc.right, objBounds.left + objBounds.width),
+          bottom: Math.max(acc.bottom, objBounds.top + objBounds.height),
+        };
+      },
+      { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }
+    );
+  
+    const width = boundingRect.right - boundingRect.left;
+    const height = boundingRect.bottom - boundingRect.top;
+  
+    if (width <= 0 || height <= 0) return null; // No valid content
+  
+    // Convert to transparent PNG with cropping
+    return drawCanvas.toDataURL({
+      format: "png",
+      left: boundingRect.left,
+      top: boundingRect.top,
+      width,
+      height,
+      multiplier: 2, // Increases resolution (optional)
+    });
+  };
+  
+  const getCroppedTypedSignatureImage = () => {
+    if (!typeCanvas) return null;
+  
+    const textObj = typeCanvas.getObjects("textbox")[0] as fabric.Textbox;
+    if (!textObj) return null; // No text
+  
+    typeCanvas.discardActiveObject();
+    typeCanvas.renderAll();
+  
+    const { left, top } = textObj.getBoundingRect();
+
+    const ctx = document.createElement("canvas").getContext("2d");
+
+    var width = textObj.width;
+
+    if (ctx) {
+      ctx.font = `${textObj.fontSize}px ${selectedFont}`;
+      width = ctx.measureText(textInput).width;
+    } 
+    
+    const height = textObj.calcTextHeight() + 30;
+
+    console.log(left, top, width, height)
+  
+    // Convert to transparent PNG with cropping
+    return typeCanvas.toDataURL({
+      format: "png",
+      left,
+      top,
+      width,
+      height,
+    });
+  };
+
+  const downloadImage = (dataUrl:string, filename:string) => {
+    if(!dataUrl) return;
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
       <ModalContent>
         {(onClose) => (
           <>
@@ -183,7 +281,12 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                         ))}
                       </ul>
                       <div className="flex flex-row gap-1">
-                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1">
+                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1"
+                        onClick={()=>{
+                          const drawImage = getCroppedDrawSignatureImage();
+                          if(drawImage) downloadImage(drawImage, "drawn_signature.png");
+                        }}
+                        >
                           <BookmarkAddedOutlinedIcon />
                           <span>Save this {title}</span>
                         </button>
@@ -222,7 +325,12 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                         </select>
                       </div>
                       <div className="flex flex-row gap-1">
-                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1">
+                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1"
+                        onClick={()=>{
+                          const typeImage = getCroppedTypedSignatureImage();
+                          if(typeImage) downloadImage(typeImage, "typed_signature.png");
+                        }}
+                        >
                           <BookmarkAddedOutlinedIcon />
                           <span>Save this {title}</span>
                         </button>
@@ -252,8 +360,34 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                 </Tab>
                 {/* Upload Tab */}
                 <Tab key="upload" title="Upload">
-                  <div className="flex flex-col text-sm gap-2">
-                    <input type="file" className="border p-2 rounded-lg" />
+                  <div className="flex flex-col gap-1 text-text">
+                    <div className="flex flex-row justify-end text-text">
+                      <div className="flex flex-row gap-1">
+                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1">
+                          <BookmarkAddedOutlinedIcon />
+                          <span>Save this {title}</span>
+                        </button>
+                        <button
+                          onClick={clearFile}
+                          className="border-2 rounded-lg p-1 hover:bg-gray-100 p-1"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex flex-col text-sm gap-2">
+                      {selectedFile ? <img
+                          src={URL.createObjectURL(selectedFile)}
+                          alt="Uploaded signature"
+                          className="w-full max-h-[260px] object-contain bg-[#F8F8F8] rounded-md"
+                        /> : <FileAdd
+                          filename={filename}
+                          setFile={handleSetFile}
+                          setFilename={setFilename}
+                          title="Upload signature"
+                          description="Click to upload a document from your device, or drag & drop it here. Supported files: JPG, PNG"
+                        />}
+                    </div>
                   </div>
                 </Tab>
                 {/* Saved Tab */}

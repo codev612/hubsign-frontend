@@ -244,6 +244,8 @@ const AddDoc = () => {
             filename={filename}
             setFile={handleSetFile}
             setFilename={setFilename}
+            title="Add a document for signing"
+            description="Click to upload a document from your device, or drag & drop it here. Supported files: PDF, Word, PowerPoint, JPG, PNG"
           />
         </Tab>
         <Tab key={"template"} title="Start with a template" onClick={()=>setActiveTab("template")}>

@@ -181,6 +181,8 @@ export interface FileAddBoardProps {
   filename: string;
   setFile: (file: any) => void;
   setFilename: (filename: string) => void;
+  title: string;
+  description: string;
 }
 
 //document data
