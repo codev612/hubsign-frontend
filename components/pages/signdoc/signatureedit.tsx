@@ -47,9 +47,9 @@ const SignatureEditModal: React.FC<ModalProps> = ({
   const typeRef = useRef<HTMLCanvasElement | null>(null);
   const [drawCanvas, setDrawCanvas] = useState<fabric.Canvas | null>(null);
   const [typeCanvas, setTypeCanvas] = useState<fabric.Canvas | null>(null);
-  const [selectedColor, setSelectedColor] = useState("#000");
-  const [selectedFont, setSelectedFont] = useState("Playwrite Island");
-  const [textInput, setTextInput] = useState("");
+  const [selectedColor, setSelectedColor] = useState<string>("#000");
+  const [selectedFont, setSelectedFont] = useState<string>("Playwrite Island");
+  const [textInput, setTextInput] = useState<string>("");
 
   // Initialize Fabric.js Canvas
   useEffect(() => {
@@ -118,21 +118,6 @@ const SignatureEditModal: React.FC<ModalProps> = ({
     }
   }, [selectedColor, drawCanvas]);
 
-  // Add typed text to canvas
-  const addTextToCanvas = () => {
-    if (typeCanvas && textInput.trim()) {
-      const text = new fabric.Text(textInput, {
-        left: 50,
-        top: 50,
-        fontSize: 24,
-        fill: selectedColor,
-        fontFamily: "Arial",
-      });
-      typeCanvas.add(text);
-      typeCanvas.renderAll();
-    }
-  };
-
   useEffect(() => {
     if (typeCanvas) {
       document.fonts.load(`16px ${selectedFont}`).then(() => {
@@ -159,8 +144,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
 
   const clearTypeCanvas = () => {
     if (typeCanvas) {
-      typeCanvas.clear();
-      typeCanvas.setBackgroundColor("rgba(0,0,0,0)", () => typeCanvas.renderAll());
+      setTextInput("")
     }
   };
 
