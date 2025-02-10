@@ -78,15 +78,19 @@ const SignatureEditModal: React.FC<ModalProps> = ({
             stopContextMenu: false,
             height: 260,
             width: 464,
-            selection: false,
+            selection: true,
           });
 
-          const textBox = new fabric.Textbox("text", {
+          const textBox = new fabric.Textbox(textInput, {
             fontFamily: selectedFont,
+            width: 464,
+            top: 115,
+            fontSize: 64,
             editable: false,
             selectable: false,
             hasControls: false,
             hasBorders: false,
+            evented: false,
           });
 
           document.fonts.load(`16px ${selectedFont}`).then(() => {
@@ -129,12 +133,35 @@ const SignatureEditModal: React.FC<ModalProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (typeCanvas) {
+      document.fonts.load(`16px ${selectedFont}`).then(() => {
+        typeCanvas.getObjects("textbox").forEach((obj) => {
+          if (obj instanceof fabric.Textbox) {
+            obj.set({
+              fontFamily: selectedFont,
+            });
+            obj.set("text", textInput);
+          }
+        });
+        typeCanvas.renderAll();
+      });
+    }
+  }, [selectedFont, typeCanvas, textInput]);  
+
   // Clear Canvas
-  const clearCanvas = () => {
-    // if (canvas) {
-    //   canvas.clear();
-    //   canvas.setBackgroundColor("rgba(0,0,0,0)", () => canvas.renderAll());
-    // }
+  const clearDrawCanvas = () => {
+    if (drawCanvas) {
+      drawCanvas.clear();
+      drawCanvas.setBackgroundColor("rgba(0,0,0,0)", () => drawCanvas.renderAll());
+    }
+  };
+
+  const clearTypeCanvas = () => {
+    if (typeCanvas) {
+      typeCanvas.clear();
+      typeCanvas.setBackgroundColor("rgba(0,0,0,0)", () => typeCanvas.renderAll());
+    }
   };
 
   return (
@@ -177,7 +204,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                           <span>Save this {title}</span>
                         </button>
                         <button
-                          onClick={clearCanvas}
+                          onClick={clearDrawCanvas}
                           className="border-2 rounded-lg p-1 hover:bg-gray-100 p-1"
                         >
                           Clear
@@ -202,7 +229,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                             </li>
                           ))}
                         </ul>
-                        <select className="border-2 rounded-lg p-1">
+                        <select className="border-2 rounded-lg p-1" onChange={(e)=>setSelectedFont(e.target.value)}>
                           {fontFamily.map((font) => (
                             <option value={font} key={font}>
                               {font}
@@ -216,24 +243,24 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                           <span>Save this {title}</span>
                         </button>
                         <button
-                          onClick={clearCanvas}
+                          onClick={clearTypeCanvas}
                           className="border-2 rounded-lg p-1 hover:bg-gray-100 p-1"
                         >
                           Clear
                         </button>
                       </div>
                     </div>
-                    {/* <div className="flex gap-2">
+                    <div className="flex gap-2">
                       <Input
                         type="text"
                         placeholder="Type your signature"
                         value={textInput}
                         onChange={(e) => setTextInput(e.target.value)}
                       />
-                      <Button onPress={addTextToCanvas} color="primary" className="text-white">
+                      {/* <Button onPress={addTextToCanvas} color="primary" className="text-white">
                         Add
-                      </Button>
-                    </div> */}
+                      </Button> */}
+                    </div>
                     <div className="h-[260px] bg-[#F8F8F8] rounded-md">
                       <canvas ref={typeRef} />
                     </div>
