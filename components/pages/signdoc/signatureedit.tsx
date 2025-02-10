@@ -82,10 +82,12 @@ const SignatureEditModal: React.FC<ModalProps> = ({
           });
 
           const textBox = new fabric.Textbox(textInput, {
+            left: 30,
+            top: 100,
             fontFamily: selectedFont,
             width: canvasWidth,
-            top: 115,
-            fontSize: 64,
+            // height: canvasHeight,
+            fontSize: 72,
             fill: selectedColor,
             editable: false,
             selectable: false,
@@ -210,6 +212,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
   
   const getCroppedTypedSignatureImage = () => {
     if (!typeCanvas) return null;
+    if (!textInput) return null;
   
     const textObj = typeCanvas.getObjects("textbox")[0] as fabric.Textbox;
     if (!textObj) return null; // No text
@@ -217,7 +220,8 @@ const SignatureEditModal: React.FC<ModalProps> = ({
     typeCanvas.discardActiveObject();
     typeCanvas.renderAll();
   
-    const { left, top } = textObj.getBoundingRect();
+    const left = 0;
+    const top = textObj.getBoundingRect().top - 30;
 
     const ctx = document.createElement("canvas").getContext("2d");
 
@@ -225,10 +229,10 @@ const SignatureEditModal: React.FC<ModalProps> = ({
 
     if (ctx) {
       ctx.font = `${textObj.fontSize}px ${selectedFont}`;
-      width = ctx.measureText(textInput).width;
+      width = ctx.measureText(textInput).width + 60;
     } 
     
-    const height = textObj.calcTextHeight() + 30;
+    const height = textObj.calcTextHeight() + 60;
 
     console.log(left, top, width, height)
   
@@ -366,7 +370,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                 </Tab>
                 {/* Upload Tab */}
                 <Tab key="upload" title="Upload">
-                  <div className="flex flex-col gap-1 text-text">
+                  <div className={`flex flex-col gap-1 h-[${canvasHeight}px]`}>
                     <div className="flex flex-row justify-end text-text">
                       <div className="flex flex-row gap-1">
                         <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1">
