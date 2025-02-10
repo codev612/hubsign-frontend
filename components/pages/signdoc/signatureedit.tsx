@@ -32,6 +32,9 @@ const fontFamily = [
   "La Belle Aurore",
 ];
 
+const canvasWidth = 840;
+const canvasHeight = 260;
+
 const SignatureEditModal: React.FC<ModalProps> = ({
   isOpen,
   onOpenChange,
@@ -57,8 +60,8 @@ const SignatureEditModal: React.FC<ModalProps> = ({
             isDrawingMode: true,
             backgroundColor: "rgba(0,0,0,0)",
             stopContextMenu: false,
-            height: 260,
-            width: 464,
+            height: canvasHeight,
+            width: canvasWidth,
             selection: false,
           });
 
@@ -73,15 +76,17 @@ const SignatureEditModal: React.FC<ModalProps> = ({
             isDrawingMode: false,
             backgroundColor: "rgba(0,0,0,0)",
             stopContextMenu: false,
-            height: 260,
-            width: 464,
+            height: canvasHeight,
+            width: canvasWidth,
             selection: true,
           });
 
           const textBox = new fabric.Textbox(textInput, {
             fontFamily: selectedFont,
+            width: canvasWidth,
             top: 115,
             fontSize: 64,
+            fill: selectedColor,
             editable: false,
             selectable: false,
             hasControls: false,
@@ -121,6 +126,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
           if (obj instanceof fabric.Textbox) {
             obj.set({
               fontFamily: selectedFont,
+              fill: selectedColor,
             });
             obj.set("text", textInput);
           }
@@ -128,7 +134,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
         typeCanvas.renderAll();
       });
     }
-  }, [selectedFont, typeCanvas, textInput]);  
+  }, [selectedFont, typeCanvas, textInput, selectedColor]);  
 
   // Clear Canvas
   const clearDrawCanvas = () => {
@@ -247,7 +253,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
   }
   
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
       <ModalContent>
         {(onClose) => (
           <>
