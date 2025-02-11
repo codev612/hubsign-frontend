@@ -19,8 +19,8 @@ import { allowedSignatureFile } from "@/constants/common";
 interface ModalProps {
   isOpen: boolean;
   title: string;
-  actionState: ({ state, data }: { state: boolean; data: any }) => void;
   onOpenChange: (isOpen: boolean) => void;
+  setInitialImage: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const fontColor = ["#111111", "#184CAA", "#B92812"];
@@ -39,6 +39,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
   isOpen,
   onOpenChange,
   title,
+  setInitialImage,
 }) => {
   const drawRef = useRef<HTMLCanvasElement | null>(null);
   const typeRef = useRef<HTMLCanvasElement | null>(null);
@@ -50,6 +51,9 @@ const SignatureEditModal: React.FC<ModalProps> = ({
 
   const [filename, setFilename] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<any>(null);
+
+  const [activeTab, setActiveTab] = useState<string>("draw");
+  // const [activeInitialImage, setActiveInitialImage] = useState<string>("");
 
   // Initialize Fabric.js Canvas
   useEffect(() => {
@@ -211,8 +215,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
   };
   
   const getCroppedTypedSignatureImage = () => {
-    if (!typeCanvas) return null;
-    if (!textInput) return null;
+    if (!typeCanvas || !textInput) return null;
   
     const textObj = typeCanvas.getObjects("textbox")[0] as fabric.Textbox;
     if (!textObj) return null; // No text
@@ -255,6 +258,31 @@ const SignatureEditModal: React.FC<ModalProps> = ({
     link.click();
     document.body.removeChild(link);
   }
+
+  const handleAccept = () => {
+    switch (activeTab) {
+      case "draw":
+        setInitialImage(getCroppedDrawSignatureImage() || "");
+        break;
+      case "type":
+        setInitialImage(getCroppedTypedSignatureImage() || "");
+        break;
+      case "upload":
+        if (selectedFile) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const imageData = reader.result as string; // Convert to base64 string
+            setInitialImage(imageData);
+          };
+          reader.readAsDataURL(selectedFile); // Convert file to base64
+        } else {
+          setInitialImage("");
+        }
+        break;
+      default:
+        break;
+    }
+  }
   
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
@@ -275,6 +303,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                 color="primary"
                 variant="underlined"
                 destroyInactiveTabPanel={false}
+                onSelectionChange={(key)=>setActiveTab(String(key))}
                 // selectedKey={"type"}
                 // defaultSelectedKey={"type"}
               >
@@ -385,11 +414,11 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                         </button>
                       </div>
                     </div>
-                    <div className="flex flex-col text-sm gap-2">
+                    <div className="flex flex-col text-sm gap-2 items-center justify-center h-[260px] w-full bg-[#F8F8F8]">
                       {selectedFile ? <img
                           src={URL.createObjectURL(selectedFile)}
                           alt="Uploaded signature"
-                          className="w-full max-h-[260px] object-contain bg-[#F8F8F8] rounded-md"
+                          className="max-w-full max-h-full object-contain rounded-md"
                         /> : <FileAdd
                           filename={filename}
                           setFile={handleSetFile}
@@ -410,7 +439,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
               <Button variant="bordered" onPress={onClose}>
                 Close
               </Button>
-              <Button type="submit" className="text-white" color="primary">
+              <Button type="submit" className="text-white" color="primary" onPress={()=>handleAccept()}>
                 Accept and Sign
               </Button>
             </ModalFooter>

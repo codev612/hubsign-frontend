@@ -24,7 +24,7 @@ class InitialsboxManager {
     private recipient: string = "";
     private required: boolean = true;
     private placeholder: string = "Signed by";
-    private initialImage: fabric.Image | null = null;
+    private initialImage: string = "";
     private textvalue: string = "Text";
     private enteredText: string = "";
     private customPlaceholder: boolean=false;
@@ -64,7 +64,7 @@ class InitialsboxManager {
       this.tracktextboxGroup();
     }
     
-    private createtextboxes() {
+    private createInitialboxes() {
         this.containerTop = this.currentTop;
 
         if(!this.initialImage) {
@@ -248,6 +248,7 @@ class InitialsboxManager {
         value: {
             recipient: this.recipient,
             required: this.required,
+            initialImage: this.initialImage,
         }
       });
     }
@@ -263,25 +264,24 @@ class InitialsboxManager {
         },
         value: {
             recipient: this.recipient,
-            customPlaceholder: this.customPlaceholder,
-            placeholder: this.placeholder,
             required: this.required,
+            initialImage: this.initialImage,
         }
       });
     }
   
     public addToCanvas() {
     //   this.canvi.add(this.textboxGroup);
-        this.createtextboxes();
+        this.createInitialboxes();
         this.canvi.add(this.textbox);
     //   this.canvi.renderAll();
     }
-
 
     public setValue(value:any) {
       this.recipient = value.recipient;
       this.color = generateColorForRecipient(this.recipient);
       this.required = value.required;
+      this.initialImage = value.initialImage;
       
       this.updateSvgColor();     
     }
@@ -323,21 +323,21 @@ class InitialsboxManager {
     }
 
     public updateTextboxGroup() {
-        console.log("updated");
-        // Update the color of each checkbox individually
-        this.textbox.set({
-            // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
-            borderColor: this.color,
-            fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
-            text: this.enteredText==="" ? this.placeholder : this.enteredText,
-        });
-      
-        this.border.set({
-          stroke: hexToRgba(this.color, 1), 
-          backgroundColor: hexToRgba(this.color, 0.05),
-        });
-  
-        this.canvi.renderAll() // Re-render canvas
+      console.log("updated");
+      // Update the color of each checkbox individually
+      this.textbox.set({
+          // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
+          borderColor: this.color,
+          fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
+          text: this.enteredText==="" ? this.placeholder : this.enteredText,
+      });
+    
+      this.border.set({
+        stroke: hexToRgba(this.color, 1), 
+        backgroundColor: hexToRgba(this.color, 0.05),
+      });
+
+      this.canvi.renderAll() // Re-render canvas
     }
 
     //for store on database

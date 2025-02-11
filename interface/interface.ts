@@ -118,7 +118,7 @@ export interface DateboxSettingFormState {
 export interface InitialsboxSettings {
   recipient: string;
   required: boolean;
-  initialImage: fabric.Image | null;
+  initialImage: string;
 }
 
 

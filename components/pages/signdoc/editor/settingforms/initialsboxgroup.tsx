@@ -15,6 +15,7 @@ const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSett
 
   const [selectRecipient, setSelectRecipient] = useState<string>(showInitialsboxSettingForm.value.recipient);
   const [checkRequired, setCheckRequired] = useState<boolean>(showInitialsboxSettingForm.value.required);
+  const [initialImage, setInitialImage] = useState<string>(showInitialsboxSettingForm.value.initialImage);
   //modal for edit initials and signature
   const { isOpen:isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
   
@@ -29,9 +30,8 @@ const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSett
         <SignatureEditModal 
         isOpen={isEditOpen} 
         onOpenChange={onEditOpenChange} 
-        title="Initials" 
-        // item={showInitialsboxSettingForm} 
-        actionState={setInitialsboxSetting} 
+        title="Initials"
+        setInitialImage={setInitialImage}
         />
         <select value={selectRecipient} onChange={(e)=>setSelectRecipient(e.target.value)} className="border-1 rounded-md p-2">
             {
@@ -64,7 +64,8 @@ const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSett
                     uid: showInitialsboxSettingForm.uid,
                     value: {
                         recipient: selectRecipient,
-                        required: checkRequired
+                        required: checkRequired,
+                        initialImage: initialImage,
                     }
                 });
                 setShowInitialsboxSettingForm({...showInitialsboxSettingForm, show:false});

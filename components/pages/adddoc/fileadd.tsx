@@ -25,7 +25,7 @@ const FileAdd: React.FC<FileAddBoardProps> = ({
         {({ getRootProps, getInputProps }) => (
           <div
             {...getRootProps()}
-            className="flex flex-col text-link justify-center items-center bg-background rounded-md border-1 gap-1 p-8"
+            className="flex flex-col text-link justify-center w-full h-full items-center bg-background rounded-md border-1 gap-1 p-8"
           >
             <input {...getInputProps()} />
             {filename ? <CheckCircleOutlineOutlinedIcon fontSize="large" /> : <PostAddOutlinedIcon fontSize="large" />}

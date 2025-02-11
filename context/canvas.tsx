@@ -204,7 +204,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     value: {
       recipient: "",
       required: true,
-      initialImage: null,
+      initialImage: "",
     },
   });
 
