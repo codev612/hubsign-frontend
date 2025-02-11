@@ -281,7 +281,6 @@ class DateboxManager {
       });
     }
 
-
     public addToCanvas() {
         this.createtextboxes();
         this.canvi.add(this.textbox);

@@ -25,11 +25,10 @@ class InitialsboxManager {
     private required: boolean = true;
     private placeholder: string = "Signed by";
     private initialImage: string = "";
-    private textvalue: string = "Text";
     private enteredText: string = "";
-    private customPlaceholder: boolean=false;
     private controlSVGFile: ControlSVGFile;
     private svgGroup: fabric.Object;
+    private signImage: fabric.Image;
     private leftPadding: number = 10;
    
     constructor(
@@ -60,180 +59,152 @@ class InitialsboxManager {
       this.textbox = new fabric.Textbox("");
       this.border = new fabric.Rect();
       this.svgGroup = new fabric.Object();
+      this.signImage = new fabric.Image("");
 
       this.tracktextboxGroup();
     }
     
     private createInitialboxes() {
-        this.containerTop = this.currentTop;
+      this.containerTop = this.currentTop;
 
-        if(!this.initialImage) {
-          const svgString = this.controlSVGFile.initialsbox;
-          const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
+      const svgString = this.controlSVGFile.initialsbox;
+      const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
-          // Load SVG into Fabric.js
-          fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-            if (this.svgGroup) {
-              this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
-            }
-    
-            this.svgGroup = fabric.util.groupSVGElements(objects, options);
-            (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
-            this.svgGroup.set({
-              left: this.containerLeft,
-              top: this.containerTop,
-              selectable: true,
-            })
+      // Load SVG into Fabric.js
+      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+        if (this.svgGroup) {
+          this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+        }
 
-            this.trackSvgGroup();    
-            this.canvi.add(this.svgGroup);
-          });
-        } else {
+        this.svgGroup = fabric.util.groupSVGElements(objects, options);
+        (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        this.svgGroup.set({
+          left: this.containerLeft,
+          top: this.containerTop,
+          selectable: true,
+        })
 
-          // Create a border rectangle
-          this.border = new fabric.Rect({
-            left: this.containerLeft - this.leftPadding,
-            top: this.containerTop - this.leftPadding,
-            width: 200 + 1 + 2 * this.leftPadding,
-            height: 32 + 4 + 2 * this.leftPadding,
-            stroke: hexToRgba(this.color, 1),
-            strokeDashArray: [0, 0],
-            strokeWidth: 1,
-            fill: hexToRgba(this.color, 0.05),
-            selectable: false,
-            evented: true,
-            rx: 4,
-            ry: 4,
-          });
+        this.trackSvgGroup();    
+        this.canvi.add(this.svgGroup);
+      });
       
-          // Create the textbox
-          this.textbox = new fabric.Textbox(
-            this.enteredText==="" ? this.placeholder : this.enteredText, 
-            {
-              left: this.containerLeft,
-              top: this.containerTop,
-              width: 200,
-              fontSize: 32,
-              textAlign: "left",
-              padding: this.leftPadding,
-              // backgroundColor: hexToRgba(this.color, 0.05),
-              backgroundColor: "transparent",
-              fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
-              borderColor: 'transparent',
-              cornerStyle: "circle",
-              transparentCorners: false,
-              evented: true,
-          });
-
-          this.tracktextboxGroup();
-
-          this.canvi.add(this.border, this.textbox);
-        }  
-        
-        this.canvi.renderAll();
+      this.canvi.renderAll();
     }
     
     // Track scaling of the textboxGroup
     private tracktextboxGroup() {
-      this.textbox.on('modified', () => {
-        this.border.set({
-            left: this.textbox.left! - this.leftPadding,
-            top: this.textbox.top! - this.leftPadding,
-            width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
-            height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
+      if(this.textbox) {
+        this.textbox.on('modified', () => {
+          this.border.set({
+              left: this.textbox.left! - this.leftPadding,
+              top: this.textbox.top! - this.leftPadding,
+              width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
+              height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
+          });
+
+          this.canvi.renderAll();
         });
 
-        this.canvi.renderAll();
-      });
-      this.textbox.on('scaling', () => {
-        // this.showShowSettingForm();  
-        this.closeShowSettingForm();
-        this.border.set({
-          strokeDashArray: [2, 2, 2, 2],
-          stroke: hexToRgba(this.color, 0.4),
-        })
-      });
-      this.textbox.on('resizing', () => {
-        // this.showShowSettingForm();  
-        this.closeShowSettingForm();
-        this.border.set({
-          strokeDashArray: [2, 2, 2, 2],
-          stroke: hexToRgba(this.color, 0.4),
-        })
-      });
-      this.textbox.on('mouseup', () => {
-        this.showShowSettingForm();
-        this.border.set({
-          strokeDashArray: [0, 0],
-          stroke: hexToRgba(this.color, 1),
-        })
-      });
-      this.textbox.on('deselected', () => {
-        this.closeShowSettingForm();
-      });
-
-      this.textbox.on('moving', () => {
-        // Get the position of the group
-        this.containerLeft = this.textbox.left!;
-        this.containerTop = this.textbox.top!;
-        this.border.set({
-          strokeDashArray: [2, 2, 2, 2],
-          stroke: hexToRgba(this.color, 0.4),
-        })
-        this.closeShowSettingForm();
-      });
-
-      // Catch editing event
-      this.textbox.on('editing:entered', () => {
-        this.textbox.set({
-          fill: "#262626",
-        })
-        this.canvi.renderAll();
-      });
-
-      this.textbox.on('editing:exited', () => {
-        if(this.textbox.text === this.placeholder || this.textbox.text === "") {
-          this.textbox.set({
-            fill: "#6F6F6F",
-            text: this.placeholder,
+        this.textbox.on('scaling', () => {
+          // this.showShowSettingForm();  
+          this.closeShowSettingForm();
+          this.border.set({
+            strokeDashArray: [2, 2, 2, 2],
+            stroke: hexToRgba(this.color, 0.4),
           })
-        } else {
+        });
+
+        this.textbox.on('resizing', () => {
+          // this.showShowSettingForm();  
+          this.closeShowSettingForm();
+          this.border.set({
+            strokeDashArray: [2, 2, 2, 2],
+            stroke: hexToRgba(this.color, 0.4),
+          })
+        });
+
+        this.textbox.on('mouseup', () => {
+          this.showShowSettingForm();
+          this.border.set({
+            strokeDashArray: [0, 0],
+            stroke: hexToRgba(this.color, 1),
+          })
+        });
+
+        this.textbox.on('deselected', () => {
+          this.closeShowSettingForm();
+        });
+
+        this.textbox.on('moving', () => {
+          // Get the position of the group
+          this.containerLeft = this.textbox.left!;
+          this.containerTop = this.textbox.top!;
+          this.border.set({
+            strokeDashArray: [2, 2, 2, 2],
+            stroke: hexToRgba(this.color, 0.4),
+          })
+          this.closeShowSettingForm();
+        });
+
+        // Catch editing event
+        this.textbox.on('editing:entered', () => {
           this.textbox.set({
             fill: "#262626",
           })
+          this.canvi.renderAll();
+        });
 
-          this.enteredText = this.textbox.text || '';
-        }
+        this.textbox.on('editing:exited', () => {
+          if(this.textbox.text === this.placeholder || this.textbox.text === "") {
+            this.textbox.set({
+              fill: "#6F6F6F",
+              text: this.placeholder,
+            })
+          } else {
+            this.textbox.set({
+              fill: "#262626",
+            })
 
-        this.canvi.renderAll();
-      });
+            this.enteredText = this.textbox.text || '';
+          }
+
+          this.canvi.renderAll();
+        });
+      }
     }
 
     // Track scaling of the textboxGroup
     private trackSvgGroup() {
-      this.svgGroup.on('modified', () => {
-        this.canvi.renderAll();
-      });
-      this.svgGroup.on('scaling', () => {
-        // this.showShowSettingForm();  
-        this.closeShowSettingForm();
-      });
-      this.svgGroup.on('resizing', () => {
-        // this.showShowSettingForm();  
-        this.closeShowSettingForm();
-      });
-      this.svgGroup.on('mouseup', () => {
-        this.showShowSettingForm();
-      });
-      this.svgGroup.on('deselected', () => {
-        this.closeShowSettingForm();
-      });
-      this.svgGroup.on('moving', () => {
-        // Get the position of the group
-        this.containerLeft = this.svgGroup.left!;
-        this.containerTop = this.svgGroup.top!;
-        this.closeShowSettingForm();
-      });
+      if(this.svgGroup) {
+        this.svgGroup.on('modified', () => {
+          this.canvi.renderAll();
+        });
+
+        this.svgGroup.on('scaling', () => {
+          // this.showShowSettingForm();  
+          this.closeShowSettingForm();
+        });
+        
+        this.svgGroup.on('resizing', () => {
+          // this.showShowSettingForm();  
+          this.closeShowSettingForm();
+        });
+
+        this.svgGroup.on('mouseup', () => {
+          this.showShowSettingForm();
+        });
+
+        this.svgGroup.on('deselected', () => {
+          this.closeShowSettingForm();
+        });
+
+        this.svgGroup.on('moving', () => {
+          // Get the position of the group
+          this.containerLeft = this.svgGroup.left!;
+          this.containerTop = this.svgGroup.top!;
+          this.closeShowSettingForm();
+        });
+      }
     }
   
     private showShowSettingForm() {
@@ -259,13 +230,13 @@ class InitialsboxManager {
         uid: this.uid,
         show: false,
         position: {
-            left: groupPosition.left, // Position horizontally below the group
-            top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
+          left: groupPosition.left, // Position horizontally below the group
+          top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
         },
         value: {
-            recipient: this.recipient,
-            required: this.required,
-            initialImage: this.initialImage,
+          recipient: this.recipient,
+          required: this.required,
+          initialImage: this.initialImage,
         }
       });
     }
@@ -282,8 +253,7 @@ class InitialsboxManager {
       this.color = generateColorForRecipient(this.recipient);
       this.required = value.required;
       this.initialImage = value.initialImage;
-      
-      this.updateSvgColor();     
+      (value.initialImage!=="") ? this.updateSignedbox() : this.updateSvgColor();
     }
 
     private updateSvgColor() {
@@ -300,36 +270,93 @@ class InitialsboxManager {
 
       // Remove the old SVG before adding a new one
       if (this.svgGroup) {
-          this.canvi.remove(this.svgGroup);
-          this.canvi.renderAll();
+        this.canvi.remove(this.svgGroup);
+        this.canvi.renderAll();
       }
 
       fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-          this.svgGroup = fabric.util.groupSVGElements(objects, options);
-          (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        this.svgGroup = fabric.util.groupSVGElements(objects, options);
+        (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
 
-          // Restore the position and scale of the new SVG
-          this.svgGroup.set({
-              left: prevLeft,
-              top: prevTop,
-              scaleX: prevScaleX,
-              scaleY: prevScaleY,
-          });
+        // Restore the position and scale of the new SVG
+        this.svgGroup.set({
+          left: prevLeft,
+          top: prevTop,
+          scaleX: prevScaleX,
+          scaleY: prevScaleY,
+        });
 
-          this.trackSvgGroup();
-          this.canvi.add(this.svgGroup);
-          this.canvi.renderAll();
+        this.trackSvgGroup();
+        this.canvi.add(this.svgGroup);
+        this.canvi.renderAll();
       });
     }
 
+    private updateSignedbox() {
+
+      if (this.svgGroup) {
+        this.canvi.remove(this.svgGroup);
+        this.canvi.renderAll();
+
+        const border = new fabric.Rect({
+          left: this.containerLeft,
+          top: this.containerTop,
+          stroke: this.color,
+          strokeWidth: 2,
+          fill: "transparent",
+          borderColor: "transparent",
+          width: 200,
+          height: 56,
+          rx: 10,
+          ry: 10,
+          evented: true,
+        });
+
+        const text = new fabric.Text(this.placeholder, {
+          left: this.containerLeft + 5,
+          top: this.containerTop + 5,
+          fill: "#000",
+          fontSize: 10,
+          selectable: false,
+        });
+
+        fabric.Image.fromURL(this.initialImage, (img) => {
+          img.scaleToWidth(200);
+          img.scaleToHeight(51);
+          img.set({
+            left: this.containerLeft,
+            top: this.containerTop + 5,
+            selectable: false,
+            // height: 56,
+          });
+          this.signImage = img;
+          this.canvi.add(img).renderAll();
+        });
+
+        this.canvi.add(text);
+        this.canvi.add(border);
+        
+        border.on('moving', () => {
+          text.set({
+            left: border.left! + 5,
+            top: border.top! + 5,
+          });
+
+          this.signImage.set({
+            left: border.left! + 5,
+            top: border.top! + 5,
+          })
+        })
+      }
+    }
+
     public updateTextboxGroup() {
-      console.log("updated");
       // Update the color of each checkbox individually
       this.textbox.set({
-          // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
-          borderColor: this.color,
-          fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
-          text: this.enteredText==="" ? this.placeholder : this.enteredText,
+        // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
+        borderColor: this.color,
+        fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
+        text: this.enteredText==="" ? this.placeholder : this.enteredText,
       });
     
       this.border.set({

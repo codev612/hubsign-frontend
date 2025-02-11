@@ -346,7 +346,7 @@ class CheckboxManager {
         this.elements = [];
         
         // Trigger React state updates if required
-        this.setShowSettingForm({ show: false });
+        this.setShowSettingForm({...this.showShowSettingForm, show: false });
       
         this.canvi.renderAll();
       }
