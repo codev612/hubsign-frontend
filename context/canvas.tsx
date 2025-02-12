@@ -113,7 +113,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [hideCanvas, setHiddenCanvas] = useState(false);
   const exportPage = useRef<HTMLDivElement | null>(null);
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
-  const [signMode, setSignMode] = useState<boolean>(false);
+  const [signMode, setSignMode] = useState<boolean>(true);
 
   const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
     textbox: "",

@@ -20,7 +20,7 @@ interface ModalProps {
   isOpen: boolean;
   title: string;
   onOpenChange: (isOpen: boolean) => void;
-  setInitialImage: React.Dispatch<React.SetStateAction<string>>;
+  setInitialImage: (dataUrl: string) => void;
 }
 
 const fontColor = ["#111111", "#184CAA", "#B92812"];
@@ -53,6 +53,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
   const [selectedFile, setSelectedFile] = useState<any>(null);
 
   const [activeTab, setActiveTab] = useState<string>("draw");
+
   // const [activeInitialImage, setActiveInitialImage] = useState<string>("");
 
   // Initialize Fabric.js Canvas
@@ -198,16 +199,16 @@ const SignatureEditModal: React.FC<ModalProps> = ({
       { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }
     );
   
-    const width = boundingRect.right - boundingRect.left;
-    const height = boundingRect.bottom - boundingRect.top;
+    const width = boundingRect.right - boundingRect.left + 60;
+    const height = boundingRect.bottom - boundingRect.top + 60;
   
     if (width <= 0 || height <= 0) return null; // No valid content
   
     // Convert to transparent PNG with cropping
     return drawCanvas.toDataURL({
       format: "png",
-      left: boundingRect.left,
-      top: boundingRect.top,
+      left: boundingRect.left - 30,
+      top: boundingRect.top - 30,
       width,
       height,
       multiplier: 2, // Increases resolution (optional)

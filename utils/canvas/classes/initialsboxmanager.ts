@@ -364,6 +364,13 @@ class InitialsboxManager {
     // }
 
     private updateSignedbox() {
+
+      // Store the previous position of svgGroup
+      let prevLeft = this.svgGroup?.left || this.containerLeft;
+      let prevTop = this.svgGroup?.top || this.containerTop;
+      let prevScaleX = this.svgGroup?.scaleX || 1;
+      let prevScaleY = this.svgGroup?.scaleY || 1;
+
       if (this.svgGroup) {
         this.canvi.remove(this.svgGroup);
         this.canvi.renderAll();
@@ -406,12 +413,15 @@ class InitialsboxManager {
     
         // Create a group
         this.svgGroup = new fabric.Group([border, text, img], {
-          left: this.containerLeft,
-          top: this.containerTop,
+          left: prevLeft,
+          top: prevTop,
           selectable: true,
+          scaleX: prevScaleX,
+          scaleY: prevScaleY,
         });
     
         this.signImage = img;
+        this.trackSvgGroup();
         this.canvi.add(this.svgGroup);
         this.canvi.renderAll();
     
