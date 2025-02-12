@@ -184,11 +184,6 @@ class InitialsboxManager {
           // this.showShowSettingForm();  
           this.closeShowSettingForm();
         });
-        
-        this.svgGroup.on('resizing', () => {
-          // this.showShowSettingForm();  
-          this.closeShowSettingForm();
-        });
 
         this.svgGroup.on('mouseup', () => {
           this.showShowSettingForm();
@@ -292,62 +287,163 @@ class InitialsboxManager {
       });
     }
 
-    private updateSignedbox() {
+    // private updateSignedbox() {
 
+    //   if (this.svgGroup) {
+    //     this.canvi.remove(this.svgGroup);
+    //     this.canvi.renderAll();
+
+    //     const border = new fabric.Rect({
+    //       left: this.containerLeft,
+    //       top: this.containerTop,
+    //       stroke: this.color,
+    //       strokeWidth: 2,
+    //       fill: "transparent",
+    //       borderColor: "transparent",
+    //       width: 200,
+    //       height: 56,
+    //       rx: 10,
+    //       ry: 10,
+    //       evented: true,
+    //     });
+
+    //     const text = new fabric.Text(this.placeholder, {
+    //       left: this.containerLeft + 5,
+    //       top: this.containerTop + 5,
+    //       fill: "#000",
+    //       fontSize: 10,
+    //       selectable: false,
+    //     });
+
+    //     fabric.Image.fromURL(this.initialImage, (img) => {
+    //       img.scaleToWidth(200);
+    //       img.scaleToHeight(51);
+    //       img.set({
+    //         left: this.containerLeft,
+    //         top: this.containerTop + 5,
+    //         evented: true,
+    //       });
+    //       this.signImage = img;
+    //       this.canvi.add(img).renderAll();
+    //     });
+
+    //     this.canvi.add(text);
+    //     this.canvi.add(border);
+        
+    //     border.on('moving', () => {
+    //       text.set({
+    //         left: border.left! + 5 * border.getScaledWidth() / 200,
+    //         top: border.top! + 5 * border.getScaledHeight() / 56,
+    //       });
+
+    //       this.signImage.set({
+    //         left: border.left! + 5,
+    //         top: border.top! + 5,
+    //       });
+    //     });
+
+    //     border.on('scaling', () => {
+    //       text.set({
+    //         left: border.left! + 5 * border.getScaledWidth() / 200,
+    //         top: border.top! + 5 * border.getScaledHeight() / 56,
+    //       });
+
+    //       this.signImage.set({
+    //         left: border.left! + 5,
+    //         top: border.top! + 5,
+    //       });
+
+    //       this.signImage.scaleToWidth(border.getScaledWidth()-5 * border.getScaledWidth() / 200);
+    //       this.signImage.scaleToHeight(border.getScaledHeight()-5 * border.getScaledHeight() / 56);
+    //     });
+
+    //     border.on("resizing", () => {
+    //       console.log("resizing")
+    //     })
+    //   };
+    // }
+
+    private updateSignedbox() {
       if (this.svgGroup) {
         this.canvi.remove(this.svgGroup);
         this.canvi.renderAll();
-
-        const border = new fabric.Rect({
+      }
+    
+      const border = new fabric.Rect({
+        left: 0,
+        top: 0,
+        stroke: this.color,
+        strokeWidth: 2,
+        fill: "transparent",
+        borderColor: "transparent",
+        width: 200,
+        height: 56,
+        rx: 10,
+        ry: 10,
+        evented: true,
+      });
+    
+      const text = new fabric.Text(this.placeholder, {
+        left: 5,
+        top: 5,
+        fill: "#000",
+        fontSize: 10,
+        selectable: false,
+        originX: "left",
+        originY: "top",
+      });
+    
+      fabric.Image.fromURL(this.initialImage, (img) => {
+        img.scaleToWidth(200);
+        img.scaleToHeight(51);
+        img.set({
+          left: 5,
+          top: 5,
+          selectable: false,
+          originX: "left",
+          originY: "top",
+        });
+    
+        // Create a group
+        this.svgGroup = new fabric.Group([border, text, img], {
           left: this.containerLeft,
           top: this.containerTop,
-          stroke: this.color,
-          strokeWidth: 2,
-          fill: "transparent",
-          borderColor: "transparent",
-          width: 200,
-          height: 56,
-          rx: 10,
-          ry: 10,
-          evented: true,
+          selectable: true,
         });
-
-        const text = new fabric.Text(this.placeholder, {
-          left: this.containerLeft + 5,
-          top: this.containerTop + 5,
-          fill: "#000",
-          fontSize: 10,
-          selectable: false,
-        });
-
-        fabric.Image.fromURL(this.initialImage, (img) => {
-          img.scaleToWidth(200);
-          img.scaleToHeight(51);
-          img.set({
-            left: this.containerLeft,
-            top: this.containerTop + 5,
-            selectable: false,
-            // height: 56,
-          });
-          this.signImage = img;
-          this.canvi.add(img).renderAll();
-        });
-
-        this.canvi.add(text);
-        this.canvi.add(border);
-        
-        border.on('moving', () => {
-          text.set({
-            left: border.left! + 5,
-            top: border.top! + 5,
-          });
-
-          this.signImage.set({
-            left: border.left! + 5,
-            top: border.top! + 5,
-          })
-        })
-      }
+    
+        this.signImage = img;
+        this.canvi.add(this.svgGroup);
+        this.canvi.renderAll();
+    
+        // Handle scaling
+        // this.svgGroup.on("scaling", () => {
+        //   const scaleX = this.svgGroup.scaleX || 1;
+        //   const scaleY = this.svgGroup.scaleY || 1;
+    
+        //   // Resize the border
+        //   border.set({
+        //     width: 200 * scaleX,
+        //     height: 56 * scaleY,
+        //   });
+    
+        //   // Resize text and image proportionally
+        //   text.set({
+        //     left: 5 * scaleX,
+        //     top: 5 * scaleY,
+        //     fontSize: 10 * scaleX, // Scale font size
+        //   });
+    
+        //   img.set({
+        //     left: 5 * scaleX,
+        //     top: 5 * scaleY,
+        //   });
+    
+        //   img.scaleToWidth(200 * scaleX);
+        //   img.scaleToHeight(51 * scaleY);
+    
+        //   this.svgGroup.setCoords(); // Update the group's bounding box
+        // });
+      });
     }
 
     public updateTextboxGroup() {
