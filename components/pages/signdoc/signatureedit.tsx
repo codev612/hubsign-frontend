@@ -63,6 +63,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
   };
 
   const [savedImages, setSavedImages] = useState<SavedImage[]>([]);
+  const [activeSavedImage, setActiveSavedImage] = useState<string>("");
 
   // const [activeInitialImage, setActiveInitialImage] = useState<string>("");
 
@@ -314,7 +315,7 @@ const SignatureEditModal: React.FC<ModalProps> = ({
         return;
       }
       const json = await response.json();
-      setSavedImages([...savedImages, {dataUrl: json.dataUrl, type: json.type, _id: json._id}])
+      setSavedImages([...savedImages, { dataUrl: json.dataUrl, type: json.type, _id: json._id }])
       console.log(json);
     } catch (error) {
       console.log(error);
@@ -340,6 +341,9 @@ const SignatureEditModal: React.FC<ModalProps> = ({
         } else {
           setInitialImage("");
         }
+        break;
+      case "saved":
+          setInitialImage(savedImages.filter(img => img._id === activeSavedImage)[0].dataUrl);
         break;
       default:
         break;
@@ -383,9 +387,12 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                       </ul>
                       <div className="flex flex-row gap-1">
                         <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1"
-                        onClick={()=>{
+                        onClick={async ()=>{
                           const drawImage = getCroppedDrawSignatureImage();
-                          if(drawImage) downloadImage(drawImage, "drawn_signature.png");
+                          if(drawImage) {
+                            downloadImage(drawImage, "drawn_signature.png");
+                            await saveInitialImage(drawImage);
+                          }
                         }}
                         >
                           <BookmarkAddedOutlinedIcon />
@@ -467,7 +474,17 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                   <div className={`flex flex-col gap-1 h-[${canvasHeight}px]`}>
                     <div className="flex flex-row justify-end text-text">
                       <div className="flex flex-row gap-1">
-                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1">
+                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1" onClick={()=>{
+                          if (selectedFile) {
+                            const reader = new FileReader();
+                            reader.onload = async () => {
+                              const imageData = reader.result as string; // Convert to base64 string
+                              // setInitialImage(imageData);
+                              await saveInitialImage(imageData);
+                            };
+                            reader.readAsDataURL(selectedFile); // Convert file to base64
+                          }
+                        }}>
                           <BookmarkAddedOutlinedIcon />
                           <span>Save this {title}</span>
                         </button>
@@ -499,13 +516,15 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                   <ul className="flex flex-col gap-1">
                   {savedImages.map(img => (
                     <li key={img._id} className="flex flex-row gap-1 items-center justify-between">
-                      <div className="bg-[#F8F8F8] h-[60px] w-full flex items-center justify-start rounded-lg overflow-hidden"> 
+                      <a className={`bg-[#F8F8F8] ${img._id === activeSavedImage ? "border border-primary" : "" } h-[60px] w-full flex items-center justify-start rounded-lg overflow-hidden`}
+                      onClick={()=>setActiveSavedImage(img._id)}
+                      > 
                         <img 
                           src={img.dataUrl} 
                           alt="initials" 
                           className="h-[60px] w-auto object-contain"
                         />
-                      </div>
+                      </a>
                       <button className="border border-gray-300 rounded-lg hover:bg-gray-100 h-[60px] flex items-center justify-center px-3 text-text">
                         <DeleteForeverOutlinedIcon />
                       </button>
