@@ -320,6 +320,30 @@ const SignatureEditModal: React.FC<ModalProps> = ({
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const removeSavedImage = async (id:string) => {
+    if(!id) return;
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/signature?`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("session") || ""}`,
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if(!response.ok) {
+        return;
+      }
+
+      setSavedImages(savedImages.filter(img=>img._id !== id));
+
+    } catch (error) {
+      console.log(error);
+      return;
+    }
   }
 
   const handleAccept = () => {
@@ -343,7 +367,9 @@ const SignatureEditModal: React.FC<ModalProps> = ({
         }
         break;
       case "saved":
+        if(activeSavedImage) {
           setInitialImage(savedImages.filter(img => img._id === activeSavedImage)[0].dataUrl);
+        }
         break;
       default:
         break;
@@ -525,7 +551,9 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                           className="h-[60px] w-auto object-contain"
                         />
                       </a>
-                      <button className="border border-gray-300 rounded-lg hover:bg-gray-100 h-[60px] flex items-center justify-center px-3 text-text">
+                      <button className="border border-gray-300 rounded-lg hover:bg-gray-100 h-[60px] flex items-center justify-center px-3 text-text"
+                      onClick={()=>removeSavedImage(img._id)}
+                      >
                         <DeleteForeverOutlinedIcon />
                       </button>
                     </li>
