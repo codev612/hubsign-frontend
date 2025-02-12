@@ -186,11 +186,11 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                     </div>
                 </Tooltip> */}
 
-                <Tooltip title="Draw">
+                {/* <Tooltip title="Draw">
                     <div>
                         <HiPencil className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.toggleDraw(contextValues.canvas!)} />
                     </div>
-                </Tooltip>
+                </Tooltip> */}
 
                 {/* <Tooltip title="Highlight">
                     <div>

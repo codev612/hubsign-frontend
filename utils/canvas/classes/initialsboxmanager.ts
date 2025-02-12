@@ -376,36 +376,36 @@ class InitialsboxManager {
         this.canvi.renderAll();
       }
     
-      const border = new fabric.Rect({
-        left: 0,
-        top: 0,
-        stroke: this.color,
-        strokeWidth: 2,
-        fill: "transparent",
-        borderColor: "transparent",
-        width: 200,
-        height: 56,
-        rx: 10,
-        ry: 10,
-        evented: true,
-      });
-    
-      const text = new fabric.Text(this.placeholder, {
-        left: 5,
-        top: 5,
-        fill: "#000",
-        fontSize: 10,
-        selectable: false,
-        originX: "left",
-        originY: "top",
-      });
-    
       fabric.Image.fromURL(this.initialImage, (img) => {
         img.scaleToWidth(200);
         img.scaleToHeight(51);
         img.set({
           left: 5,
           top: 5,
+          selectable: false,
+          originX: "left",
+          originY: "top",
+        });
+
+        const border = new fabric.Rect({
+          left: 0,
+          top: 0,
+          stroke: this.color,
+          strokeWidth: 2,
+          fill: "transparent",
+          borderColor: "transparent",
+          width: img.getScaledWidth() + 15,
+          height: 56,
+          rx: 10,
+          ry: 10,
+          evented: true,
+        });
+      
+        const text = new fabric.Text(this.placeholder, {
+          left: 5,
+          top: 5,
+          fill: "#000",
+          fontSize: 10,
           selectable: false,
           originX: "left",
           originY: "top",
