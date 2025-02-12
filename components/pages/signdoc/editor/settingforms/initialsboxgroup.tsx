@@ -6,7 +6,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import SignatureEditModal from "../../signatureedit";
-import { useButtons } from "@/context/canvas";
+import { useCanvas } from "@/context/canvas";
 
 const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSettingForm, setShowInitialsboxSettingForm, recipients, setInitialsboxSetting }) => {
     useEffect(() => {
@@ -20,7 +20,7 @@ const InitialsboxGroup: React.FC<InitialsboxGroupProps> = ({ showInitialsboxSett
     //modal for edit initials and signature
     const { isOpen: isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
 
-    const contextValue = useButtons();
+    const contextValue = useCanvas();
     const signMode = contextValue.signMode;
 
     const handleInitialImageSet = (dataUrl:string) => {

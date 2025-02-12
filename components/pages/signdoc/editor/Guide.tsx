@@ -1,10 +1,10 @@
 import React from "react";
-// import { useButtons } from "../context/CanvasContext";
-import { useButtons } from "@/context/canvas";
+// import { useCanvas } from "../context/CanvasContext";
+import { useCanvas } from "@/context/canvas";
 
 export default function Guide() {
 
-    const contextValues = useButtons();
+    const contextValues = useCanvas();
 
     return (
         <div className={`flex flex-col items-center w-full h-full gap-8 ${contextValues.theme && "text-white bg-[rgb(16,16,16)]"}`}>

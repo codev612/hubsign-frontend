@@ -4,13 +4,11 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { siteConfig } from "@/config/site";
-
 export const verifySession = cache(async () => {
   const session = (await cookies()).get("session")?.value;
 
   if (!session) {
-    redirect("/signin");
+    return null;
   }
 
   return session;
@@ -19,7 +17,7 @@ export const verifySession = cache(async () => {
 export const getUser = cache(async () => {
   const session = await verifySession();
 
-  if (!session) return null;
+  if (!session) redirect("/signin");
 
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/profile`, {
@@ -40,7 +38,6 @@ export const getUser = cache(async () => {
     return json;
   } catch (error) {
     console.log(error);
-
     return null;
   }
 });
@@ -48,7 +45,7 @@ export const getUser = cache(async () => {
 export const getContacts = async () => {
   const session = await verifySession();
 
-  if (!session) return null;
+  if (!session) redirect("/signin");
 
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`, {

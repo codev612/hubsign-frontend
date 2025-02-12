@@ -7,7 +7,7 @@ import { AiOutlineClear, AiOutlineDelete, AiOutlineHighlight } from 'react-icons
 import { HiPencil } from 'react-icons/hi';
 import { TfiNotepad } from 'react-icons/tfi';
 import { FiSave } from 'react-icons/fi';
-import { useButtons } from '@/context/canvas';
+import { useCanvas } from '@/context/canvas';
 import { Popover, Slider } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { SketchPicker, ColorResult } from 'react-color';
@@ -31,7 +31,7 @@ type SideBarProps = {
 };
 
 const SideBar: React.FC<SideBarProps> = ({docData}) => {
-    const contextValues = useButtons();
+    const contextValues = useCanvas();
     const [openColor, setOpenColor] = useState<AnchorElement>(null);
     const [openBorderColor, setOpenBorderColor] = useState<AnchorElement>(null);
     const [openStroke, setOpenStroke] = useState<AnchorElement>(null);

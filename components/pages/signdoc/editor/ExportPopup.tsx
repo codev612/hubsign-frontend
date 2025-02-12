@@ -4,7 +4,7 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { fabric } from 'fabric';
 import { Dialog, Transition } from '@headlessui/react';
-import { useButtons } from '@/context/canvas';
+import { useCanvas } from '@/context/canvas';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Backdrop } from '@mui/material';
@@ -17,7 +17,7 @@ interface ExportPopupProps {
 }
 
 const ExportPopup: React.FC<ExportPopupProps> = (props) => {
-  const contextValues = useButtons();
+  const contextValues = useCanvas();
   const [exportCanvas, setExportCanvas] = useState<fabric.StaticCanvas | null>(null);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [currPage, setCurrPage] = useState<number>(1);

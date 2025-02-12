@@ -6,7 +6,7 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { fabric } from 'fabric';
 import Cookies from 'js-cookie';
-import { useButtons } from '@/context/canvas';
+import { useCanvas } from '@/context/canvas';
 import Loader from './Loader';
 import SideBar from '@/components/pages/signdoc/editor/SideBar';
 import ControlBar from './ControlBar';
@@ -17,7 +17,7 @@ import RadioboxGroup from './settingforms/radioboxgroup';
 import DropdownboxGroup from './settingforms/dropdownbox';
 import DateboxGroup from './settingforms/dateboxgroup';
 import InitialsboxGroup from './settingforms/initialsboxgroup';
-import { 
+import {
   CheckboxGroupProps, 
   TextboxGroupProps, 
   RadioboxGroupProps, 
@@ -26,10 +26,9 @@ import {
   InitialsboxGroupProps,
 } from '@/interface/interface';
 
-
 const PDFBoard: React.FC = () => {
   const params = useParams();
-  const contextValues = useButtons();
+  const contextValues = useCanvas();
   const [docIsLoading, setDocIsLoading] = useState<boolean>(true);
   const [docData, setDocData] = useState<DocData>({
     filename: "",
@@ -168,17 +167,48 @@ const PDFBoard: React.FC = () => {
     fetchDocumentData();
   }, [])
 
-  function onDocumentLoadSuccess({ numPages }: PDFDocumentProxy): void {
+  // function onDocumentLoadSuccess({ numPages }: PDFDocumentProxy): void {
+  //   contextValues.setEdits({});
+  //   contextValues.setNumPages(numPages);
+  //   contextValues.setCurrPage(1);
+  //   contextValues.setCanvas(initCanvas());
+  //   setTimeout(() => setDocIsLoading(false), 2000);
+  // }
+
+  // function changePage(offset: number) {
+  //   const page = contextValues.currPage;
+    
+  //   // Save current page state to edits
+  //   contextValues.edits[page] = contextValues.canvas!.toObject();
+  //   contextValues.setEdits(contextValues.edits);
+  
+  //   // Update to the next page
+  //   contextValues.setCurrPage((page) => page + offset);
+  
+  //   // Clear and load the canvas with the new page state
+  //   contextValues.canvas!.clear();
+  //   if (contextValues.edits[page + offset]) {
+  //     contextValues.canvas!.loadFromJSON(
+  //       contextValues.edits[page + offset],
+  //       () => {
+  //         console.log("Canvas loaded from JSON");
+  //         contextValues.canvas!.renderAll();
+  //       }
+  //     );
+  //   }
+  // }
+
+  const onDocumentLoadSuccess = ({ numPages }: PDFDocumentProxy): void => {
     contextValues.setEdits({});
     contextValues.setNumPages(numPages);
     contextValues.setCurrPage(1);
     contextValues.setCanvas(initCanvas());
     setTimeout(() => setDocIsLoading(false), 2000);
-  }
-
-  function changePage(offset: number) {
+  };
+  
+  const changePage = (offset: number): void => {
     const page = contextValues.currPage;
-    
+  
     // Save current page state to edits
     contextValues.edits[page] = contextValues.canvas!.toObject();
     contextValues.setEdits(contextValues.edits);
@@ -197,7 +227,7 @@ const PDFBoard: React.FC = () => {
         }
       );
     }
-  }
+  };
 
   const initCanvas = (): fabric.Canvas => {
     // Initialize fabric canvas

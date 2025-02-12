@@ -88,10 +88,10 @@ type CanvasContextProps = {
 
 const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
 
-export const useButtons = () => {
+export const useCanvas = () => {
   const context = useContext(CanvasContext);
   if (!context) {
-    throw new Error('useButtons must be used within a CanvasProvider');
+    throw new Error('useCanvas must be used within a CanvasProvider');
   }
   return context;
 };
