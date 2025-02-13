@@ -127,6 +127,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     datebox: "",
     calendar: "",
     initialsbox: "",
+    gear: "",
   })
   // canvas edit object
   const [edits, setEdits] = React.useState({});
@@ -233,6 +234,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     "datebox",
     "calendar",
     "initialsbox",
+    "gear",
   ]
 
   //fetching svg files for canvas object
@@ -399,7 +401,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startTop, 
       activeRecipient,
       signMode,
-      setShowRadioboxSettingForm,
+      setShowTextboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object:textboxGroup}]);
