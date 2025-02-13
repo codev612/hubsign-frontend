@@ -23,6 +23,7 @@ class DateboxManager {
     private iconBorder: fabric.Rect = new fabric.Rect();
     private valueBorder: fabric.Rect = new fabric.Rect();
     private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
+    private setShowCalendarForm: React.Dispatch<React.SetStateAction<any>>;
     //setting form properties
     private recipient: string = "";
     private required: boolean = true;
@@ -47,6 +48,7 @@ class DateboxManager {
         signMode: boolean,
         onlyMyself: boolean,
         setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
+        setShowCalendarForm: React.Dispatch<React.SetStateAction<any>>,
         controlSVGFile: ControlSVGFile,
     ) {
         this.uid = uid;
@@ -64,6 +66,7 @@ class DateboxManager {
         this.color = generateColorForRecipient(recipient);
     
         this.setShowSettingForm = setShowSettingForm;
+        this.setShowCalendarForm = setShowCalendarForm;
         
         this.textbox = new fabric.Textbox("");
         this.border = new fabric.Rect();
@@ -137,7 +140,6 @@ class DateboxManager {
                 this.svgGearGroup.scaleToHeight(20);
 
                 this.svgGearGroup.on("mousedown", () => {
-                    console.log("setting clicked")
                     this.showShowSettingForm();
                 });
 
@@ -195,6 +197,35 @@ class DateboxManager {
                 }
             );
 
+            if(this.onlyMyself) {
+                const svgGearString = this.controlSVGFile.gear;
+                const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
+
+                fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+                    if (this.svgGearGroup) {
+                        this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
+                    }
+            
+                    this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+                    (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+                    this.svgGearGroup.set({
+                        left: this.textbox.left! + 200 + 15,
+                        top: this.textbox.top! + ( 32 - 24 ) / 2,
+                        selectable: false,
+                        evented: true,
+                    });
+
+                    this.svgGearGroup.scaleToWidth(20);
+                    this.svgGearGroup.scaleToHeight(20);
+
+                    this.svgGearGroup.on("mousedown", () => {
+                        this.showShowSettingForm();
+                    });
+
+                    this.canvi.add(this.svgGearGroup);
+                });
+            }
+
             this.tracktextboxGroup();
 
             this.canvi.add(this.border, this.textbox);
@@ -218,12 +249,42 @@ class DateboxManager {
                 top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY! - this.calendarIcon.height!/2,
             });
 
+           if(this.onlyMyself) {
+            const svgGearString = this.controlSVGFile.gear;
+            const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
+    
+            fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+                if (this.svgGearGroup) {
+                    this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
+                }
+        
+                this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+                (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+                this.svgGearGroup.set({
+                    left: this.textbox.left! + this.textbox.getScaledWidth() + 15,
+                    top: this.textbox.top! + (this.textbox.getScaledHeight() - 24) / 2,
+                    selectable: false,
+                    evented: true,
+                });
+        
+                this.svgGearGroup.scaleToWidth(20);
+                this.svgGearGroup.scaleToHeight(20);
+        
+                this.svgGearGroup.on("mousedown", () => {
+                    this.showShowSettingForm();
+                });
+        
+                this.canvi.add(this.svgGearGroup);
+            });
+           }
+
             this.canvi.renderAll();
         });
 
         this.textbox.on('scaling', () => {
             // this.showShowSettingForm();  
             this.closeShowSettingForm();
+
             this.border.set({
                 left: this.textbox.left! - this.leftPadding,
                 top: this.textbox.top! - this.leftPadding,
@@ -235,6 +296,15 @@ class DateboxManager {
                 left: this.textbox.left! + this.textbox.width! * this.textbox.scaleX! - this.leftPadding,
                 top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY! - this.calendarIcon.height!/2,
             });
+
+            if(this.onlyMyself) {
+                this.svgGearGroup.set({
+                    left: this.textbox.left! + this.textbox.getScaledWidth() + 15,
+                    top: this.textbox.top! + ( this.textbox.getScaledHeight() - 24 ) / 2,
+                    selectable: false,
+                    evented: true,
+                });
+            }
         });
         this.textbox.on('resizing', () => {
             // this.showShowSettingForm();  
@@ -250,16 +320,27 @@ class DateboxManager {
                 left: this.textbox.left! + this.textbox.width! * this.textbox.scaleX! - this.leftPadding,
                 top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY! - this.calendarIcon.height!/2,
             });
+
+            if(this.onlyMyself) {
+                this.svgGearGroup.set({
+                    left: this.textbox.left! + this.textbox.getScaledWidth() + 15,
+                    top: this.textbox.top! + ( this.textbox.getScaledHeight() - 24 ) / 2,
+                    selectable: false,
+                    evented: true,
+                });
+            }
         });
+
         this.textbox.on('mouseup', () => {
-            this.showShowSettingForm();
-            this.border.set({
-            strokeDashArray: [0, 0],
-            stroke: hexToRgba(this.color, 1),
-            })
+            if(this.onlyMyself)
+                this.showShowCalendarForm();
         });
+
         this.textbox.on('deselected', () => {
-            this.closeShowSettingForm();
+            if(this.onlyMyself)
+                this.closeShowCalendarForm();
+            else
+                this.closeShowSettingForm();
         });
 
         this.textbox.on('moving', () => {
@@ -279,7 +360,17 @@ class DateboxManager {
                 top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY! - this.calendarIcon.height!/2,
             });
 
+            if(this.onlyMyself) {
+                this.svgGearGroup.set({
+                    left: this.textbox.left! + this.textbox.getScaledWidth() + 15,
+                    top: this.textbox.top! + ( this.textbox.getScaledHeight() - 24 ) / 2,
+                    selectable: false,
+                    evented: true,
+                });
+            }
+
             this.closeShowSettingForm();
+            this.closeShowCalendarForm();
         });
 
         // Catch editing event
@@ -471,6 +562,45 @@ class DateboxManager {
             lockedToday: this.lockedToday,
         }
       });
+    }
+
+    private showShowCalendarForm() {
+        const groupPosition = this.signMode || this.onlyMyself ? this.textbox.getBoundingRect() : this.iconBorder.getBoundingRect();
+        this.setShowCalendarForm({
+          uid: this.uid,
+          show: true,
+          position: {
+              left: groupPosition.left, // Position horizontally below the group
+              top: groupPosition.top + groupPosition.height + 5, // Position vertically below the group
+          },
+          width: this.border.width!,
+          value: {
+              recipient: this.recipient,
+              selectedDate: this.selectedDate,
+              required: this.required,
+              format: this.format,
+              lockedToday: this.lockedToday,
+          }
+        });
+    }
+
+    private closeShowCalendarForm() {
+        const groupPosition = this.textbox.getBoundingRect();
+        this.setShowCalendarForm({
+          uid: this.uid,
+          show: false,
+          position: {
+              left: groupPosition.left, // Position horizontally below the group
+              top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
+          },
+          value: {
+              recipient: this.recipient,
+              selectedDate: this.selectedDate,
+              required: this.required,
+              format: this.format,
+              lockedToday: this.lockedToday,
+          }
+        });
     }
 
     public addToCanvas() {

@@ -15,16 +15,18 @@ import Checkboxgroup from './settingforms/checkboxgroup';
 import TextboxGroup from './settingforms/textboxgroup';
 import RadioboxGroup from './settingforms/radioboxgroup';
 import DropdownboxGroup from './settingforms/dropdownbox';
-import DateboxGroup from './settingforms/dateboxgroup';
+import DateboxCalendar from './settingforms/dateboxcalendar';
 import InitialsboxGroup from './settingforms/initialsboxgroup';
 import {
   CheckboxGroupProps, 
   TextboxGroupProps, 
   RadioboxGroupProps, 
   DropdownboxGroupProps,
-  DateboxGroupProps,
+  DateboxSettingProps,
+  DateboxCalendarProps,
   InitialsboxGroupProps,
 } from '@/interface/interface';
+import DateboxSetting from './settingforms/dateboxsetting';
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -52,6 +54,9 @@ const PDFBoard: React.FC = () => {
   const showDateboxSettingForm = canvasContextValues.showDateboxSettingForm;
   const setShowDateboxSettingForm = canvasContextValues.setShowDateboxSettingForm;
 
+  const showDateboxCalendarForm = canvasContextValues.showDateboxCalendarForm;
+  const setShowDateboxCalendarForm = canvasContextValues.setShowDateboxCalendarForm;
+
   const showInitialsboxSettingForm = canvasContextValues.showInitialsboxSettingForm;
   const setShowInitialsboxSettingForm = canvasContextValues.setShowInitialsboxSettingForm;
 
@@ -59,7 +64,7 @@ const PDFBoard: React.FC = () => {
   type FormConfig = {
     show: boolean;
     Component: React.ComponentType<any>;
-    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps | DateboxGroupProps | InitialsboxGroupProps;
+    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps | DateboxSettingProps | DateboxCalendarProps | InitialsboxGroupProps;
   }
   
   // Now use these types in your component
@@ -107,12 +112,23 @@ const PDFBoard: React.FC = () => {
     },
     {
       show: showDateboxSettingForm.show,
-      Component: DateboxGroup,
+      Component: DateboxSetting,
       props: {
         showDateboxSettingForm,
         setShowDateboxSettingForm,
         recipients: docData.recipients,
         setDateboxSetting: canvasContextValues.handleCanvasObjectSetValue,
+        signMode: canvasContextValues.signMode
+      }
+    },
+    {
+      show: showDateboxCalendarForm.show,
+      Component: DateboxCalendar,
+      props: {
+        showDateboxCalendarForm,
+        setShowDateboxCalendarForm,
+        recipients: docData.recipients,
+        setDateboxCalendar: canvasContextValues.handleCanvasObjectSetValue,
         signMode: canvasContextValues.signMode
       }
     },

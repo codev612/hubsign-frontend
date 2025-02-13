@@ -160,11 +160,19 @@ export interface DropdownboxGroupProps {
   signMode: boolean;
 }
 
-export interface DateboxGroupProps {
+export interface DateboxSettingProps {
   showDateboxSettingForm: DateboxSettingFormState;
   setShowDateboxSettingForm: React.Dispatch<React.SetStateAction<DateboxSettingFormState>>;
   recipients: Recipient[];
   setDateboxSetting: (payload: any) => void;
+  signMode: boolean;
+}
+
+export interface DateboxCalendarProps {
+  showDateboxCalendarForm: DateboxSettingFormState;
+  setShowDateboxCalendarForm: React.Dispatch<React.SetStateAction<DateboxSettingFormState>>;
+  recipients: Recipient[];
+  setDateboxCalendar: (payload: any) => void;
   signMode: boolean;
 }
 

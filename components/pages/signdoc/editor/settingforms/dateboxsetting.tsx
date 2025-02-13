@@ -3,11 +3,12 @@ import { Checkbox, Button } from "@heroui/react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import { DateboxGroupProps } from "@/interface/interface";
+import { DateboxSettingProps } from "@/interface/interface";
 import Calendar from "@/components/common/calendar";
 import { useCanvas } from "@/context/canvas";
+import { useUser } from "@/context/user";
 
-const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, setShowDateboxSettingForm, recipients, setDateboxSetting, signMode }) => {
+const DateboxSetting: React.FC<DateboxSettingProps> = ({ showDateboxSettingForm, setShowDateboxSettingForm, recipients, setDateboxSetting, signMode }) => {
     useEffect(() => {
         setSelectRecipient(showDateboxSettingForm.value.recipient);
         setCheckRequired(showDateboxSettingForm.value.required);
@@ -23,8 +24,10 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
     const [selectedDate, setSelectedDate] = useState<Date | null>(showDateboxSettingForm.value.selectedDate);
     const [onlyMyself, setOnlyMyself] = useState<boolean>(false);
 
+    const userContextValues = useUser();
+
     useEffect(() => {
-        if(recipients.length === 1 && recipients[0].email === selectRecipient) {
+        if(recipients.length === 1 && recipients[0].email === userContextValues.userData.email) {
             setOnlyMyself(true);
         } else {
             setOnlyMyself(false);
@@ -44,9 +47,8 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
         }
     }, [selectedDate]);
 
-    return !signMode && !onlyMyself ? (
+    return (
         <div
-
             style={{
                 left: showDateboxSettingForm.position.left,
                 top: showDateboxSettingForm.position.top,
@@ -106,18 +108,7 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
                 </Button>
             </div>
         </div>
-    ) : (
-        <div
-            style={{
-                left: showDateboxSettingForm.position.left,
-                top: showDateboxSettingForm.position.top,
-            }}
-            className="absolute"
-        >
-            <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
-        </div>
-
-    );
+    )
 };
 
-export default DateboxGroup;
+export default DateboxSetting;

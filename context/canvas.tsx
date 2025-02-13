@@ -78,6 +78,8 @@ type CanvasContextProps = {
   setShowDropdownboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
   showDateboxSettingForm: any,
   setShowDateboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
+  showDateboxCalendarForm: any,
+  setShowDateboxCalendarForm:React.Dispatch<React.SetStateAction<any>>;
   showInitialsboxSettingForm: any,
   setShowInitialsboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
 
@@ -204,6 +206,20 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   });
 
   const [showDateboxSettingForm, setShowDateboxSettingForm] = useState<DateboxSettingFormState>({
+    uid: "",
+    show: false,
+    position: { left: 0, top: 0 },
+    width: 200,
+    value: {
+      recipient: "",
+      format: "mm/dd/yyyy",
+      required: true,
+      lockedToday: false,
+      selectedDate: null,
+    },
+  });
+
+  const [showDateboxCalendarForm, setShowDateboxCalendarForm] = useState<DateboxSettingFormState>({
     uid: "",
     show: false,
     position: { left: 0, top: 0 },
@@ -495,6 +511,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       signMode,
       onlyMyself,
       setShowDateboxSettingForm,
+      setShowDateboxCalendarForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
@@ -588,6 +605,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setShowDropdownboxSettingForm,
         showDateboxSettingForm,
         setShowDateboxSettingForm,
+        showDateboxCalendarForm,
+        setShowDateboxCalendarForm,
         showInitialsboxSettingForm,
         setShowInitialsboxSettingForm,
 
