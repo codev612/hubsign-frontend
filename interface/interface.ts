@@ -205,4 +205,5 @@ export interface ControlSVGFile {
   calendar: string,
   initialsbox: string,
   gear: string,
+  date: string,
 }

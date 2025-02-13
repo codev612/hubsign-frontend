@@ -78,9 +78,6 @@ class TextboxManager {
           const svgString = this.controlSVGFile.textbox;
           const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
-          const svgGearString = this.controlSVGFile.gear;
-          const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
-
           // Load SVG into Fabric.js
           fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
             if (this.svgGroup) {
@@ -117,6 +114,9 @@ class TextboxManager {
             this.trackIconGroup();    
             this.canvi.add(this.svgGroup, this.iconBorder, this.iconText);
           });
+
+          const svgGearString = this.controlSVGFile.gear;
+          const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
 
           fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
             if (this.svgGearGroup) {
@@ -203,9 +203,11 @@ class TextboxManager {
         // this.showShowSettingForm();  
         this.closeShowSettingForm();
         this.valueBorder.set({
-          strokeDashArray: [2, 2, 2, 2],
-          stroke: hexToRgba(this.color, 0.4),
-        })
+          left: this.textbox.left! - this.leftPadding,
+          top: this.textbox.top! - this.leftPadding,
+          width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
+          height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
+        });
       });
 
       this.textbox.on('resizing', () => {

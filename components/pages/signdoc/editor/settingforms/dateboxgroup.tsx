@@ -5,6 +5,7 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import { DateboxGroupProps } from "@/interface/interface";
 import Calendar from "@/components/common/calendar";
+import { useCanvas } from "@/context/canvas";
 
 const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, setShowDateboxSettingForm, recipients, setDateboxSetting, signMode }) => {
     useEffect(() => {
@@ -20,6 +21,15 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
     const [dateFormat, setDateFormat] = useState<string>(showDateboxSettingForm.value.format);
     const [lockedToday, setLockedToday] = useState<boolean>(showDateboxSettingForm.value.lockedToday);
     const [selectedDate, setSelectedDate] = useState<Date | null>(showDateboxSettingForm.value.selectedDate);
+    const [onlyMyself, setOnlyMyself] = useState<boolean>(false);
+
+    useEffect(() => {
+        if(recipients.length === 1 && recipients[0].email === selectRecipient) {
+            setOnlyMyself(true);
+        } else {
+            setOnlyMyself(false);
+        }
+    }, [selectRecipient, recipients])
 
     useEffect(() => {
         if(selectedDate) {
@@ -34,7 +44,7 @@ const DateboxGroup: React.FC<DateboxGroupProps> = ({ showDateboxSettingForm, set
         }
     }, [selectedDate]);
 
-    return !signMode ? (
+    return !signMode && !onlyMyself ? (
         <div
 
             style={{

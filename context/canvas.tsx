@@ -147,6 +147,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     calendar: "",
     initialsbox: "",
     gear: "",
+    date: "",
   })
   // canvas edit object
   const [edits, setEdits] = React.useState({});
@@ -246,7 +247,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     "textbox",
     "dropdownbox",
     "arrow_bottom",
-    "datebox",
+    "date",
     "calendar",
     "initialsbox",
     "gear",
@@ -492,6 +493,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startTop, 
       activeRecipient,
       signMode,
+      onlyMyself,
       setShowDateboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
