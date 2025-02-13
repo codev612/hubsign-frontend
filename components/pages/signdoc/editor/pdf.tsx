@@ -28,7 +28,8 @@ import {
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
-  const contextValues = useCanvas();
+  const canvasContextValues = useCanvas();
+
   const [docIsLoading, setDocIsLoading] = useState<boolean>(true);
   const [docData, setDocData] = useState<DocData>({
     filename: "",
@@ -36,23 +37,23 @@ const PDFBoard: React.FC = () => {
   });
 
   //variables for setting forms
-  const showCheckboxSettingForm = contextValues.showCheckboxSettingForm;
-  const setShowCheckboxSettingForm = contextValues.setShowCheckboxSettingForm;
+  const showCheckboxSettingForm = canvasContextValues.showCheckboxSettingForm;
+  const setShowCheckboxSettingForm = canvasContextValues.setShowCheckboxSettingForm;
 
-  const showTextboxSettingForm = contextValues.showTextboxSettingForm;
-  const setShowTextboxSettingForm = contextValues.setShowTextboxSettingForm;
+  const showTextboxSettingForm = canvasContextValues.showTextboxSettingForm;
+  const setShowTextboxSettingForm = canvasContextValues.setShowTextboxSettingForm;
 
-  const showRadioboxSettingForm = contextValues.showRadioboxSettingForm;
-  const setShowRadioboxSettingForm = contextValues.setShowRadioboxSettingForm;
+  const showRadioboxSettingForm = canvasContextValues.showRadioboxSettingForm;
+  const setShowRadioboxSettingForm = canvasContextValues.setShowRadioboxSettingForm;
 
-  const showDropdownboxSettingForm = contextValues.showDropdownboxSettingForm;
-  const setShowDropdownboxSettingForm = contextValues.setShowDropdownboxSettingForm;
+  const showDropdownboxSettingForm = canvasContextValues.showDropdownboxSettingForm;
+  const setShowDropdownboxSettingForm = canvasContextValues.setShowDropdownboxSettingForm;
 
-  const showDateboxSettingForm = contextValues.showDateboxSettingForm;
-  const setShowDateboxSettingForm = contextValues.setShowDateboxSettingForm;
+  const showDateboxSettingForm = canvasContextValues.showDateboxSettingForm;
+  const setShowDateboxSettingForm = canvasContextValues.setShowDateboxSettingForm;
 
-  const showInitialsboxSettingForm = contextValues.showInitialsboxSettingForm;
-  const setShowInitialsboxSettingForm = contextValues.setShowInitialsboxSettingForm;
+  const showInitialsboxSettingForm = canvasContextValues.showInitialsboxSettingForm;
+  const setShowInitialsboxSettingForm = canvasContextValues.setShowInitialsboxSettingForm;
 
   // Create a type for our form configuration
   type FormConfig = {
@@ -70,7 +71,7 @@ const PDFBoard: React.FC = () => {
         showCheckboxSettingForm,
         setShowCheckboxSettingForm,
         recipients: docData.recipients,
-        setCheckboxSetting: contextValues.handleCanvasObjectSetValue
+        setCheckboxSetting: canvasContextValues.handleCanvasObjectSetValue
       }
     },
     {
@@ -80,7 +81,7 @@ const PDFBoard: React.FC = () => {
         showTextboxSettingForm,
         setShowTextboxSettingForm,
         recipients: docData.recipients,
-        setTextboxSetting: contextValues.handleCanvasObjectSetValue
+        setTextboxSetting: canvasContextValues.handleCanvasObjectSetValue
       }
     },
     {
@@ -90,7 +91,7 @@ const PDFBoard: React.FC = () => {
         showRadioboxSettingForm,
         setShowRadioboxSettingForm,
         recipients: docData.recipients,
-        setRadioboxSetting: contextValues.handleCanvasObjectSetValue
+        setRadioboxSetting: canvasContextValues.handleCanvasObjectSetValue
       }
     },
     {
@@ -100,8 +101,8 @@ const PDFBoard: React.FC = () => {
         showDropdownboxSettingForm,
         setShowDropdownboxSettingForm,
         recipients: docData.recipients,
-        setDropdownboxSetting: contextValues.handleCanvasObjectSetValue,
-        signMode: contextValues.signMode
+        setDropdownboxSetting: canvasContextValues.handleCanvasObjectSetValue,
+        signMode: canvasContextValues.signMode
       }
     },
     {
@@ -111,8 +112,8 @@ const PDFBoard: React.FC = () => {
         showDateboxSettingForm,
         setShowDateboxSettingForm,
         recipients: docData.recipients,
-        setDateboxSetting: contextValues.handleCanvasObjectSetValue,
-        signMode: contextValues.signMode
+        setDateboxSetting: canvasContextValues.handleCanvasObjectSetValue,
+        signMode: canvasContextValues.signMode
       }
     },
     {
@@ -122,8 +123,8 @@ const PDFBoard: React.FC = () => {
         showInitialsboxSettingForm,
         setShowInitialsboxSettingForm,
         recipients: docData.recipients,
-        setInitialsboxSetting: contextValues.handleCanvasObjectSetValue,
-        signMode: contextValues.signMode
+        setInitialsboxSetting: canvasContextValues.handleCanvasObjectSetValue,
+        signMode: canvasContextValues.signMode
       }
     },
   ];
@@ -131,7 +132,7 @@ const PDFBoard: React.FC = () => {
   // const { getRootProps, getInputProps } = useDropzone({
   //   onDrop: (files: File[]) => {
   //     setDocIsLoading(true);
-  //     contextValues.setFile(files[0]);
+  //     canvasContextValues.setFile(files[0]);
   //   },
   //   accept: {
   //     'application/pdf': ['.pdf']
@@ -157,6 +158,7 @@ const PDFBoard: React.FC = () => {
         }
         const json = await response.json();
         setDocData({ ...docData, filename: json.filename, recipients: json.recipients });
+        canvasContextValues.setRecipients(json.recipients);
       } catch (error) {
         // setError("Failed to fetch data");
         console.error(error);
@@ -168,62 +170,62 @@ const PDFBoard: React.FC = () => {
   }, [])
 
   // function onDocumentLoadSuccess({ numPages }: PDFDocumentProxy): void {
-  //   contextValues.setEdits({});
-  //   contextValues.setNumPages(numPages);
-  //   contextValues.setCurrPage(1);
-  //   contextValues.setCanvas(initCanvas());
+  //   canvasContextValues.setEdits({});
+  //   canvasContextValues.setNumPages(numPages);
+  //   canvasContextValues.setCurrPage(1);
+  //   canvasContextValues.setCanvas(initCanvas());
   //   setTimeout(() => setDocIsLoading(false), 2000);
   // }
 
   // function changePage(offset: number) {
-  //   const page = contextValues.currPage;
+  //   const page = canvasContextValues.currPage;
     
   //   // Save current page state to edits
-  //   contextValues.edits[page] = contextValues.canvas!.toObject();
-  //   contextValues.setEdits(contextValues.edits);
+  //   canvasContextValues.edits[page] = canvasContextValues.canvas!.toObject();
+  //   canvasContextValues.setEdits(canvasContextValues.edits);
   
   //   // Update to the next page
-  //   contextValues.setCurrPage((page) => page + offset);
+  //   canvasContextValues.setCurrPage((page) => page + offset);
   
   //   // Clear and load the canvas with the new page state
-  //   contextValues.canvas!.clear();
-  //   if (contextValues.edits[page + offset]) {
-  //     contextValues.canvas!.loadFromJSON(
-  //       contextValues.edits[page + offset],
+  //   canvasContextValues.canvas!.clear();
+  //   if (canvasContextValues.edits[page + offset]) {
+  //     canvasContextValues.canvas!.loadFromJSON(
+  //       canvasContextValues.edits[page + offset],
   //       () => {
   //         console.log("Canvas loaded from JSON");
-  //         contextValues.canvas!.renderAll();
+  //         canvasContextValues.canvas!.renderAll();
   //       }
   //     );
   //   }
   // }
 
   const onDocumentLoadSuccess = ({ numPages }: PDFDocumentProxy): void => {
-    contextValues.setEdits({});
-    contextValues.setNumPages(numPages);
-    contextValues.setCurrPage(1);
-    contextValues.setCanvas(initCanvas());
+    canvasContextValues.setEdits({});
+    canvasContextValues.setNumPages(numPages);
+    canvasContextValues.setCurrPage(1);
+    canvasContextValues.setCanvas(initCanvas());
     setTimeout(() => setDocIsLoading(false), 2000);
   };
   
   const changePage = (offset: number): void => {
-    const page = contextValues.currPage;
+    const page = canvasContextValues.currPage;
   
     // Save current page state to edits
-    contextValues.edits[page] = contextValues.canvas!.toObject();
-    contextValues.setEdits(contextValues.edits);
+    canvasContextValues.edits[page] = canvasContextValues.canvas!.toObject();
+    canvasContextValues.setEdits(canvasContextValues.edits);
   
     // Update to the next page
-    contextValues.setCurrPage((page) => page + offset);
+    canvasContextValues.setCurrPage((page) => page + offset);
   
     // Clear and load the canvas with the new page state
-    contextValues.canvas!.clear();
-    if (contextValues.edits[page + offset]) {
-      contextValues.canvas!.loadFromJSON(
-        contextValues.edits[page + offset],
+    canvasContextValues.canvas!.clear();
+    if (canvasContextValues.edits[page + offset]) {
+      canvasContextValues.canvas!.loadFromJSON(
+        canvasContextValues.edits[page + offset],
         () => {
           console.log("Canvas loaded from JSON");
-          contextValues.canvas!.renderAll();
+          canvasContextValues.canvas!.renderAll();
         }
       );
     }
@@ -267,7 +269,7 @@ const PDFBoard: React.FC = () => {
             )}
             
             {docData.filename ? <Document
-              // file={contextValues.selectedFile}
+              // file={canvasContextValues.selectedFile}
               file={`${process.env.NEXT_PUBLIC_SERVER_URL}/document/pdf/${docData.filename}`}
               onLoadSuccess={onDocumentLoadSuccess}
               className="flex justify-center"
@@ -286,13 +288,13 @@ const PDFBoard: React.FC = () => {
                 </div>
                 <div
                   className={`${
-                    !contextValues.isExporting && contextValues.theme
+                    !canvasContextValues.isExporting && canvasContextValues.theme
                       ? "bg-[rgb(25,25,25)] shadow-[0px_0px_16px_rgb(0,0,0)] border-none"
                       : "shadow-lg border"
                   }`}
                 >
                   <Page
-                    pageNumber={contextValues.currPage}
+                    pageNumber={canvasContextValues.currPage}
                     width={868}
                     height={842}
                   />
@@ -302,7 +304,7 @@ const PDFBoard: React.FC = () => {
           </div>
         </div>
         <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">
-          {contextValues.currPage > 1 && (
+          {canvasContextValues.currPage > 1 && (
             <button
               onClick={() => changePage(-1)}
               className="px-4 py-2 bg-gray-700 rounded-md text-white"
@@ -311,9 +313,9 @@ const PDFBoard: React.FC = () => {
             </button>
           )}
           <div className="px-4 py-2 bg-gray-700 rounded-md text-white">
-            Page {contextValues.currPage} of {contextValues.numPages}
+            Page {canvasContextValues.currPage} of {canvasContextValues.numPages}
           </div>
-          {contextValues.currPage < contextValues.numPages! && (
+          {canvasContextValues.currPage < canvasContextValues.numPages! && (
             <button
               onClick={() => changePage(1)}
               className="px-4 py-2 bg-gray-700 rounded-md text-white"

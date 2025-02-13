@@ -9,6 +9,7 @@ class TextboxManager {
     
     private controlType = "textbox";
     private signMode: boolean = false;
+    private onlyMyself: boolean = false;
     private color: string;
     private uid: string;
     private canvi: fabric.Canvas;
@@ -19,7 +20,6 @@ class TextboxManager {
     private currentTop: number;
     private textboxesState: boolean[] = [];
     private textbox: fabric.Textbox;
-    private border: fabric.Rect;
     private iconBorder: fabric.Rect = new fabric.Rect();
     private valueBorder: fabric.Rect = new fabric.Rect();
     private iconText: fabric.Text = new fabric.Text("");
@@ -43,6 +43,7 @@ class TextboxManager {
       startTop: number,
       recipient: string,
       signMode: boolean,
+      onlyMyself: boolean,
       setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
       controlSVGFile: ControlSVGFile,
     ) {
@@ -57,13 +58,13 @@ class TextboxManager {
 
       this.recipient = recipient;
       this.signMode = signMode;
+      this.onlyMyself = onlyMyself;
       this.controlSVGFile = controlSVGFile;
       this.color = generateColorForRecipient(recipient);
   
       this.setShowSettingForm = setShowSettingForm;
       
       this.textbox = new fabric.Textbox("");
-      this.border = new fabric.Rect();
       this.svgGroup = new fabric.Object();
       this.svgGearGroup = new fabric.Object();
 
@@ -73,7 +74,7 @@ class TextboxManager {
     private createtextboxes() {
         this.containerTop = this.currentTop;
 
-        if(!this.signMode) {
+        if(!this.signMode && !this.onlyMyself ) {
           const svgString = this.controlSVGFile.textbox;
           const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
@@ -143,7 +144,7 @@ class TextboxManager {
           });
         } else {
           // Create a border rectangle
-          this.border = new fabric.Rect({
+          this.valueBorder = new fabric.Rect({
             left: this.containerLeft - this.leftPadding,
             top: this.containerTop - this.leftPadding,
             width: 200 + 1 + 2 * this.leftPadding,
@@ -171,7 +172,7 @@ class TextboxManager {
               // backgroundColor: hexToRgba(this.color, 0.05),
               backgroundColor: "transparent",
               fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
-              borderColor: 'transparent',
+              // borderColor: 'transparent',
               cornerStyle: "circle",
               transparentCorners: false,
               evented: true,
@@ -179,7 +180,7 @@ class TextboxManager {
 
           this.tracktextboxGroup();
 
-          this.canvi.add(this.border, this.textbox);
+          this.canvi.add(this.valueBorder, this.textbox);
         }  
         
         this.canvi.renderAll();
@@ -188,11 +189,11 @@ class TextboxManager {
     // Track scaling of the textboxGroup
     private tracktextboxGroup() {
       this.textbox.on('modified', () => {
-        this.border.set({
-            left: this.textbox.left! - this.leftPadding,
-            top: this.textbox.top! - this.leftPadding,
-            width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
-            height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
+        this.valueBorder.set({
+          left: this.textbox.left! - this.leftPadding,
+          top: this.textbox.top! - this.leftPadding,
+          width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
+          height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
         });
 
         this.canvi.renderAll();
@@ -201,7 +202,7 @@ class TextboxManager {
       this.textbox.on('scaling', () => {
         // this.showShowSettingForm();  
         this.closeShowSettingForm();
-        this.border.set({
+        this.valueBorder.set({
           strokeDashArray: [2, 2, 2, 2],
           stroke: hexToRgba(this.color, 0.4),
         })
@@ -210,7 +211,7 @@ class TextboxManager {
       this.textbox.on('resizing', () => {
         // this.showShowSettingForm();  
         this.closeShowSettingForm();
-        this.border.set({
+        this.valueBorder.set({
           strokeDashArray: [2, 2, 2, 2],
           stroke: hexToRgba(this.color, 0.4),
         })
@@ -218,7 +219,7 @@ class TextboxManager {
 
       this.textbox.on('mouseup', () => {
         this.showShowSettingForm();
-        this.border.set({
+        this.valueBorder.set({
           strokeDashArray: [0, 0],
           stroke: hexToRgba(this.color, 1),
         })
@@ -232,10 +233,16 @@ class TextboxManager {
         // Get the position of the group
         this.containerLeft = this.textbox.left!;
         this.containerTop = this.textbox.top!;
-        this.border.set({
-          strokeDashArray: [2, 2, 2, 2],
-          stroke: hexToRgba(this.color, 0.4),
-        })
+        // this.border.set({
+        //   strokeDashArray: [2, 2, 2, 2],
+        //   stroke: hexToRgba(this.color, 0.4),
+        // });
+        this.valueBorder.set({
+          left: this.textbox.left! - this.leftPadding,
+          top: this.textbox.top! - this.leftPadding,
+          width: (this.textbox.width! + 1) * this.textbox.scaleX! + 2 * this.leftPadding,
+          height: (this.textbox.height! + 2) * this.textbox.scaleY! + 2 * this.leftPadding,
+        });
         this.closeShowSettingForm();
       });
 
@@ -409,7 +416,7 @@ class TextboxManager {
     }
   
     private showShowSettingForm() {
-      const groupPosition = this.signMode ? this.textbox.getBoundingRect() : this.iconBorder.getBoundingRect();
+      const groupPosition = this.signMode || this.onlyMyself ? this.textbox.getBoundingRect() : this.iconBorder.getBoundingRect();
       this.setShowSettingForm({
         uid: this.uid,
         show: true,
@@ -459,7 +466,7 @@ class TextboxManager {
       this.placeholder = value.placeholder;
       this.required = value.required;
       
-      if(!this.signMode) {
+      if(!this.signMode && !this.onlyMyself) {
         this.updateIconBorder();
         this.updateSvgColor();
       } else {
@@ -470,7 +477,7 @@ class TextboxManager {
     private updateIconBorder() {
       this.iconBorder.set({
         stroke: hexToRgba(this.color, 1),
-        fill: hexToRgba(this.color, 0.1),
+        fill: hexToRgba(this.color, 0.05),
       });
 
       this.canvi.renderAll();
@@ -551,14 +558,14 @@ class TextboxManager {
         // Update the color of each checkbox individually
         this.textbox.set({
             // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
-            borderColor: this.color,
+            // borderColor: this.color,
             fill: this.enteredText==="" ? "#6F6F6F" : "#262626",
             text: this.enteredText==="" ? this.placeholder : this.enteredText,
         });
       
-        this.border.set({
+        this.valueBorder.set({
           stroke: hexToRgba(this.color, 1), 
-          backgroundColor: hexToRgba(this.color, 0.05),
+          fill: hexToRgba(this.color, 0.05),
         });
   
         this.canvi.renderAll() // Re-render canvas

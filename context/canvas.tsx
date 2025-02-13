@@ -20,7 +20,9 @@ import {
   DateboxSettingFormState,
   InitialsboxSettingFormState,
   ControlSVGFile,
+  Recipient,
 } from '@/interface/interface';
+import { useUser } from './user';
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
@@ -81,6 +83,7 @@ type CanvasContextProps = {
 
   activeRecipient:string;
   setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
+  setRecipients: React.Dispatch<React.SetStateAction<Recipient[]>>;
   handleCanvasObjectSetValue: (payload:any) => void;
 
   signMode: boolean;
@@ -113,7 +116,23 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [hideCanvas, setHiddenCanvas] = useState(false);
   const exportPage = useRef<HTMLDivElement | null>(null);
   const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
-  const [signMode, setSignMode] = useState<boolean>(true);
+
+  const [signMode, setSignMode] = useState<boolean>(false);
+  const [onlyMyself, setOnlyMyself] = useState<boolean>(false);
+
+  // current selected recipient
+  const [activeRecipient, setActiveRecipient] = useState<string>("");
+  const [recipients, setRecipients] = useState<Recipient[]>([]);
+
+  const userContextValues = useUser();
+
+  useEffect(() => {
+    if(recipients.length === 1 && recipients[0].email === userContextValues.userData.email) {
+      setOnlyMyself(true);
+    } else {
+      setOnlyMyself(false);
+    }
+  }, [recipients]);
 
   const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
     textbox: "",
@@ -209,14 +228,11 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     },
   });
 
-  // current selected recipient
-  const [activeRecipient, setActiveRecipient] = useState<string>("");
-
   //stroe canvas objects
   type CanvasObjects = {
     uid:string;
     object: any
-  }
+  };
   const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([])
 
   //transfer setting values from setting form to canvas object
@@ -224,11 +240,10 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     if(canvas) {
       canvasObjects.filter(item=>item.uid===payload.uid)[0].object.setValue(payload.value)
     }
-  }
+  };
 
   const svgFiles = [
     "textbox",
-    "textbox_edit",
     "dropdownbox",
     "arrow_bottom",
     "datebox",
@@ -262,48 +277,48 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     fetchFileContent();
   }, []);
 
-  useEffect(() => {
-    const wrapper = document.getElementById("canvasWrapper");
-    if (wrapper) {
-      wrapper.style.visibility = hideCanvas ? "hidden" : "visible";
-    }
-  }, [hideCanvas]);
+  // useEffect(() => {
+  //   const wrapper = document.getElementById("canvasWrapper");
+  //   if (wrapper) {
+  //     wrapper.style.visibility = hideCanvas ? "hidden" : "visible";
+  //   }
+  // }, [hideCanvas]);
 
-  useEffect(() => {
-    if (canvas) {
-      const activeObject = canvas.getActiveObject();
-      if (activeObject) {
-        activeObject.set("fill", color);
-        canvas.renderAll();
-      }
-    }
-  }, [color, canvas]);
+  // useEffect(() => {
+  //   if (canvas) {
+  //     const activeObject = canvas.getActiveObject();
+  //     if (activeObject) {
+  //       activeObject.set("fill", color);
+  //       canvas.renderAll();
+  //     }
+  //   }
+  // }, [color, canvas]);
 
-  useEffect(() => {
-    if (canvas) {
-      if (canvas.isDrawingMode) {
-        canvas.freeDrawingBrush.color = borderColor;
-      }
-      const activeObject = canvas.getActiveObject();
-      if (activeObject) {
-        activeObject.set("stroke", borderColor);
-        canvas.renderAll();
-      }
-    }
-  }, [borderColor, canvas]);
+  // useEffect(() => {
+  //   if (canvas) {
+  //     if (canvas.isDrawingMode) {
+  //       canvas.freeDrawingBrush.color = borderColor;
+  //     }
+  //     const activeObject = canvas.getActiveObject();
+  //     if (activeObject) {
+  //       activeObject.set("stroke", borderColor);
+  //       canvas.renderAll();
+  //     }
+  //   }
+  // }, [borderColor, canvas]);
 
-  useEffect(() => {
-    if (canvas) {
-      if (canvas.isDrawingMode) {
-        canvas.freeDrawingBrush.width = strokeWidth;
-      }
-      const activeObject = canvas.getActiveObject();
-      if (activeObject) {
-        activeObject.set("strokeWidth", strokeWidth);
-        canvas.renderAll();
-      }
-    }
-  }, [strokeWidth, canvas]);
+  // useEffect(() => {
+  //   if (canvas) {
+  //     if (canvas.isDrawingMode) {
+  //       canvas.freeDrawingBrush.width = strokeWidth;
+  //     }
+  //     const activeObject = canvas.getActiveObject();
+  //     if (activeObject) {
+  //       activeObject.set("strokeWidth", strokeWidth);
+  //       canvas.renderAll();
+  //     }
+  //   }
+  // }, [strokeWidth, canvas]);
 
   const downloadPage = () => {
     setExporting(true);
@@ -401,6 +416,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startTop, 
       activeRecipient,
       signMode,
+      onlyMyself,
       setShowTextboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
@@ -575,6 +591,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
 
         activeRecipient,
         setActiveRecipient,
+        setRecipients,
         handleCanvasObjectSetValue,
         signMode,
       }}
