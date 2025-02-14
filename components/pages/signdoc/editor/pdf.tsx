@@ -9,6 +9,8 @@ import Cookies from 'js-cookie';
 import { Divider } from '@heroui/react';
 import ArrowBackIosOutlinedIcon from '@mui/icons-material/ArrowBackIosOutlined';
 import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
+import SkipPreviousOutlinedIcon from '@mui/icons-material/SkipPreviousOutlined';
+import SkipNextOutlinedIcon from '@mui/icons-material/SkipNextOutlined';
 import { useCanvas } from '@/context/canvas';
 import Loader from './Loader';
 import SideBar from '@/components/pages/signdoc/editor/SideBar';
@@ -337,23 +339,39 @@ const PDFBoard: React.FC = () => {
         </div>
         <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">
           {canvasContextValues.currPage > 1 && (
-            <button
-              onClick={() => scrollToPage(canvasContextValues.currPage - 1)}
-              className="px-4 py-2 bg-gray-700 rounded-md text-white"
-            >
-              <ArrowBackIosOutlinedIcon />
-            </button>
+            <div className='flex flex-row gap-1'>
+              <button
+                onClick={() => scrollToPage(1)}
+                className="px-4 py-2 bg-gray-700 rounded-md text-white"
+              >
+                <SkipPreviousOutlinedIcon />
+              </button>
+              <button
+                onClick={() => scrollToPage(canvasContextValues.currPage - 1)}
+                className="px-4 py-2 bg-gray-700 rounded-md text-white"
+              >
+                <ArrowBackIosOutlinedIcon />
+              </button>
+            </div>
           )}
           <div className="px-4 py-2 bg-gray-700 rounded-md text-white">
-            Page {canvasContextValues.currPage} of {numPages}
+            {canvasContextValues.currPage} of {numPages}
           </div>
           {canvasContextValues.currPage < numPages && (
-            <button
-              onClick={() => scrollToPage(canvasContextValues.currPage + 1)}
-              className="px-4 py-2 bg-gray-700 rounded-md text-white"
-            >
-              <ArrowForwardIosOutlinedIcon />
-            </button>
+            <div className='flex flex-row gap-1'>
+              <button
+                onClick={() => scrollToPage(canvasContextValues.currPage + 1)}
+                className="px-4 py-2 bg-gray-700 rounded-md text-white"
+              >
+                <ArrowForwardIosOutlinedIcon />
+              </button>
+              <button
+                onClick={() => scrollToPage(numPages)}
+                className="px-4 py-2 bg-gray-700 rounded-md text-white"
+              >
+                <SkipNextOutlinedIcon />
+              </button>
+            </div>
           )}
         </div>
       </div>
