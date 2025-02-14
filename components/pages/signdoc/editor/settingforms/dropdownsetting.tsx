@@ -15,12 +15,17 @@ const DropdownboxSetting: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSe
     setCheckRequired(showDropdownboxSettingForm.value.required);
   }, [showDropdownboxSettingForm]);
 
-  const testItems = ['1', '2', '3']
-
   const [selectRecipient, setSelectRecipient] = useState<string>(showDropdownboxSettingForm.value.recipient);
   const [checkRequired, setCheckRequired] = useState<boolean>(showDropdownboxSettingForm.value.required);
   const [items, setItems] = useState<string[]>(showDropdownboxSettingForm.value.items);
   const [addItem, setAddItem] = useState<string>("");
+
+  const handleAddItem = () => {
+    if(!items.includes(addItem)) {
+        setItems((prevItems) => addItem ? [...prevItems, addItem] : prevItems);
+        setAddItem("");
+    }
+  }
 
   return (
     <div
@@ -67,10 +72,7 @@ const DropdownboxSetting: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSe
                 />
                 <button
                 className="border-1 rounded-md w-[33]"
-                onClick={()=>{
-                    setItems((prevItems) => addItem ? [...prevItems, addItem] : prevItems);
-                    setAddItem("");
-                }}
+                onClick={()=>handleAddItem()}
                 ><AddOutlinedIcon /></button>
             </div>
         </div>

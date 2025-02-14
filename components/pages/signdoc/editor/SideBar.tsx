@@ -23,6 +23,7 @@ import { RadioBoxIcon } from '../sidebaricons/radiobox';
 import { DropdownIcon } from '../sidebaricons/dropdownbox';
 import { DateBoxIcon } from '../sidebaricons/datebox';
 import { InitialsBoxIcon } from '../sidebaricons/initialsbox';
+import { pageHeight } from '@/constants/canvas';
 
 type AnchorElement = HTMLElement | null;
 
@@ -94,7 +95,7 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         isIconOnly 
                         size='sm'
                         className='p-0 bg-white'
-                        onPress={() => contextValues.addText(contextValues.canvas!, 100, 100, 4)}
+                        onPress={() => contextValues.addText(contextValues.canvas!, 300, (contextValues.currPage - 1) * pageHeight + 100)}
                         >
                             <TextBoxIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
                         </Button>
@@ -109,7 +110,7 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         isIconOnly 
                         className='p-0 bg-white'
                         size='sm'
-                        onPress={() => contextValues.addCheckbox(contextValues.canvas!, 100, 100, 4)}
+                        onPress={() => contextValues.addCheckbox(contextValues.canvas!, 300, (contextValues.currPage - 1) * pageHeight + 100)}
                         >
                             <CheckBoxIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
                         </Button>
@@ -124,7 +125,7 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         isIconOnly 
                         className='p-0 bg-white'
                         size='sm'
-                        onPress={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}
+                        onPress={() => contextValues.addRadiobox(contextValues.canvas!, 300, (contextValues.currPage - 1) * pageHeight + 100)}
                         >
                             <RadioBoxIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
                         </Button>
@@ -139,7 +140,7 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         isIconOnly 
                         className='p-0 bg-white'
                         size='sm'
-                        onPress={() => contextValues.addDropdownbox(contextValues.canvas!, 100, 100, 4)}
+                        onPress={() => contextValues.addDropdownbox(contextValues.canvas!, 300, (contextValues.currPage - 1) * pageHeight + 100)}
                         >
                         <DropdownIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
                         </Button>
@@ -154,7 +155,7 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         isIconOnly 
                         className='p-0 bg-white'
                         size='sm'
-                        onPress={() => contextValues.addDatebox(contextValues.canvas!,100, 100, 4)}
+                        onPress={() => contextValues.addDatebox(contextValues.canvas!, 300, (contextValues.currPage - 1) * pageHeight + 100)}
                         >
                         <DateBoxIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
                         </Button>
@@ -169,7 +170,7 @@ const SideBar: React.FC<SideBarProps> = ({docData}) => {
                         isIconOnly 
                         className='p-0 bg-white'
                         size='sm'
-                        onPress={() => contextValues.addInitialsbox(contextValues.canvas!,100, 100, 4)}
+                        onPress={() => contextValues.addInitialsbox(contextValues.canvas!, 300, (contextValues.currPage - 1) * pageHeight + 100)}
                         >
                         <InitialsBoxIcon stroke={generateColorForRecipient(activeRecipient)} fill={hexToRgba(generateColorForRecipient(activeRecipient), 0.1)} />
                         </Button>

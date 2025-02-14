@@ -28,12 +28,12 @@ type CanvasContextProps = {
   canvas: fabric.Canvas | null;
   setCanvas: React.Dispatch<React.SetStateAction<fabric.Canvas | null>>;
   //sidebar control functions
-  addText: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
-  addCheckbox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
-  addRadiobox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
-  addDropdownbox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
-  addDatebox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
-  addInitialsbox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
+  addText: (canvi: fabric.Canvas,startLeft: number, startTop: number) => void;
+  addCheckbox: (canvi: fabric.Canvas, left: number, top: number) => void;
+  addRadiobox: (canvi: fabric.Canvas, left: number, top: number) => void;
+  addDropdownbox: (canvi: fabric.Canvas,startLeft: number, startTop: number) => void;
+  addDatebox: (canvi: fabric.Canvas,startLeft: number, startTop: number) => void;
+  addInitialsbox: (canvi: fabric.Canvas,startLeft: number, startTop: number) => void;
 
   toggleDraw: (canvi: fabric.Canvas) => void;
   color: string;
@@ -334,7 +334,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
 
   //checkbox
-  const addCheckbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+  const addCheckbox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
     const uid = uuidv4();
     const checkboxGroup = new CheckboxManager(
       uid,
@@ -352,7 +352,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
 
   //radiobox
-  const addRadiobox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+  const addRadiobox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
     const uid = uuidv4();
     const radioboxGroup = new RadioboxManager(
       uid,
@@ -371,7 +371,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
   
   //dropdownbox
-  const addDropdownbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+  const addDropdownbox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
     const uid = uuidv4();
     const radioboxGroup = new DropdownboxManager(
       uid,
@@ -391,7 +391,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
 
   //datebox
-  const addDatebox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+  const addDatebox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
     const uid = uuidv4();
     const radioboxGroup = new DateboxManager(
       uid,
@@ -411,7 +411,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
 
   //initialsbox
-  const addInitialsbox = (canvi: fabric.Canvas, startLeft: number, startTop: number, numCheckboxes: number) => {
+  const addInitialsbox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
     const uid = uuidv4();
     const radioboxGroup = new InitialsboxManager(
       uid,

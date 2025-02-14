@@ -218,7 +218,6 @@ const AddDoc = () => {
         return;
       }
       const json = await response.json();
-      console.log(json);
       router.push(`/signdoc/draft/${json.uid}`);
     } catch (error) {
       // console.log(error);

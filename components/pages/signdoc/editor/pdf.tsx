@@ -33,6 +33,7 @@ import {
 } from '@/interface/interface';
 import DateboxSetting from './settingforms/dateboxsetting';
 import DropdownboxSetting from './settingforms/dropdownsetting';
+import { pageHeight, pageWidth } from '@/constants/canvas';
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -263,8 +264,8 @@ const PDFBoard: React.FC = () => {
     // Initialize fabric canvas
     const fabricCanvas = new fabric.Canvas('canvas', {
       isDrawingMode: false,
-      height: 1123 * pages,
-      width: 868,
+      height: pageHeight * pages,
+      width: pageWidth,
       backgroundColor: 'rgba(0,0,0,0)',
       stopContextMenu: true,
       selection: false,
@@ -350,7 +351,7 @@ const PDFBoard: React.FC = () => {
                 onClick={() => scrollToPage(canvasContextValues.currPage - 1)}
                 className="px-4 py-2 bg-gray-700 rounded-md text-white"
               >
-                <ArrowBackIosOutlinedIcon />
+                <ArrowBackIosOutlinedIcon fontSize='small' />
               </button>
             </div>
           )}
@@ -363,7 +364,7 @@ const PDFBoard: React.FC = () => {
                 onClick={() => scrollToPage(canvasContextValues.currPage + 1)}
                 className="px-4 py-2 bg-gray-700 rounded-md text-white"
               >
-                <ArrowForwardIosOutlinedIcon />
+                <ArrowForwardIosOutlinedIcon fontSize='small' />
               </button>
               <button
                 onClick={() => scrollToPage(numPages)}
