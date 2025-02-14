@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { Document, Page, pdfjs } from 'react-pdf';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
@@ -6,6 +6,9 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { fabric } from 'fabric';
 import Cookies from 'js-cookie';
+import { Divider } from '@heroui/react';
+import ArrowBackIosOutlinedIcon from '@mui/icons-material/ArrowBackIosOutlined';
+import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
 import { useCanvas } from '@/context/canvas';
 import Loader from './Loader';
 import SideBar from '@/components/pages/signdoc/editor/SideBar';
@@ -38,6 +41,51 @@ const PDFBoard: React.FC = () => {
     filename: "",
     recipients: []
   });
+
+  const [numPages, setNumPages] = useState<number>(0);
+
+  const pdfWrapperRef = useRef<HTMLDivElement | null>(null);
+
+  //tracking pdf scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!pdfWrapperRef.current) return;
+      
+      const pages = pdfWrapperRef.current.querySelectorAll('.react-pdf__Page');
+      let currentPage = canvasContextValues.currPage;
+      
+      for (let i = 0; i < pages.length; i++) {
+        const page = pages[i] as HTMLElement;
+        const { top } = page.getBoundingClientRect();
+
+        // If the page is near the top of the viewport, set it as the current page
+        if (top >= 0 && top < window.innerHeight / 2) {
+          currentPage = i + 1;
+          break;
+        }
+      }
+
+      if (canvasContextValues.currPage !== currentPage) {
+        console.log(currentPage)
+        canvasContextValues.setCurrPage(currentPage);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [numPages, canvasContextValues]);
+
+  const scrollToPage = (pageNumber: number) => {
+    if (!pdfWrapperRef.current) return;
+    
+    const pages = pdfWrapperRef.current.querySelectorAll('.react-pdf__Page');
+    if (pageNumber > 0 && pageNumber <= pages.length) {
+      const targetPage = pages[pageNumber - 1] as HTMLElement;
+      if (targetPage) {
+        window.scrollTo({ top: targetPage.offsetTop - 100, behavior: 'smooth' });
+      }
+    }
+  };
 
   //variables for setting forms
   const showCheckboxSettingForm = canvasContextValues.showCheckboxSettingForm;
@@ -200,73 +248,20 @@ const PDFBoard: React.FC = () => {
     fetchDocumentData();
   }, [])
 
-  // function onDocumentLoadSuccess({ numPages }: PDFDocumentProxy): void {
-  //   canvasContextValues.setEdits({});
-  //   canvasContextValues.setNumPages(numPages);
-  //   canvasContextValues.setCurrPage(1);
-  //   canvasContextValues.setCanvas(initCanvas());
-  //   setTimeout(() => setDocIsLoading(false), 2000);
-  // }
-
-  // function changePage(offset: number) {
-  //   const page = canvasContextValues.currPage;
-    
-  //   // Save current page state to edits
-  //   canvasContextValues.edits[page] = canvasContextValues.canvas!.toObject();
-  //   canvasContextValues.setEdits(canvasContextValues.edits);
-  
-  //   // Update to the next page
-  //   canvasContextValues.setCurrPage((page) => page + offset);
-  
-  //   // Clear and load the canvas with the new page state
-  //   canvasContextValues.canvas!.clear();
-  //   if (canvasContextValues.edits[page + offset]) {
-  //     canvasContextValues.canvas!.loadFromJSON(
-  //       canvasContextValues.edits[page + offset],
-  //       () => {
-  //         console.log("Canvas loaded from JSON");
-  //         canvasContextValues.canvas!.renderAll();
-  //       }
-  //     );
-  //   }
-  // }
-
   const onDocumentLoadSuccess = ({ numPages }: PDFDocumentProxy): void => {
     canvasContextValues.setEdits({});
+    setNumPages(numPages);
     canvasContextValues.setNumPages(numPages);
     canvasContextValues.setCurrPage(1);
-    canvasContextValues.setCanvas(initCanvas());
+    canvasContextValues.setCanvas(initCanvas(numPages));
     setTimeout(() => setDocIsLoading(false), 2000);
   };
-  
-  const changePage = (offset: number): void => {
-    const page = canvasContextValues.currPage;
-  
-    // Save current page state to edits
-    canvasContextValues.edits[page] = canvasContextValues.canvas!.toObject();
-    canvasContextValues.setEdits(canvasContextValues.edits);
-  
-    // Update to the next page
-    canvasContextValues.setCurrPage((page) => page + offset);
-  
-    // Clear and load the canvas with the new page state
-    canvasContextValues.canvas!.clear();
-    if (canvasContextValues.edits[page + offset]) {
-      canvasContextValues.canvas!.loadFromJSON(
-        canvasContextValues.edits[page + offset],
-        () => {
-          console.log("Canvas loaded from JSON");
-          canvasContextValues.canvas!.renderAll();
-        }
-      );
-    }
-  };
 
-  const initCanvas = (): fabric.Canvas => {
+  const initCanvas = (pages:number): fabric.Canvas => {
     // Initialize fabric canvas
     const fabricCanvas = new fabric.Canvas('canvas', {
       isDrawingMode: false,
-      height: 1123,
+      height: 1123 * pages,
       width: 868,
       backgroundColor: 'rgba(0,0,0,0)',
       stopContextMenu: true,
@@ -299,7 +294,7 @@ const PDFBoard: React.FC = () => {
               </>
             )}
             
-            {docData.filename ? <Document
+            {docData.filename ? <div id="pdfWrapper" ref={pdfWrapperRef}><Document
               // file={canvasContextValues.selectedFile}
               file={`${process.env.NEXT_PUBLIC_SERVER_URL}/document/pdf/${docData.filename}`}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -324,34 +319,40 @@ const PDFBoard: React.FC = () => {
                       : "shadow-lg border"
                   }`}
                 >
-                  <Page
+                  {/* <Page
                     pageNumber={canvasContextValues.currPage}
                     width={868}
                     height={842}
-                  />
+                  /> */}
+                  {Array.from({ length: numPages }, (_, i) => (
+                    <div key={i}>
+                      <Page key={i} pageNumber={i + 1} width={868} height={1123} />
+                      <Divider />
+                    </div>
+                  ))}
                 </div>
               </div>
-            </Document> : ""}
+            </Document></div> : ""}
           </div>
         </div>
         <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">
           {canvasContextValues.currPage > 1 && (
             <button
-              onClick={() => changePage(-1)}
+              onClick={() => scrollToPage(canvasContextValues.currPage - 1)}
               className="px-4 py-2 bg-gray-700 rounded-md text-white"
             >
-              {'<'}
+              <ArrowBackIosOutlinedIcon />
             </button>
           )}
           <div className="px-4 py-2 bg-gray-700 rounded-md text-white">
-            Page {canvasContextValues.currPage} of {canvasContextValues.numPages}
+            Page {canvasContextValues.currPage} of {numPages}
           </div>
-          {canvasContextValues.currPage < canvasContextValues.numPages! && (
+          {canvasContextValues.currPage < numPages && (
             <button
-              onClick={() => changePage(1)}
+              onClick={() => scrollToPage(canvasContextValues.currPage + 1)}
               className="px-4 py-2 bg-gray-700 rounded-md text-white"
             >
-              {'>'}
+              <ArrowForwardIosOutlinedIcon />
             </button>
           )}
         </div>
