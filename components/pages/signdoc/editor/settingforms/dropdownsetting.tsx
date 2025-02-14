@@ -9,7 +9,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import RemoveOutlinedIcon from '@mui/icons-material/RemoveOutlined';
 import { DropdownboxGroupProps } from "@/interface/interface";
 
-const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSettingForm, setShowDropdownboxSettingForm, recipients, setDropdownboxSetting, signMode }) => {
+const DropdownboxSetting: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSettingForm, setShowDropdownboxSettingForm, recipients, setDropdownboxSetting, signMode }) => {
   useEffect(() => {
     setSelectRecipient(showDropdownboxSettingForm.value.recipient);
     setCheckRequired(showDropdownboxSettingForm.value.required);
@@ -22,7 +22,7 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
   const [items, setItems] = useState<string[]>(showDropdownboxSettingForm.value.items);
   const [addItem, setAddItem] = useState<string>("");
 
-  return !signMode ? (
+  return (
     <div
         style={{
             left: showDropdownboxSettingForm.position.left,
@@ -114,36 +114,8 @@ const DropdownboxGroup: React.FC<DropdownboxGroupProps> = ({ showDropdownboxSett
             </Button>
         </div>
     </div>
-  ) : (
-    items.length > 0 && <div
-        style={{
-            left: showDropdownboxSettingForm.position.left,
-            top: showDropdownboxSettingForm.position.top,
-            width: showDropdownboxSettingForm.width,
-        }}
-        className="absolute bg-white p-1 rounded-lg shadow-lg flex flex-col w-[300] gap-2 text-text"
-    >
-        <Listbox 
-            aria-label="Actions" 
-            onAction={(key) => {
-                setDropdownboxSetting({
-                    uid: showDropdownboxSettingForm.uid,
-                    value: {
-                        recipient: selectRecipient,
-                        items: items,
-                        selectedItem: key,
-                        required: checkRequired,
-                    }
-
-                });
-                setShowDropdownboxSettingForm({...showDropdownboxSettingForm, show:false});
-            }}
-            >
-            {items.map((item) => <ListboxItem key={item}>{`[${item}]`}</ListboxItem>)}
-        </Listbox>
-    </div>
   );
 };
 
 
-export default DropdownboxGroup;
+export default DropdownboxSetting;

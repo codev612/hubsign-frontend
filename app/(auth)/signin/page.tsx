@@ -8,8 +8,8 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { signin } from "./action";
-import LoadingButton from "@/components/common/loadingbutton";
-import StateBoard from "@/components/common/stateboard";
+import LoadingButton from "@/components/ui/loadingbutton";
+import StateBoard from "@/components/ui/stateboard";
 
 interface InitialState {
   message: string;

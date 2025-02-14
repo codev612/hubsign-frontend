@@ -15,7 +15,7 @@ import ExportPopup from './ExportPopup';
 import { Button, Select, SelectItem } from '@heroui/react';
 import { DocData } from '@/interface/interface';
 // import { DocData } from '@/interface/interface';
-import Dot from '@/components/common/dot';
+import Dot from '@/components/ui/dot';
 import { generateColorForRecipient, hexToRgba } from '@/utils/canvas/utils';
 import { TextBoxIcon } from '../sidebaricons/textbox';
 import { CheckBoxIcon } from '../sidebaricons/checkbox';

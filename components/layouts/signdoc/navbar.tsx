@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { SearchIcon } from "@/components/icons";
-import UserAvatar from "@/components/common/user";
+import UserAvatar from "@/components/ui/user";
 
 interface NavbarProps {
   user?: any;

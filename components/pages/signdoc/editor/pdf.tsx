@@ -10,11 +10,11 @@ import { useCanvas } from '@/context/canvas';
 import Loader from './Loader';
 import SideBar from '@/components/pages/signdoc/editor/SideBar';
 import ControlBar from './ControlBar';
-import { DocData } from '@/interface/interface';
+import { DocData, DropdownboxListProps } from '@/interface/interface';
 import Checkboxgroup from './settingforms/checkboxgroup';
 import TextboxGroup from './settingforms/textboxgroup';
 import RadioboxGroup from './settingforms/radioboxgroup';
-import DropdownboxGroup from './settingforms/dropdownbox';
+import DropdownboxList from './settingforms/dropdownlist';
 import DateboxCalendar from './settingforms/dateboxcalendar';
 import InitialsboxGroup from './settingforms/initialsboxgroup';
 import {
@@ -27,6 +27,7 @@ import {
   InitialsboxGroupProps,
 } from '@/interface/interface';
 import DateboxSetting from './settingforms/dateboxsetting';
+import DropdownboxSetting from './settingforms/dropdownsetting';
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -51,6 +52,9 @@ const PDFBoard: React.FC = () => {
   const showDropdownboxSettingForm = canvasContextValues.showDropdownboxSettingForm;
   const setShowDropdownboxSettingForm = canvasContextValues.setShowDropdownboxSettingForm;
 
+  const showDropdownboxListForm = canvasContextValues.showDropdownboxListForm;
+  const setShowDropdownboxListForm = canvasContextValues.setShowDropdownboxListForm;
+
   const showDateboxSettingForm = canvasContextValues.showDateboxSettingForm;
   const setShowDateboxSettingForm = canvasContextValues.setShowDateboxSettingForm;
 
@@ -64,7 +68,7 @@ const PDFBoard: React.FC = () => {
   type FormConfig = {
     show: boolean;
     Component: React.ComponentType<any>;
-    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps | DateboxSettingProps | DateboxCalendarProps | InitialsboxGroupProps;
+    props: CheckboxGroupProps | TextboxGroupProps | RadioboxGroupProps | DropdownboxGroupProps | DropdownboxListProps | DateboxSettingProps | DateboxCalendarProps | InitialsboxGroupProps;
   }
   
   // Now use these types in your component
@@ -101,12 +105,23 @@ const PDFBoard: React.FC = () => {
     },
     {
       show: showDropdownboxSettingForm.show,
-      Component: DropdownboxGroup,
+      Component: DropdownboxSetting,
       props: {
         showDropdownboxSettingForm,
         setShowDropdownboxSettingForm,
         recipients: docData.recipients,
         setDropdownboxSetting: canvasContextValues.handleCanvasObjectSetValue,
+        signMode: canvasContextValues.signMode
+      }
+    },
+    {
+      show: showDropdownboxListForm.show,
+      Component: DropdownboxList,
+      props: {
+        showDropdownboxListForm,
+        setShowDropdownboxListForm,
+        recipients: docData.recipients,
+        setDropdownboxList: canvasContextValues.handleCanvasObjectSetValue,
         signMode: canvasContextValues.signMode
       }
     },

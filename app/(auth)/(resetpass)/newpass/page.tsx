@@ -9,8 +9,8 @@ import { Button } from "@heroui/button";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { siteConfig } from "@/config/site";
-import Dot from "@/components/common/dot";
-import StateBoard from "@/components/common/stateboard";
+import Dot from "@/components/ui/dot";
+import StateBoard from "@/components/ui/stateboard";
 
 export default function Newpass() {
   const router = useRouter();

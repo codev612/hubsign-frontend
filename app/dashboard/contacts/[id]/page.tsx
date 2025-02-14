@@ -6,8 +6,8 @@ import { redirect, useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { Button } from "@heroui/button";
 import { updateContact } from "../action";
-import LoadingButton from "@/components/common/loadingbutton";
-import StateBoard from "@/components/common/stateboard";
+import LoadingButton from "@/components/ui/loadingbutton";
+import StateBoard from "@/components/ui/stateboard";
 import { useParams } from "next/navigation";
 import { ActionInitialState } from "@/interface/interface";
 

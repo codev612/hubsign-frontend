@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import PageMenu from "@/components/layouts/common/pagemenu";
 import { siteConfig } from "@/config/site";
 import dynamic from 'next/dynamic';
-const DataTable = dynamic(() => import('@/components/common/datatable'), { ssr: false });
+const DataTable = dynamic(() => import('@/components/ui/datatable'), { ssr: false });
 // import DataTable from "@/components/common/datatable";
 
 export default function Completed() {

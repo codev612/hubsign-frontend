@@ -153,10 +153,18 @@ export interface RadioboxGroupProps {
 }
 
 export interface DropdownboxGroupProps {
-  showDropdownboxSettingForm: any;
-  setShowDropdownboxSettingForm: React.Dispatch<any>;
+  showDropdownboxSettingForm: DropdownboxSettingFormState;
+  setShowDropdownboxSettingForm: React.Dispatch<DropdownboxSettingFormState>;
   recipients: Recipient[];
   setDropdownboxSetting: (payload: any) => void;
+  signMode: boolean;
+}
+
+export interface DropdownboxListProps {
+  showDropdownboxListForm: DropdownboxSettingFormState;
+  setShowDropdownboxListForm: React.Dispatch<DropdownboxSettingFormState>;
+  recipients: Recipient[];
+  setDropdownboxList: (payload: any) => void;
   signMode: boolean;
 }
 
@@ -214,4 +222,6 @@ export interface ControlSVGFile {
   initialsbox: string,
   gear: string,
   date: string,
+  dropdown: string,
+  initials: string,
 }

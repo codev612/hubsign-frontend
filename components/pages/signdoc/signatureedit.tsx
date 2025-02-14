@@ -13,7 +13,7 @@ import {
 import BookmarkAddedOutlinedIcon from "@mui/icons-material/BookmarkAddedOutlined";
 import { fabric } from "fabric";
 import Cookies from "js-cookie";
-import Dot from "@/components/common/dot";
+import Dot from "@/components/ui/dot";
 import FileAdd from "../adddoc/fileadd";
 import { allowedSignatureFile } from "@/constants/common";
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';

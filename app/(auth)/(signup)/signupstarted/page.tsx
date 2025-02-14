@@ -6,8 +6,8 @@ import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import Dot from "@/components/common/dot";
-import StateBoard from "@/components/common/stateboard";
+import Dot from "@/components/ui/dot";
+import StateBoard from "@/components/ui/stateboard";
 
 export default function Signupstarted() {
   const searchParams = useSearchParams(); // Get search params

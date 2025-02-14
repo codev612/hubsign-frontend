@@ -249,34 +249,34 @@ class DateboxManager {
                 top: this.textbox.top! + this.textbox.height!/2 * this.textbox.scaleY! - this.calendarIcon.height!/2,
             });
 
-           if(this.onlyMyself) {
-            const svgGearString = this.controlSVGFile.gear;
-            const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
-    
-            fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
-                if (this.svgGearGroup) {
-                    this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
-                }
+            if(this.onlyMyself) {
+                const svgGearString = this.controlSVGFile.gear;
+                const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
         
-                this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
-                (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
-                this.svgGearGroup.set({
-                    left: this.textbox.left! + this.textbox.getScaledWidth() + 15,
-                    top: this.textbox.top! + (this.textbox.getScaledHeight() - 24) / 2,
-                    selectable: false,
-                    evented: true,
+                fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+                    if (this.svgGearGroup) {
+                        this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
+                    }
+            
+                    this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+                    (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+                    this.svgGearGroup.set({
+                        left: this.textbox.left! + this.textbox.getScaledWidth() + 15,
+                        top: this.textbox.top! + (this.textbox.getScaledHeight() - 24) / 2,
+                        selectable: false,
+                        evented: true,
+                    });
+            
+                    this.svgGearGroup.scaleToWidth(20);
+                    this.svgGearGroup.scaleToHeight(20);
+            
+                    this.svgGearGroup.on("mousedown", () => {
+                        this.showShowSettingForm();
+                    });
+            
+                    this.canvi.add(this.svgGearGroup);
                 });
-        
-                this.svgGearGroup.scaleToWidth(20);
-                this.svgGearGroup.scaleToHeight(20);
-        
-                this.svgGearGroup.on("mousedown", () => {
-                    this.showShowSettingForm();
-                });
-        
-                this.canvi.add(this.svgGearGroup);
-            });
-           }
+            }
 
             this.canvi.renderAll();
         });
@@ -526,42 +526,42 @@ class DateboxManager {
     }
   
     private showShowSettingForm() {
-      const groupPosition = this.signMode || this.onlyMyself ? this.textbox.getBoundingRect() : this.iconBorder.getBoundingRect();
-      this.setShowSettingForm({
-        uid: this.uid,
-        show: true,
-        position: {
-            left: groupPosition.left, // Position horizontally below the group
-            top: groupPosition.top + groupPosition.height + 5, // Position vertically below the group
-        },
-        width: this.border.width!,
-        value: {
-            recipient: this.recipient,
-            selectedDate: this.selectedDate,
-            required: this.required,
-            format: this.format,
-            lockedToday: this.lockedToday,
-        }
-      });
+        const groupPosition = this.signMode || this.onlyMyself ? this.textbox.getBoundingRect() : this.iconBorder.getBoundingRect();
+        this.setShowSettingForm({
+            uid: this.uid,
+            show: true,
+            position: {
+                left: groupPosition.left, // Position horizontally below the group
+                top: groupPosition.top + groupPosition.height + 5, // Position vertically below the group
+            },
+            width: this.border.width!,
+            value: {
+                recipient: this.recipient,
+                selectedDate: this.selectedDate,
+                required: this.required,
+                format: this.format,
+                lockedToday: this.lockedToday,
+            }
+        });
     }
 
     private closeShowSettingForm() {
-      const groupPosition = this.textbox.getBoundingRect();
-      this.setShowSettingForm({
-        uid: this.uid,
-        show: false,
-        position: {
-            left: groupPosition.left, // Position horizontally below the group
-            top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
-        },
-        value: {
-            recipient: this.recipient,
-            selectedDate: this.selectedDate,
-            required: this.required,
-            format: this.format,
-            lockedToday: this.lockedToday,
-        }
-      });
+        const groupPosition = this.signMode || this.onlyMyself ? this.textbox.getBoundingRect() : this.iconBorder.getBoundingRect();
+        this.setShowSettingForm({
+            uid: this.uid,
+            show: false,
+            position: {
+                left: groupPosition.left, // Position horizontally below the group
+                top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
+            },
+            value: {
+                recipient: this.recipient,
+                selectedDate: this.selectedDate,
+                required: this.required,
+                format: this.format,
+                lockedToday: this.lockedToday,
+            }
+        });
     }
 
     private showShowCalendarForm() {
@@ -585,7 +585,7 @@ class DateboxManager {
     }
 
     private closeShowCalendarForm() {
-        const groupPosition = this.textbox.getBoundingRect();
+        const groupPosition = this.signMode || this.onlyMyself ? this.textbox.getBoundingRect() : this.iconBorder.getBoundingRect();
         this.setShowCalendarForm({
           uid: this.uid,
           show: false,
@@ -647,71 +647,71 @@ class DateboxManager {
     private updateSvgColor() {
 
         // Update SVG color and replace existing one
-      const svgString = this.controlSVGFile.date;
-      const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
+        const svgString = this.controlSVGFile.date;
+        const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
 
-      // Store the previous position of svgGroup
-      let prevLeft = this.svgGroup?.left || this.containerLeft;
-      let prevTop = this.svgGroup?.top || this.containerTop;
+        // Store the previous position of svgGroup
+        let prevLeft = this.svgGroup?.left || this.containerLeft;
+        let prevTop = this.svgGroup?.top || this.containerTop;
 
-      // Remove the old SVG before adding a new one
-      if (this.svgGroup) {
-          this.canvi.remove(this.svgGroup);
-          this.canvi.renderAll();
-      }
+        // Remove the old SVG before adding a new one
+        if (this.svgGroup) {
+            this.canvi.remove(this.svgGroup);
+            this.canvi.renderAll();
+        }
 
-      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-          this.svgGroup = fabric.util.groupSVGElements(objects, options);
-          (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+            this.svgGroup = fabric.util.groupSVGElements(objects, options);
+            (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
 
-          // Restore the position and scale of the new SVG
-          this.svgGroup.set({
-              left: prevLeft,
-              top: prevTop,
-          });
+            // Restore the position and scale of the new SVG
+            this.svgGroup.set({
+                left: prevLeft,
+                top: prevTop,
+            });
 
-          // this.trackIconGroup();
-          this.canvi.add(this.svgGroup);
-          this.canvi.renderAll();
-      });
-
-      // Update SVG color and replace existing one
-      const svgGearString = this.controlSVGFile.gear;
-      const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
-
-      // Store the previous position of svgGroup
-      let prevGearLeft = this.svgGearGroup?.left || this.containerLeft;
-      let prevGearTop = this.svgGearGroup?.top || this.containerTop;
-
-      // Remove the old SVG before adding a new one
-      if (this.svgGearGroup) {
-        this.canvi.remove(this.svgGearGroup);
-        this.canvi.renderAll();
-      }
-
-      fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
-        this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
-        (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
-
-        // Restore the position and scale of the new SVG
-        this.svgGearGroup.set({
-            left: prevGearLeft,
-            top: prevGearTop,
-            selectable: false,
-            evented: true,
+            // this.trackIconGroup();
+            this.canvi.add(this.svgGroup);
+            this.canvi.renderAll();
         });
 
-        this.svgGearGroup.scaleToWidth(20);
-        this.svgGearGroup.scaleToHeight(20);
+        // Update SVG color and replace existing one
+        const svgGearString = this.controlSVGFile.gear;
+        const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
 
-        this.svgGearGroup.on("mouseup", () => {
-          this.showShowSettingForm();
-        })
+        // Store the previous position of svgGroup
+        let prevGearLeft = this.svgGearGroup?.left || this.containerLeft;
+        let prevGearTop = this.svgGearGroup?.top || this.containerTop;
 
-        this.trackIconGroup();
-        this.canvi.add(this.svgGearGroup);
-        this.canvi.renderAll();
-      });
+        // Remove the old SVG before adding a new one
+        if (this.svgGearGroup) {
+            this.canvi.remove(this.svgGearGroup);
+            this.canvi.renderAll();
+        }
+
+        fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+            this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+            (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+
+            // Restore the position and scale of the new SVG
+            this.svgGearGroup.set({
+                left: prevGearLeft,
+                top: prevGearTop,
+                selectable: false,
+                evented: true,
+            });
+
+            this.svgGearGroup.scaleToWidth(20);
+            this.svgGearGroup.scaleToHeight(20);
+
+            this.svgGearGroup.on("mouseup", () => {
+            this.showShowSettingForm();
+            })
+
+            this.trackIconGroup();
+            this.canvi.add(this.svgGearGroup);
+            this.canvi.renderAll();
+        });
     }
 
     public updateTextboxGroup() {

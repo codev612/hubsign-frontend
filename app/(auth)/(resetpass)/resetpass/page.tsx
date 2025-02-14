@@ -7,8 +7,8 @@ import { Button } from "@heroui/button";
 import { useActionState } from "react";
 import Cookies from "js-cookie";
 import { inputEmail } from "../action";
-import LoadingButton from "@/components/common/loadingbutton";
-import StateBoard from "@/components/common/stateboard";
+import LoadingButton from "@/components/ui/loadingbutton";
+import StateBoard from "@/components/ui/stateboard";
 
 const initialState = {
   message: "",

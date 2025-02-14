@@ -15,7 +15,7 @@ import { Divider } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
 import { Logo } from "@/components/icons";
-import UserAvatar from "@/components/common/user";
+import UserAvatar from "@/components/ui/user";
 import { useEffect } from "react";
 
 // Define the props for the Sidebar component

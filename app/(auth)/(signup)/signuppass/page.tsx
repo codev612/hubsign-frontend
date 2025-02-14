@@ -7,8 +7,8 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import { Button } from "@heroui/button";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import Dot from "@/components/common/dot";
-import StateBoard from "@/components/common/stateboard";
+import Dot from "@/components/ui/dot";
+import StateBoard from "@/components/ui/stateboard";
 
 const Signuppass: React.FC = () => {
   // State variables with TypeScript types

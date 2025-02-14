@@ -4,7 +4,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import { DateboxCalendarProps, DateboxSettingProps } from "@/interface/interface";
-import Calendar from "@/components/common/calendar";
+import Calendar from "@/components/ui/calendar";
 import { useCanvas } from "@/context/canvas";
 import { useUser } from "@/context/user";
 

@@ -5,7 +5,7 @@ import { Button } from "@heroui/button";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import StateBoard from "@/components/common/stateboard";
+import StateBoard from "@/components/ui/stateboard";
 
 export default function Checkinbox() {
   const searchParams = useSearchParams(); // Get search params

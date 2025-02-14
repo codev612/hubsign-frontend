@@ -5,8 +5,8 @@ import { Button } from "@heroui/button";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import Dot from "@/components/common/dot";
-import StateBoard from "@/components/common/stateboard";
+import Dot from "@/components/ui/dot";
+import StateBoard from "@/components/ui/stateboard";
 
 const Signupcheck: React.FC = () => {
   const router = useRouter();

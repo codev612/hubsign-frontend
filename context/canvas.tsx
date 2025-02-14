@@ -76,6 +76,8 @@ type CanvasContextProps = {
   setShowRadioboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
   showDropdownboxSettingForm: any,
   setShowDropdownboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
+  showDropdownboxListForm: any,
+  setShowDropdownboxListForm:React.Dispatch<React.SetStateAction<any>>;
   showDateboxSettingForm: any,
   setShowDateboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
   showDateboxCalendarForm: any,
@@ -150,6 +152,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     initialsbox: "",
     gear: "",
     date: "",
+    dropdown: "",
+    initials: "",
   })
   // canvas edit object
   const [edits, setEdits] = React.useState({});
@@ -193,6 +197,19 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   });
 
   const [showDropdownboxSettingForm, setShowDropdownboxSettingForm] = useState<DropdownboxSettingFormState>({
+    uid: "",
+    show: false,
+    position: { left: 0, top: 0 },
+    width: 200,
+    value: {
+      recipient: "",
+      items: [],
+      selectedItem: "",
+      required: true,
+    },
+  });
+
+  const [showDropdownboxListForm, setShowDropdownboxListForm] = useState<DropdownboxSettingFormState>({
     uid: "",
     show: false,
     position: { left: 0, top: 0 },
@@ -261,12 +278,12 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
 
   const svgFiles = [
     "textbox",
-    "dropdownbox",
     "arrow_bottom",
     "date",
     "calendar",
-    "initialsbox",
     "gear",
+    "dropdown",
+    "initials",
   ]
 
   //fetching svg files for canvas object
@@ -491,7 +508,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       startTop, 
       activeRecipient,
       signMode,
+      onlyMyself,
       setShowDropdownboxSettingForm,
+      setShowDropdownboxListForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
@@ -603,6 +622,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setShowRadioboxSettingForm,
         showDropdownboxSettingForm,
         setShowDropdownboxSettingForm,
+        showDropdownboxListForm,
+        setShowDropdownboxListForm,
         showDateboxSettingForm,
         setShowDateboxSettingForm,
         showDateboxCalendarForm,

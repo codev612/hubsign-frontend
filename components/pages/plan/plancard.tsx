@@ -7,7 +7,7 @@ import {
 } from "@heroui/react";
 import React from "react";
 import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
-import LoadingButton from "@/components/common/loadingbutton";
+import LoadingButton from "@/components/ui/loadingbutton";
 
 interface PlanCardProps {
   id: string;
