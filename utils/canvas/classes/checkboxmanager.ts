@@ -25,7 +25,6 @@ class CheckboxManager {
     private checkboxGroup: fabric.Group;
     private tickPattern: fabric.Pattern;
     private crossPattern: fabric.Pattern;
-    private setCheckboxItems: React.Dispatch<React.SetStateAction<number>>;
     private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
    
     constructor(
@@ -36,7 +35,6 @@ class CheckboxManager {
       numCheckboxes: number,
       recipient: string,
       signMode: boolean,
-      setCheckboxItems: React.Dispatch<React.SetStateAction<number>>,
       setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
     ) {
       this.uid = uid;
@@ -54,7 +52,6 @@ class CheckboxManager {
 
       this.checkboxGroup = this.createCheckboxGroup();
   
-      this.setCheckboxItems = setCheckboxItems;
       this.setShowSettingForm = setShowSettingForm;
 
       this.checkboxesState = Array(numCheckboxes).fill(this.checkedBydefault); // Initial state of checkboxes
@@ -392,7 +389,6 @@ class CheckboxManager {
         parsed.numCheckboxes,
         parsed.recipient,
         parsed.signMode,
-        setCheckboxItems,
         setShowSettingForm
       );
   

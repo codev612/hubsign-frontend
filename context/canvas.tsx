@@ -28,18 +28,12 @@ type CanvasContextProps = {
   canvas: fabric.Canvas | null;
   setCanvas: React.Dispatch<React.SetStateAction<fabric.Canvas | null>>;
   //sidebar control functions
-  addRect: (canvi: fabric.Canvas) => void;
-  addCircle: (canvi: fabric.Canvas) => void;
   addText: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
   addCheckbox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
   addRadiobox: (canvi: fabric.Canvas, left: number, top: number, numCheckboxes: number) => void;
   addDropdownbox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
   addDatebox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
   addInitialsbox: (canvi: fabric.Canvas,startLeft: number, startTop: number, numCheckboxes: number) => void;
-
-  addImage: (e: React.ChangeEvent<HTMLInputElement>, canvi: fabric.Canvas) => void;
-  addHighlight: (canvi: fabric.Canvas) => void;
-
 
   toggleDraw: (canvi: fabric.Canvas) => void;
   color: string;
@@ -48,14 +42,12 @@ type CanvasContextProps = {
   setBorderColor: React.Dispatch<React.SetStateAction<string>>;
   strokeWidth: number;
   setStrokeWidth: React.Dispatch<React.SetStateAction<number>>;
-  deleteBtn: () => void;
   numPages: number | null;
   setNumPages: React.Dispatch<React.SetStateAction<number | null>>;
   currPage: number;
   setCurrPage: React.Dispatch<React.SetStateAction<number>>;
   selectedFile: File | null;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
-  addNote: (canvi: fabric.Canvas) => void;
   exportPage: React.MutableRefObject<HTMLDivElement | null>;
   exportPdf: () => void;
   downloadPage: () => void;
@@ -157,9 +149,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   })
   // canvas edit object
   const [edits, setEdits] = React.useState({});
-
-  const [checkboxItems, setCheckboxItems] = useState(1);
-  const [radioboxItems, setRadioboxItems] = useState(1);
 
   //setting form controls
   const [showCheckboxSettingForm, setShowCheckboxSettingForm] = useState<CheckboxSettingFormState>({
@@ -311,49 +300,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     fetchFileContent();
   }, []);
 
-  // useEffect(() => {
-  //   const wrapper = document.getElementById("canvasWrapper");
-  //   if (wrapper) {
-  //     wrapper.style.visibility = hideCanvas ? "hidden" : "visible";
-  //   }
-  // }, [hideCanvas]);
-
-  // useEffect(() => {
-  //   if (canvas) {
-  //     const activeObject = canvas.getActiveObject();
-  //     if (activeObject) {
-  //       activeObject.set("fill", color);
-  //       canvas.renderAll();
-  //     }
-  //   }
-  // }, [color, canvas]);
-
-  // useEffect(() => {
-  //   if (canvas) {
-  //     if (canvas.isDrawingMode) {
-  //       canvas.freeDrawingBrush.color = borderColor;
-  //     }
-  //     const activeObject = canvas.getActiveObject();
-  //     if (activeObject) {
-  //       activeObject.set("stroke", borderColor);
-  //       canvas.renderAll();
-  //     }
-  //   }
-  // }, [borderColor, canvas]);
-
-  // useEffect(() => {
-  //   if (canvas) {
-  //     if (canvas.isDrawingMode) {
-  //       canvas.freeDrawingBrush.width = strokeWidth;
-  //     }
-  //     const activeObject = canvas.getActiveObject();
-  //     if (activeObject) {
-  //       activeObject.set("strokeWidth", strokeWidth);
-  //       canvas.renderAll();
-  //     }
-  //   }
-  // }, [strokeWidth, canvas]);
-
   const downloadPage = () => {
     setExporting(true);
     const doc = document.querySelector<HTMLDivElement>('#singlePageExport');
@@ -366,78 +312,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         setExporting(false);
       });
     }
-  };
-
-  const addImage = (e: React.ChangeEvent<HTMLInputElement>, canvi: fabric.Canvas) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (f) {
-        const data = f.target?.result as string;
-        fabric.Image.fromURL(data, (img) => {
-          img.scaleToWidth(300);
-          canvi.add(img).renderAll();
-        });
-      };
-      reader.readAsDataURL(file);
-      canvi.isDrawingMode = false;
-    }
-  };
-
-  const addNote = (canvi: fabric.Canvas) => {
-    fabric.Image.fromURL(`./note/note${(Math.floor(Math.random() * 10) % 4) + 1}.png`, (img) => {
-      img.scaleToWidth(100);
-      canvi.add(img).renderAll();
-    });
-    canvi.isDrawingMode = false;
-  };
-
-  const deleteBtn = () => {
-    if (canvas) {
-      const activeObject = canvas.getActiveObject();
-      if (activeObject) {
-        canvas.remove(activeObject);
-      }
-    }
-  };
-
-  const addRect = (canvi: fabric.Canvas) => {
-    const rect = new fabric.Rect({
-      height: 180,
-      width: 200,
-      fill: color,
-      stroke: borderColor,
-      strokeWidth: strokeWidth,
-      cornerStyle: 'circle',
-    });
-    canvi.add(rect);
-    canvi.renderAll();
-    canvi.isDrawingMode = false;
-  };
-
-  const addCircle = (canvi: fabric.Canvas) => {
-    const circle = new fabric.Circle({
-      radius: 100,
-      fill: color,
-      cornerStyle: 'circle',
-      stroke: borderColor,
-      strokeWidth: 2,
-    });
-    canvi.add(circle);
-    canvi.renderAll();
-    canvi.isDrawingMode = false;
-  };
-
-  const addHighlight = (canvi: fabric.Canvas) => {
-    const highlight = new fabric.Rect({
-      height: 20,
-      width: 400,
-      fill: color + '33',
-      cornerStyle: 'circle',
-    });
-    canvi.add(highlight);
-    canvi.renderAll();
-    canvi.isDrawingMode = false;
   };
 
   //textbox
@@ -470,7 +344,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       1, 
       activeRecipient,
       signMode,
-      setCheckboxItems, 
       setShowCheckboxSettingForm
     ); // Initialize with 1 checkboxes
     setCanvasObjects([...canvasObjects, {uid, object:checkboxGroup}]);
@@ -489,7 +362,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       1, 
       activeRecipient,
       signMode,
-      setRadioboxItems, 
       setShowRadioboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
@@ -575,8 +447,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         canvas,
         setCanvas,
         //sidebar controls
-        addRect,
-        addCircle,
         addText,
         addCheckbox,
         addRadiobox,
@@ -584,7 +454,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         addDatebox,
         addInitialsbox,
 
-        addImage,
         numPages,
         setNumPages,
         currPage,
@@ -592,12 +461,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
 
         selectedFile,
         setFile,
-        addHighlight,
         toggleDraw,
         color,
         setColor,
-        addNote,
-        deleteBtn,
         exportPage,
         exportPdf,
         downloadPage,

@@ -27,7 +27,6 @@ class RadioboxManager {
     private radioboxWrapper: fabric.Rect;
     private tickPattern: fabric.Pattern;
     private crossPattern: fabric.Pattern;
-    private setCheckboxItems: React.Dispatch<React.SetStateAction<number>>;
     private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
     private controlSVGFile: ControlSVGFile;
    
@@ -39,7 +38,6 @@ class RadioboxManager {
       numCheckboxes: number,
       recipient: string,
       signMode: boolean,
-      setCheckboxItems: React.Dispatch<React.SetStateAction<number>>,
       setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
       controlSVGFile: ControlSVGFile,
     ) {
@@ -62,8 +60,6 @@ class RadioboxManager {
       this.radioboxWrapper = new fabric.Rect();
 
       this.radioboxGroup = this.createRadioboxGroup();
-  
-      this.setCheckboxItems = setCheckboxItems;
       this.setShowSettingForm = setShowSettingForm;
 
       this.checkboxesState = Array(numCheckboxes).fill(this.checkedBydefault); // Initial state of checkboxes
@@ -600,7 +596,6 @@ class RadioboxManager {
         parsed.numCheckboxes,
         parsed.recipient,
         parsed.signMode,
-        setCheckboxItems,
         setShowSettingForm,
         controlSVGFile
       );
