@@ -233,20 +233,26 @@ const Recipients: React.FC<RecipientProps> = ({
     field: keyof Recipient,
     value: string,
   ) => {
+    // Update the recipients state
     const updatedRecipients = [...recipients];
-
     updatedRecipients[index] = { ...updatedRecipients[index], [field]: value };
     setRecipient(updatedRecipients);
 
     // Update search results
-    const filteredContacts = contacts.filter(
-      (contact) =>
-        contact.email.toLowerCase().includes(value.toLowerCase()) ||
-        contact.name.toLowerCase().includes(value.toLowerCase()),
-    );
 
+    const filteredContacts = contacts.filter(contact => {
+        // Check if the contact is not in recipients
+        const isInRecipients = updatedRecipients.some(recipient => recipient.email === contact.email);
+        return !isInRecipients && (
+            contact.email.toLowerCase().includes(value.toLowerCase()) ||
+            contact.name.toLowerCase().includes(value.toLowerCase())
+        );
+    });
+
+    // Update search results with not included contacts
     setSearchResults(filteredContacts);
   };
+
 
   const handleDeleteRcpt = (index: number) => {
     const updatedRecipients = recipients.filter((_, i) => i !== index);
