@@ -6,6 +6,7 @@ import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+
 import Dot from "@/components/ui/dot";
 import StateBoard from "@/components/ui/stateboard";
 

@@ -16,7 +16,6 @@ import { useRouter } from "next/navigation";
 
 import { Logo } from "@/components/icons";
 import UserAvatar from "@/components/ui/user";
-import { useEffect } from "react";
 
 // Define the props for the Sidebar component
 interface SidebarProps {
@@ -50,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const router = useRouter();
 
   return (
-    (<div className="flex flex-col min-w-[266px] h-screen border-r border-gray-200 w-64 p-4 bg-background gap-4 overflow-y-auto">
+    <div className="flex flex-col min-w-[266px] h-screen border-r border-gray-200 w-64 p-4 bg-background gap-4 overflow-y-auto">
       <Link className="mb-4" href={"/"}>
         <Logo />
       </Link>
@@ -87,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
         <Listbox aria-label="Sidebar menu" className="p-0" items={items}>
           {(item) => (
             // <Link href={item.link}>
-            (<ListboxItem
+            <ListboxItem
               key={item.link}
               className="px-0"
               startContent={item.icon}
@@ -95,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
             >
               {/* {item.icon} */}
               {item.label}
-            </ListboxItem>)
+            </ListboxItem>
             // </Link>
           )}
         </Listbox>
@@ -107,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       >
         <SettingsOutlinedIcon /> Settings
       </Button>
-    </div>)
+    </div>
   );
 };
 

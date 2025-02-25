@@ -52,13 +52,13 @@ const AddDoc = () => {
   const [contacts, setContacts] = useState<Recipient[]>([]);
   const [user, setUser] = useState<Recipient>({
     name: "",
-    email: ""
+    email: "",
   });
 
   const [customSigningOrder, setCustomSigningOrder] = useState<boolean>(false);
 
   const [disable, setDisable] = useState<boolean>(true);
-   // loading button
+  // loading button
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [activeTab, setActiveTab] = useState<string>("document");
@@ -66,13 +66,16 @@ const AddDoc = () => {
   useEffect(() => {
     const fetchContactsData = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("session") || ""}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -102,7 +105,7 @@ const AddDoc = () => {
           },
         );
 
-        console.log(response.body)
+        console.log(response.body);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -124,48 +127,57 @@ const AddDoc = () => {
     fetchUserData();
   }, []);
 
-  useEffect(()=>{
-    (recpts.length && (selectedFile || selectedTemplate)) ? setDisable(false) : setDisable(true);
-  },[recpts, selectedFile, selectedTemplate])
+  useEffect(() => {
+    recpts.length && (selectedFile || selectedTemplate)
+      ? setDisable(false)
+      : setDisable(true);
+  }, [recpts, selectedFile, selectedTemplate]);
 
   // check if recipients has empty value
   const hasEmptyFields = () => {
     return recpts.some(
-      (recipient) => !recipient.email || recipient.email === "" || !recipient.name || recipient.name === ""
+      (recipient) =>
+        !recipient.email ||
+        recipient.email === "" ||
+        !recipient.name ||
+        recipient.name === "",
     );
   };
 
   // check file size and type
-  const fileCheck = (file:File) => {
-    return ( file && file!.size > allowedUploadFile.size || !allowedUploadFile.extention.includes(file!.type) ) ?  false : true;
-  }
+  const fileCheck = (file: File) => {
+    return (file && file!.size > allowedUploadFile.size) ||
+      !allowedUploadFile.extention.includes(file!.type)
+      ? false
+      : true;
+  };
 
-  const handleSetFile = (file:File) => {
+  const handleSetFile = (file: File) => {
     if (file && fileCheck(file)) {
-      setFile(file)
+      setFile(file);
     } else {
       setFile(null);
       setFilename("");
     }
-  }
+  };
 
   useEffect(() => {
-    if(uploadDone){
+    if (uploadDone) {
       setUploadDone(false);
       handleAddDocument();
     }
-  }, [uploadDone])
+  }, [uploadDone]);
 
   //file upload when prepare button's clicked
-  const handleFileUpload = async () => {   
-    if(!selectedFile) return;
+  const handleFileUpload = async () => {
+    if (!selectedFile) return;
 
-    if(hasEmptyFields()) return;
+    if (hasEmptyFields()) return;
 
     setIsLoading(true);
     setIsUploading(true);
 
-    try{
+    try {
       const upload = new Upload({
         url: `${process.env.NEXT_PUBLIC_SERVER_URL}/upload/document`,
         form: {
@@ -175,55 +187,60 @@ const AddDoc = () => {
           Authorization: `Bearer ${Cookies.get("session") || ""}`,
         },
       });
-    
-      upload.on('progress', progress => {
+
+      upload.on("progress", (progress) => {
         console.log(progress);
       });
-    
+
       const response = await upload.upload();
       const json = JSON.parse(response.data as string);
 
-      if(response.status === 201) {
+      if (response.status === 201) {
         setUploadDone(true);
         setUploadedFilename(json.filename);
         setUploadedFilepath(json.filepath);
       }
       setIsLoading(false);
-    } catch(error) {
+    } catch (error) {
       console.log(error);
       setIsLoading(false);
     }
-  }
+  };
 
   // adding document the minute file upload finishs
   const handleAddDocument = async () => {
-    try{
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("session") || ""}`,
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/document/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
+          body: JSON.stringify({
+            name: filename,
+            filename: uploadedFilename,
+            filepath: uploadedFilepath,
+            recipients: recpts,
+            signingOrder: customSigningOrder,
+          }),
         },
-        body: JSON.stringify({ 
-          name: filename,
-          filename: uploadedFilename,
-          filepath: uploadedFilepath,
-          recipients: recpts,
-          signingOrder: customSigningOrder,
-        }),
-      })
+      );
 
-      if(!response.ok) {
+      if (!response.ok) {
         setIsLoading(false);
+
         return;
       }
       const json = await response.json();
+
       router.push(`/signdoc/draft/${json.uid}`);
     } catch (error) {
       // console.log(error);
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <section className="flex flex-col items-start w-full justify-center gap-4">
@@ -238,16 +255,24 @@ const AddDoc = () => {
         }}
         size="lg"
       >
-        <Tab key={"document"} title="Upload a document" onClick={()=>setActiveTab("document")}>
+        <Tab
+          key={"document"}
+          title="Upload a document"
+          onClick={() => setActiveTab("document")}
+        >
           <FileAdd
+            description="Click to upload a document from your device, or drag & drop it here. Supported files: PDF, Word, PowerPoint, JPG, PNG"
             filename={filename}
             setFile={handleSetFile}
             setFilename={setFilename}
             title="Add a document for signing"
-            description="Click to upload a document from your device, or drag & drop it here. Supported files: PDF, Word, PowerPoint, JPG, PNG"
           />
         </Tab>
-        <Tab key={"template"} title="Start with a template" onClick={()=>setActiveTab("template")}>
+        <Tab
+          key={"template"}
+          title="Start with a template"
+          onClick={() => setActiveTab("template")}
+        >
           <p>select a template</p>
         </Tab>
       </Tabs>
@@ -264,17 +289,17 @@ const AddDoc = () => {
       <Recipients
         contacts={contacts}
         customSigningOrder={customSigningOrder}
-        user={user}
         recipients={recpts}
         setRecipient={setRcpts}
+        user={user}
       />
       <Button
-      fullWidth
-      color="primary"
-      className="text-white"
-      isLoading={isLoading}
-      isDisabled={disable}
-      onPress={handleFileUpload}
+        fullWidth
+        className="text-white"
+        color="primary"
+        isDisabled={disable}
+        isLoading={isLoading}
+        onPress={handleFileUpload}
       >
         Prepare for signing
       </Button>

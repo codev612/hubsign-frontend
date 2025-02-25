@@ -1,39 +1,58 @@
-"use client"
+"use client";
 
-import React, { useRef, useEffect, useState, createContext, useContext } from 'react';
-import { fabric } from 'fabric';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { v4 as uuidv4 } from 'uuid';
-import CheckboxManager from '@/utils/canvas/classes/checkboxmanager';
-import TextboxManager from '@/utils/canvas/classes/textboxmanager';
-import RadioboxManager from '@/utils/canvas/classes/radioboxmanager';
-import DropdownboxManager from '@/utils/canvas/classes/dropdownmanager';
-import DateboxManager from '@/utils/canvas/classes/dateboxmanager';
-import InitialsboxManager from '@/utils/canvas/classes/initialsboxmanager';
-import { 
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+} from "react";
+import { fabric } from "fabric";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { v4 as uuidv4 } from "uuid";
+
+import { useUser } from "./user";
+
+import CheckboxManager from "@/utils/canvas/classes/checkboxmanager";
+import TextboxManager from "@/utils/canvas/classes/textboxmanager";
+import RadioboxManager from "@/utils/canvas/classes/radioboxmanager";
+import DropdownboxManager from "@/utils/canvas/classes/dropdownmanager";
+import DateboxManager from "@/utils/canvas/classes/dateboxmanager";
+import InitialsboxManager from "@/utils/canvas/classes/initialsboxmanager";
+import {
   CheckboxSettingFormState,
   TextboxSettingFormState,
-
   RadioboxSettingFormState,
   DropdownboxSettingFormState,
   DateboxSettingFormState,
   InitialsboxSettingFormState,
   ControlSVGFile,
   Recipient,
-} from '@/interface/interface';
-import { useUser } from './user';
+} from "@/interface/interface";
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
   setCanvas: React.Dispatch<React.SetStateAction<fabric.Canvas | null>>;
   //sidebar control functions
-  addText: (canvi: fabric.Canvas,startLeft: number, startTop: number) => void;
+  addText: (canvi: fabric.Canvas, startLeft: number, startTop: number) => void;
   addCheckbox: (canvi: fabric.Canvas, left: number, top: number) => void;
   addRadiobox: (canvi: fabric.Canvas, left: number, top: number) => void;
-  addDropdownbox: (canvi: fabric.Canvas,startLeft: number, startTop: number) => void;
-  addDatebox: (canvi: fabric.Canvas,startLeft: number, startTop: number) => void;
-  addInitialsbox: (canvi: fabric.Canvas,startLeft: number, startTop: number) => void;
+  addDropdownbox: (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => void;
+  addDatebox: (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => void;
+  addInitialsbox: (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => void;
 
   toggleDraw: (canvi: fabric.Canvas) => void;
   color: string;
@@ -60,27 +79,27 @@ type CanvasContextProps = {
   edits: Record<number, any>;
   setEdits: (edits: Record<number, any>) => void;
   //setting form controls
-  showCheckboxSettingForm: any,
+  showCheckboxSettingForm: any;
   setShowCheckboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
-  showTextboxSettingForm: any,
-  setShowTextboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
-  showRadioboxSettingForm: any,
-  setShowRadioboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
-  showDropdownboxSettingForm: any,
-  setShowDropdownboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
-  showDropdownboxListForm: any,
-  setShowDropdownboxListForm:React.Dispatch<React.SetStateAction<any>>;
-  showDateboxSettingForm: any,
-  setShowDateboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
-  showDateboxCalendarForm: any,
-  setShowDateboxCalendarForm:React.Dispatch<React.SetStateAction<any>>;
-  showInitialsboxSettingForm: any,
-  setShowInitialsboxSettingForm:React.Dispatch<React.SetStateAction<any>>;
+  showTextboxSettingForm: any;
+  setShowTextboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  showRadioboxSettingForm: any;
+  setShowRadioboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  showDropdownboxSettingForm: any;
+  setShowDropdownboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  showDropdownboxListForm: any;
+  setShowDropdownboxListForm: React.Dispatch<React.SetStateAction<any>>;
+  showDateboxSettingForm: any;
+  setShowDateboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  showDateboxCalendarForm: any;
+  setShowDateboxCalendarForm: React.Dispatch<React.SetStateAction<any>>;
+  showInitialsboxSettingForm: any;
+  setShowInitialsboxSettingForm: React.Dispatch<React.SetStateAction<any>>;
 
-  activeRecipient:string;
+  activeRecipient: string;
   setActiveRecipient: React.Dispatch<React.SetStateAction<string>>;
   setRecipients: React.Dispatch<React.SetStateAction<Recipient[]>>;
-  handleCanvasObjectSetValue: (payload:any) => void;
+  handleCanvasObjectSetValue: (payload: any) => void;
 
   signMode: boolean;
 };
@@ -89,9 +108,11 @@ const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
 
 export const useCanvas = () => {
   const context = useContext(CanvasContext);
+
   if (!context) {
-    throw new Error('useCanvas must be used within a CanvasProvider');
+    throw new Error("useCanvas must be used within a CanvasProvider");
   }
+
   return context;
 };
 
@@ -123,7 +144,10 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const userContextValues = useUser();
 
   useEffect(() => {
-    if(recipients.length === 1 && recipients[0].email === userContextValues.userData.email) {
+    if (
+      recipients.length === 1 &&
+      recipients[0].email === userContextValues.userData.email
+    ) {
       setOnlyMyself(true);
     } else {
       setOnlyMyself(false);
@@ -146,124 +170,137 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     date: "",
     dropdown: "",
     initials: "",
-  })
+  });
   // canvas edit object
   const [edits, setEdits] = React.useState({});
 
   //setting form controls
-  const [showCheckboxSettingForm, setShowCheckboxSettingForm] = useState<CheckboxSettingFormState>({
-    uid: "",
-    show: false,
-    position: { left: 0, top: 0 },
-    value: {
-      recipient: "",
-      defaultTick: true,
-      checkedBydefault: true,
-      required: true,
-    },
-  });
+  const [showCheckboxSettingForm, setShowCheckboxSettingForm] =
+    useState<CheckboxSettingFormState>({
+      uid: "",
+      show: false,
+      position: { left: 0, top: 0 },
+      value: {
+        recipient: "",
+        defaultTick: true,
+        checkedBydefault: true,
+        required: true,
+      },
+    });
 
-  const [showTextboxSettingForm, setShowTextboxSettingForm] = useState<TextboxSettingFormState>({
-    uid: "",
-    show: false,
-    position: { left: 0, top: 0 },
-    value: {
-      recipient: "",
-      customPlaceholder: false,
-      placeholder: "Enter value",
-      required: true,
-    },
-  });
+  const [showTextboxSettingForm, setShowTextboxSettingForm] =
+    useState<TextboxSettingFormState>({
+      uid: "",
+      show: false,
+      position: { left: 0, top: 0 },
+      value: {
+        recipient: "",
+        customPlaceholder: false,
+        placeholder: "Enter value",
+        required: true,
+      },
+    });
 
-  const [showRadioboxSettingForm, setShowRadioboxSettingForm] = useState<RadioboxSettingFormState>({
-    uid: "",
-    show: false,
-    position: { left: 0, top: 0 },
-    value: {
-      recipient: "",
-      required: true,
-    },
-  });
+  const [showRadioboxSettingForm, setShowRadioboxSettingForm] =
+    useState<RadioboxSettingFormState>({
+      uid: "",
+      show: false,
+      position: { left: 0, top: 0 },
+      value: {
+        recipient: "",
+        required: true,
+      },
+    });
 
-  const [showDropdownboxSettingForm, setShowDropdownboxSettingForm] = useState<DropdownboxSettingFormState>({
-    uid: "",
-    show: false,
-    position: { left: 0, top: 0 },
-    width: 200,
-    value: {
-      recipient: "",
-      items: [],
-      selectedItem: "",
-      required: true,
-    },
-  });
+  const [showDropdownboxSettingForm, setShowDropdownboxSettingForm] =
+    useState<DropdownboxSettingFormState>({
+      uid: "",
+      show: false,
+      position: { left: 0, top: 0 },
+      width: 200,
+      value: {
+        recipient: "",
+        items: [],
+        selectedItem: "",
+        required: true,
+      },
+    });
 
-  const [showDropdownboxListForm, setShowDropdownboxListForm] = useState<DropdownboxSettingFormState>({
-    uid: "",
-    show: false,
-    position: { left: 0, top: 0 },
-    width: 200,
-    value: {
-      recipient: "",
-      items: [],
-      selectedItem: "",
-      required: true,
-    },
-  });
+  const [showDropdownboxListForm, setShowDropdownboxListForm] =
+    useState<DropdownboxSettingFormState>({
+      uid: "",
+      show: false,
+      position: { left: 0, top: 0 },
+      width: 200,
+      value: {
+        recipient: "",
+        items: [],
+        selectedItem: "",
+        required: true,
+      },
+    });
 
-  const [showDateboxSettingForm, setShowDateboxSettingForm] = useState<DateboxSettingFormState>({
-    uid: "",
-    show: false,
-    position: { left: 0, top: 0 },
-    width: 200,
-    value: {
-      recipient: "",
-      format: "mm/dd/yyyy",
-      required: true,
-      lockedToday: false,
-      selectedDate: null,
-    },
-  });
+  const [showDateboxSettingForm, setShowDateboxSettingForm] =
+    useState<DateboxSettingFormState>({
+      uid: "",
+      show: false,
+      position: { left: 0, top: 0 },
+      width: 200,
+      value: {
+        recipient: "",
+        format: "mm/dd/yyyy",
+        required: true,
+        lockedToday: false,
+        selectedDate: null,
+      },
+    });
 
-  const [showDateboxCalendarForm, setShowDateboxCalendarForm] = useState<DateboxSettingFormState>({
-    uid: "",
-    show: false,
-    position: { left: 0, top: 0 },
-    width: 200,
-    value: {
-      recipient: "",
-      format: "mm/dd/yyyy",
-      required: true,
-      lockedToday: false,
-      selectedDate: null,
-    },
-  });
+  const [showDateboxCalendarForm, setShowDateboxCalendarForm] =
+    useState<DateboxSettingFormState>({
+      uid: "",
+      show: false,
+      position: { left: 0, top: 0 },
+      width: 200,
+      value: {
+        recipient: "",
+        format: "mm/dd/yyyy",
+        required: true,
+        lockedToday: false,
+        selectedDate: null,
+      },
+    });
 
-  const [showInitialsboxSettingForm, setShowInitialsboxSettingForm] = useState<InitialsboxSettingFormState>({
-    uid: "",
-    show: false,
-    position: { left: 0, top: 0 },
-    width: 200,
-    value: {
-      recipient: "",
-      required: true,
-      initialImage: "",
-    },
-  });
+  const [showInitialsboxSettingForm, setShowInitialsboxSettingForm] =
+    useState<InitialsboxSettingFormState>({
+      uid: "",
+      show: false,
+      position: { left: 0, top: 0 },
+      width: 200,
+      value: {
+        recipient: "",
+        required: true,
+        initialImage: "",
+      },
+    });
 
   //stroe canvas objects
   type CanvasObjects = {
-    uid:string;
-    object: any
+    uid: string;
+    object: any;
   };
-  const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([])
+  const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([]);
 
   //transfer setting values from setting form to canvas object
-  const handleCanvasObjectSetValue = (payload:any) => {
-    if(canvas) {
-      canvasObjects.filter(item=>item.uid===payload.uid)[0].object.setValue(payload.value)
+  const handleCanvasObjectSetValue = (payload: any) => {
+    if (canvas) {
+      canvasObjects
+        .filter((item) => item.uid === payload.uid)[0]
+        .object.setValue(payload.value);
     }
   };
+
+  //save canvas object in db
+  const handleCanvasObjectsSave = () => {};
 
   const svgFiles = [
     "textbox",
@@ -273,41 +310,46 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     "gear",
     "dropdown",
     "initials",
-  ]
+  ];
 
   //fetching svg files for canvas object
   useEffect(() => {
     const fetchFileContent = async () => {
       for (const item of svgFiles) {
         try {
-          const response = await fetch(`/api/readfile/controls?filename=${encodeURIComponent(item)}`);
+          const response = await fetch(
+            `/api/readfile/controls?filename=${encodeURIComponent(item)}`,
+          );
+
           if (!response.ok) {
             console.error("Error fetching:", item);
             continue;
           }
           const data = await response.json();
-  
-          setControlSVGFile(prev => ({
+
+          setControlSVGFile((prev) => ({
             ...prev,
-            [item]: data.content
+            [item]: data.content,
           }));
         } catch (err) {
           console.error(`Failed to fetch ${item}:`, err);
         }
       }
     };
-  
+
     fetchFileContent();
   }, []);
 
   const downloadPage = () => {
     setExporting(true);
-    const doc = document.querySelector<HTMLDivElement>('#singlePageExport');
+    const doc = document.querySelector<HTMLDivElement>("#singlePageExport");
+
     if (doc) {
       html2canvas(doc).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF();
-        pdf.addImage(imgData, 'PNG', 0, 0, 200, 200);
+
+        pdf.addImage(imgData, "PNG", 0, 0, 200, 200);
         pdf.save("edge_lamp_edited.pdf");
         setExporting(false);
       });
@@ -315,69 +357,88 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
 
   //textbox
-  const addText = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
+  const addText = (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => {
     const uid = uuidv4();
     const textboxGroup = new TextboxManager(
       uid,
-      canvi, 
-      startLeft, 
-      startTop, 
+      canvi,
+      startLeft,
+      startTop,
       activeRecipient,
       signMode,
       onlyMyself,
       setShowTextboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
-    setCanvasObjects([...canvasObjects, {uid, object:textboxGroup}]);
-    
+
+    setCanvasObjects([...canvasObjects, { uid, object: textboxGroup }]);
+
     textboxGroup.addToCanvas();
   };
 
   //checkbox
-  const addCheckbox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
+  const addCheckbox = (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => {
     const uid = uuidv4();
     const checkboxGroup = new CheckboxManager(
       uid,
-      canvi, 
-      startLeft, 
-      startTop, 
-      1, 
+      canvi,
+      startLeft,
+      startTop,
+      1,
       activeRecipient,
       signMode,
-      setShowCheckboxSettingForm
+      setShowCheckboxSettingForm,
     ); // Initialize with 1 checkboxes
-    setCanvasObjects([...canvasObjects, {uid, object:checkboxGroup}]);
-    
+
+    setCanvasObjects([...canvasObjects, { uid, object: checkboxGroup }]);
+
     checkboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
   //radiobox
-  const addRadiobox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
+  const addRadiobox = (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => {
     const uid = uuidv4();
     const radioboxGroup = new RadioboxManager(
       uid,
-      canvi, 
-      startLeft, 
-      startTop, 
-      1, 
+      canvi,
+      startLeft,
+      startTop,
+      1,
       activeRecipient,
       signMode,
       setShowRadioboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
-    setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
-    
+
+    setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);
+
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
-  
+
   //dropdownbox
-  const addDropdownbox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
+  const addDropdownbox = (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => {
     const uid = uuidv4();
     const radioboxGroup = new DropdownboxManager(
       uid,
-      canvi, 
-      startLeft, 
-      startTop, 
+      canvi,
+      startLeft,
+      startTop,
       activeRecipient,
       signMode,
       onlyMyself,
@@ -385,19 +446,24 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       setShowDropdownboxListForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
-    setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
-    
+
+    setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);
+
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
   //datebox
-  const addDatebox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
+  const addDatebox = (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => {
     const uid = uuidv4();
     const radioboxGroup = new DateboxManager(
       uid,
-      canvi, 
-      startLeft, 
-      startTop, 
+      canvi,
+      startLeft,
+      startTop,
       activeRecipient,
       signMode,
       onlyMyself,
@@ -405,26 +471,32 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       setShowDateboxCalendarForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
-    setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
-    
+
+    setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);
+
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
   //initialsbox
-  const addInitialsbox = (canvi: fabric.Canvas, startLeft: number, startTop: number) => {
+  const addInitialsbox = (
+    canvi: fabric.Canvas,
+    startLeft: number,
+    startTop: number,
+  ) => {
     const uid = uuidv4();
     const radioboxGroup = new InitialsboxManager(
       uid,
-      canvi, 
-      startLeft, 
-      startTop, 
+      canvi,
+      startLeft,
+      startTop,
       activeRecipient,
       signMode,
       setShowInitialsboxSettingForm,
       controlSVGFile,
     ); // Initialize with 1 checkboxes
-    setCanvasObjects([...canvasObjects, {uid, object: radioboxGroup}]);
-    
+
+    setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);
+
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
@@ -432,6 +504,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     canvi.isDrawingMode = !canvi.isDrawingMode;
     if (canvas) {
       const brush = canvas.freeDrawingBrush;
+
       brush.color = borderColor;
       brush.width = strokeWidth;
     }

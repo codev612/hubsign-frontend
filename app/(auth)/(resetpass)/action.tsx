@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
 
-import { siteConfig } from "@/config/site";
-
 // Define an interface for User Information
 interface UserInfo {
   email: string;
@@ -19,13 +17,16 @@ export async function inputEmail(prevState: any, formData: FormData) {
     return { message: "enter an email", isLoding: false };
 
   userInfo.email = formData.get("email") as string as string;
-  const user = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/users/emailcheck`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const user = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/users/emailcheck`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: formData.get("email") as string }),
     },
-    body: JSON.stringify({ email: formData.get("email") as string }),
-  });
+  );
 
   const json = await user.json();
 

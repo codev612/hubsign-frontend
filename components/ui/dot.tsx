@@ -1,11 +1,16 @@
 interface DotProps {
-  text?: string
+  text?: string;
   color?: string;
   textColor?: string;
   size?: string;
 }
 
-const Dot: React.FC<DotProps> = ({ text="", color="blue", textColor="#000000", size="10px" }) => {
+const Dot: React.FC<DotProps> = ({
+  text = "",
+  color = "blue",
+  textColor = "#000000",
+  size = "10px",
+}) => {
   return (
     <div className="flex items-center gap-1">
       <div
@@ -16,7 +21,7 @@ const Dot: React.FC<DotProps> = ({ text="", color="blue", textColor="#000000", s
           backgroundColor: color,
         }}
       />
-      {text!=="" && <p className={textColor}>{text}</p>}
+      {text !== "" && <p className={textColor}>{text}</p>}
     </div>
   );
 };

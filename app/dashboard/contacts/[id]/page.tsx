@@ -5,21 +5,23 @@ import { Input } from "@heroui/input";
 import { redirect, useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { Button } from "@heroui/button";
+import { useParams } from "next/navigation";
+
 import { updateContact } from "../action";
+
 import LoadingButton from "@/components/ui/loadingbutton";
 import StateBoard from "@/components/ui/stateboard";
-import { useParams } from "next/navigation";
 import { ActionInitialState } from "@/interface/interface";
 
 const initialState: ActionInitialState = {
-  state:"",
+  state: "",
   data: {},
   message: "",
   isLoading: false,
 };
 
 const EditContact = () => {
-  const params = useParams()
+  const params = useParams();
   const router = useRouter();
 
   const [state, formAction] = useActionState(updateContact, initialState);
@@ -29,24 +31,23 @@ const EditContact = () => {
 
   const [value, setEmailValue] = useState<string>(""); // email format validation
   const [name, setName] = useState<string>("");
-  const [ contactId, setContactId ] = useState<any>("");
+  const [contactId, setContactId] = useState<any>("");
 
   // const validateEmail = (value: string) =>
   //   value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
 
   useEffect(() => {
     setContactId(params.id);
-  }, [])
+  }, []);
 
   const isInvalid = React.useMemo(() => {
-    return (value==="") ? false : true;
+    return value === "" ? false : true;
     // return validateEmail(value) ? false : true;
-
   }, [value]);
 
   useEffect(() => {
     setIsLoading(state.isLoading || false);
-    if(state.state==="success") redirect("/dashboard/contacts");
+    if (state.state === "success") redirect("/dashboard/contacts");
   }, [state]);
 
   return (
@@ -91,10 +92,10 @@ const EditContact = () => {
         ) : (
           ""
         )}
-        <LoadingButton 
-        // disable={isInvalid} 
-        isLoading={isLoading} 
-        title="Save" 
+        <LoadingButton
+          // disable={isInvalid}
+          isLoading={isLoading}
+          title="Save"
         />
         <Button variant="bordered" onPress={() => router.back()}>
           Back

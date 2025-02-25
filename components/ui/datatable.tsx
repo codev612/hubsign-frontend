@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { SVGProps } from "react";
 import {
@@ -513,7 +513,7 @@ export default function DataTable() {
       selectedKeys={selectedKeys}
       selectionMode="multiple"
       shadow="none"
-      sortDescriptor={sortDescriptor}
+      // sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"
       onSelectionChange={setSelectedKeys}

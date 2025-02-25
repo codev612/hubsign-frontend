@@ -13,10 +13,13 @@ import {
 import BookmarkAddedOutlinedIcon from "@mui/icons-material/BookmarkAddedOutlined";
 import { fabric } from "fabric";
 import Cookies from "js-cookie";
-import Dot from "@/components/ui/dot";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import Image from "next/image";
+
 import FileAdd from "../adddoc/fileadd";
+
+import Dot from "@/components/ui/dot";
 import { allowedSignatureFile } from "@/constants/common";
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
 interface ModalProps {
   isOpen: boolean;
@@ -152,26 +155,31 @@ const SignatureEditModal: React.FC<ModalProps> = ({
         typeCanvas.renderAll();
       });
     }
-  }, [selectedFont, typeCanvas, textInput, selectedColor]);  
+  }, [selectedFont, typeCanvas, textInput, selectedColor]);
 
   useEffect(() => {
     const fetchSavedImages = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/signature?type=${title}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/signature?type=${title}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("session") || ""}`,
+            },
           },
-        });
-  
+        );
+
         if (!response.ok) {
           setSavedImages([]);
+
           return;
         }
-  
+
         const json = await response.json();
-        console.log(json)
+
+        console.log(json);
         // Assuming json is an array of saved images
         setSavedImages(json);
       } catch (error) {
@@ -179,32 +187,37 @@ const SignatureEditModal: React.FC<ModalProps> = ({
         setSavedImages([]);
       }
     };
-  
+
     fetchSavedImages();
-  }, []); // Add 'title' as a dependency  
+  }, []); // Add 'title' as a dependency
 
   // Clear Canvas
   const clearDrawCanvas = () => {
     if (drawCanvas) {
       drawCanvas.clear();
-      drawCanvas.setBackgroundColor("rgba(0,0,0,0)", () => drawCanvas.renderAll());
+      drawCanvas.setBackgroundColor("rgba(0,0,0,0)", () =>
+        drawCanvas.renderAll(),
+      );
     }
   };
 
   const clearTypeCanvas = () => {
     if (typeCanvas) {
-      setTextInput("")
+      setTextInput("");
     }
   };
 
   // check file size and type
-  const fileCheck = (file:File) => {
-    return ( file && file!.size > allowedSignatureFile.size || !allowedSignatureFile.extention.includes(file!.type) ) ?  false : true;
+  const fileCheck = (file: File) => {
+    return (file && file!.size > allowedSignatureFile.size) ||
+      !allowedSignatureFile.extention.includes(file!.type)
+      ? false
+      : true;
   };
 
-  const handleSetFile = (file:File) => {
+  const handleSetFile = (file: File) => {
     if (file && fileCheck(file)) {
-      setSelectedFile(file)
+      setSelectedFile(file);
     } else {
       setSelectedFile(null);
       setFilename("");
@@ -218,17 +231,19 @@ const SignatureEditModal: React.FC<ModalProps> = ({
 
   const getCroppedDrawSignatureImage = () => {
     if (!drawCanvas) return null;
-  
+
     const objects = drawCanvas.getObjects();
+
     if (objects.length === 0) return null; // No drawing
-  
+
     drawCanvas.discardActiveObject();
     drawCanvas.renderAll();
-  
+
     // Get bounding box of all drawn objects
     const boundingRect = drawCanvas.getObjects().reduce(
       (acc, obj) => {
         const objBounds = obj.getBoundingRect();
+
         return {
           left: Math.min(acc.left, objBounds.left),
           top: Math.min(acc.top, objBounds.top),
@@ -236,14 +251,14 @@ const SignatureEditModal: React.FC<ModalProps> = ({
           bottom: Math.max(acc.bottom, objBounds.top + objBounds.height),
         };
       },
-      { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }
+      { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity },
     );
-  
+
     const width = boundingRect.right - boundingRect.left + 60;
     const height = boundingRect.bottom - boundingRect.top + 60;
-  
+
     if (width <= 0 || height <= 0) return null; // No valid content
-  
+
     // Convert to transparent PNG with cropping
     return drawCanvas.toDataURL({
       format: "png",
@@ -254,16 +269,17 @@ const SignatureEditModal: React.FC<ModalProps> = ({
       multiplier: 2, // Increases resolution (optional)
     });
   };
-  
+
   const getCroppedTypedSignatureImage = () => {
     if (!typeCanvas || !textInput) return null;
-  
+
     const textObj = typeCanvas.getObjects("textbox")[0] as fabric.Textbox;
+
     if (!textObj) return null; // No text
-  
+
     typeCanvas.discardActiveObject();
     typeCanvas.renderAll();
-  
+
     const left = 0;
     const top = textObj.getBoundingRect().top - 30;
 
@@ -274,12 +290,12 @@ const SignatureEditModal: React.FC<ModalProps> = ({
     if (ctx) {
       ctx.font = `${textObj.fontSize}px ${selectedFont}`;
       width = ctx.measureText(textInput).width + 60;
-    } 
-    
+    }
+
     const height = textObj.calcTextHeight() + 60;
 
-    console.log(left, top, width, height)
-  
+    console.log(left, top, width, height);
+
     // Convert to transparent PNG with cropping
     return typeCanvas.toDataURL({
       format: "png",
@@ -290,61 +306,73 @@ const SignatureEditModal: React.FC<ModalProps> = ({
     });
   };
 
-  const downloadImage = (dataUrl:string, filename:string) => {
-    if(!dataUrl) return;
+  const downloadImage = (dataUrl: string, filename: string) => {
+    if (!dataUrl) return;
     const link = document.createElement("a");
+
     link.href = dataUrl;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }
+  };
 
   const saveInitialImage = async (dataUrl: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/signature`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("session") || ""}`,
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/signature`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
+          body: JSON.stringify({ dataUrl: dataUrl, type: `${title}` }),
         },
-        body: JSON.stringify({dataUrl: dataUrl, type: `${title}`})
-      });
+      );
+
       console.log(response.ok);
-      if(!response.ok) {
+      if (!response.ok) {
         return;
       }
       const json = await response.json();
-      setSavedImages([...savedImages, { dataUrl: json.dataUrl, type: json.type, _id: json._id }])
+
+      setSavedImages([
+        ...savedImages,
+        { dataUrl: json.dataUrl, type: json.type, _id: json._id },
+      ]);
       console.log(json);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const removeSavedImage = async (id:string) => {
-    if(!id) return;
+  const removeSavedImage = async (id: string) => {
+    if (!id) return;
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/signature?`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("session") || ""}`,
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/signature?`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
+          body: JSON.stringify({ id }),
         },
-        body: JSON.stringify({ id }),
-      });
+      );
 
-      if(!response.ok) {
+      if (!response.ok) {
         return;
       }
 
-      setSavedImages(savedImages.filter(img=>img._id !== id));
-
+      setSavedImages(savedImages.filter((img) => img._id !== id));
     } catch (error) {
       console.log(error);
+
       return;
     }
-  }
+  };
 
   const handleAccept = () => {
     switch (activeTab) {
@@ -357,8 +385,10 @@ const SignatureEditModal: React.FC<ModalProps> = ({
       case "upload":
         if (selectedFile) {
           const reader = new FileReader();
+
           reader.onload = () => {
             const imageData = reader.result as string; // Convert to base64 string
+
             setInitialImage(imageData);
           };
           reader.readAsDataURL(selectedFile); // Convert file to base64
@@ -367,17 +397,25 @@ const SignatureEditModal: React.FC<ModalProps> = ({
         }
         break;
       case "saved":
-        if(activeSavedImage) {
-          setInitialImage(savedImages.filter(img => img._id === activeSavedImage)[0].dataUrl);
+        if (activeSavedImage) {
+          setInitialImage(
+            savedImages.filter((img) => img._id === activeSavedImage)[0]
+              .dataUrl,
+          );
         }
         break;
       default:
         break;
     }
-  }
-  
+  };
+
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl" scrollBehavior="inside">
+    <Modal
+      isOpen={isOpen}
+      scrollBehavior="inside"
+      size="4xl"
+      onOpenChange={onOpenChange}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -393,9 +431,9 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                   tabContent: "group-data-[selected=true]:text-primary",
                 }}
                 color="primary"
-                variant="underlined"
                 destroyInactiveTabPanel={false}
-                onSelectionChange={(key)=>setActiveTab(String(key))}
+                variant="underlined"
+                onSelectionChange={(key) => setActiveTab(String(key))}
                 // selectedKey={"type"}
                 // defaultSelectedKey={"type"}
               >
@@ -406,27 +444,31 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                       <ul className="flex flex-row items-center gap-1">
                         <li>Color:</li>
                         {fontColor.map((color) => (
-                          <li key={color} onClick={() => setSelectedColor(color)}>
-                            <Dot size="16px" color={color} />
+                          <li key={color}>
+                            <button onClick={() => setSelectedColor(color)}>
+                              <Dot color={color} size="16px" />
+                            </button>
                           </li>
                         ))}
                       </ul>
                       <div className="flex flex-row gap-1">
-                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1"
-                        onClick={async ()=>{
-                          const drawImage = getCroppedDrawSignatureImage();
-                          if(drawImage) {
-                            downloadImage(drawImage, "drawn_signature.png");
-                            await saveInitialImage(drawImage);
-                          }
-                        }}
+                        <button
+                          className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1"
+                          onClick={async () => {
+                            const drawImage = getCroppedDrawSignatureImage();
+
+                            if (drawImage) {
+                              downloadImage(drawImage, "drawn_signature.png");
+                              await saveInitialImage(drawImage);
+                            }
+                          }}
                         >
                           <BookmarkAddedOutlinedIcon />
                           <span>Save this {title}</span>
                         </button>
                         <button
-                          onClick={clearDrawCanvas}
                           className="border-2 rounded-lg p-1 hover:bg-gray-100 p-1"
+                          onClick={clearDrawCanvas}
                         >
                           Clear
                         </button>
@@ -445,35 +487,42 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                         <ul className="flex flex-row items-center gap-1">
                           <li>Color:</li>
                           {fontColor.map((color) => (
-                            <li key={color} onClick={() => setSelectedColor(color)}>
-                              <Dot size="16px" color={color} />
+                            <li key={color}>
+                              <button onClick={() => setSelectedColor(color)}>
+                                <Dot color={color} size="16px" />
+                              </button>
                             </li>
                           ))}
                         </ul>
-                        <select className="border-2 rounded-lg p-1" onChange={(e)=>setSelectedFont(e.target.value)}>
+                        <select
+                          className="border-2 rounded-lg p-1"
+                          onChange={(e) => setSelectedFont(e.target.value)}
+                        >
                           {fontFamily.map((font) => (
-                            <option value={font} key={font}>
+                            <option key={font} value={font}>
                               {font}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="flex flex-row gap-1">
-                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1"
-                        onClick={async ()=>{
-                          const typeImage = getCroppedTypedSignatureImage();
-                          if(typeImage) {
-                            downloadImage(typeImage, "typed_signature.png");
-                            await saveInitialImage(typeImage);
-                          }
-                        }}
+                        <button
+                          className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1"
+                          onClick={async () => {
+                            const typeImage = getCroppedTypedSignatureImage();
+
+                            if (typeImage) {
+                              downloadImage(typeImage, "typed_signature.png");
+                              await saveInitialImage(typeImage);
+                            }
+                          }}
                         >
                           <BookmarkAddedOutlinedIcon />
                           <span>Save this {title}</span>
                         </button>
                         <button
-                          onClick={clearTypeCanvas}
                           className="border-2 rounded-lg p-1 hover:bg-gray-100 p-1"
+                          onClick={clearTypeCanvas}
                         >
                           Clear
                         </button>
@@ -481,8 +530,8 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                     </div>
                     <div className="flex gap-2">
                       <Input
-                        type="text"
                         placeholder="Type your signature"
+                        type="text"
                         value={textInput}
                         onChange={(e) => setTextInput(e.target.value)}
                       />
@@ -500,64 +549,78 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                   <div className={`flex flex-col gap-1 h-[${canvasHeight}px]`}>
                     <div className="flex flex-row justify-end text-text">
                       <div className="flex flex-row gap-1">
-                        <button className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1" onClick={()=>{
-                          if (selectedFile) {
-                            const reader = new FileReader();
-                            reader.onload = async () => {
-                              const imageData = reader.result as string; // Convert to base64 string
-                              // setInitialImage(imageData);
-                              await saveInitialImage(imageData);
-                            };
-                            reader.readAsDataURL(selectedFile); // Convert file to base64
-                          }
-                        }}>
+                        <button
+                          className="flex flex-row items-center gap-1 border-2 rounded-lg hover:bg-gray-100 p-1"
+                          onClick={() => {
+                            if (selectedFile) {
+                              const reader = new FileReader();
+
+                              reader.onload = async () => {
+                                const imageData = reader.result as string; // Convert to base64 string
+
+                                // setInitialImage(imageData);
+                                await saveInitialImage(imageData);
+                              };
+                              reader.readAsDataURL(selectedFile); // Convert file to base64
+                            }
+                          }}
+                        >
                           <BookmarkAddedOutlinedIcon />
                           <span>Save this {title}</span>
                         </button>
                         <button
-                          onClick={clearFile}
                           className="border-2 rounded-lg p-1 hover:bg-gray-100 p-1"
+                          onClick={clearFile}
                         >
                           Clear
                         </button>
                       </div>
                     </div>
                     <div className="flex flex-col text-sm gap-2 items-center justify-center h-[260px] w-full bg-[#F8F8F8]">
-                      {selectedFile ? <img
-                          src={URL.createObjectURL(selectedFile)}
+                      {selectedFile ? (
+                        <img
                           alt="Uploaded signature"
                           className="max-w-full max-h-full object-contain rounded-md"
-                        /> : <FileAdd
+                          src={URL.createObjectURL(selectedFile)}
+                        />
+                      ) : (
+                        <FileAdd
+                          description="Click to upload a document from your device, or drag & drop it here. Supported files: JPG, PNG"
                           filename={filename}
                           setFile={handleSetFile}
                           setFilename={setFilename}
                           title="Upload signature"
-                          description="Click to upload a document from your device, or drag & drop it here. Supported files: JPG, PNG"
-                        />}
+                        />
+                      )}
                     </div>
                   </div>
                 </Tab>
                 {/* Saved Tab */}
                 <Tab key="saved" title="Saved">
                   <ul className="flex flex-col gap-1">
-                  {savedImages.map(img => (
-                    <li key={img._id} className="flex flex-row gap-1 items-center justify-between">
-                      <a className={`bg-[#F8F8F8] ${img._id === activeSavedImage ? "border border-primary" : "" } h-[60px] w-full flex items-center justify-start rounded-lg overflow-hidden`}
-                      onClick={()=>setActiveSavedImage(img._id)}
-                      > 
-                        <img 
-                          src={img.dataUrl} 
-                          alt="initials" 
-                          className="h-[60px] w-auto object-contain"
-                        />
-                      </a>
-                      <button className="border border-gray-300 rounded-lg hover:bg-gray-100 h-[60px] flex items-center justify-center px-3 text-text"
-                      onClick={()=>removeSavedImage(img._id)}
+                    {savedImages.map((img) => (
+                      <li
+                        key={img._id}
+                        className="flex flex-row gap-1 items-center justify-between"
                       >
-                        <DeleteForeverOutlinedIcon />
-                      </button>
-                    </li>
-                  ))}
+                        <button
+                          className={`bg-[#F8F8F8] ${img._id === activeSavedImage ? "border border-primary" : ""} h-[60px] w-full flex items-center justify-start rounded-lg overflow-hidden`}
+                          onClick={() => setActiveSavedImage(img._id)}
+                        >
+                          <Image
+                            alt="initials"
+                            className="h-[60px] w-auto object-contain"
+                            src={img.dataUrl}
+                          />
+                        </button>
+                        <button
+                          className="border border-gray-300 rounded-lg hover:bg-gray-100 h-[60px] flex items-center justify-center px-3 text-text"
+                          onClick={() => removeSavedImage(img._id)}
+                        >
+                          <DeleteForeverOutlinedIcon />
+                        </button>
+                      </li>
+                    ))}
                   </ul>
                 </Tab>
               </Tabs>
@@ -566,7 +629,12 @@ const SignatureEditModal: React.FC<ModalProps> = ({
               <Button variant="bordered" onPress={onClose}>
                 Close
               </Button>
-              <Button type="submit" className="text-white" color="primary" onPress={()=>handleAccept()}>
+              <Button
+                className="text-white"
+                color="primary"
+                type="submit"
+                onPress={() => handleAccept()}
+              >
                 Accept and Sign
               </Button>
             </ModalFooter>

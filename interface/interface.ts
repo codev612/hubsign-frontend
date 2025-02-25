@@ -32,8 +32,8 @@ export interface Recipient {
 
 // Define InitialState type
 export interface ActionInitialState {
-  state: string,
-  data: any,
+  state: string;
+  data: any;
   message: string;
   isLoading: boolean;
 }
@@ -52,7 +52,7 @@ export interface CheckboxSettings {
 }
 
 export interface CheckboxSettingFormState {
-  uid: string,
+  uid: string;
   show: boolean;
   position: Position;
   value: CheckboxSettings;
@@ -66,7 +66,7 @@ export interface TextboxSettings {
 }
 
 export interface TextboxSettingFormState {
-  uid: string,
+  uid: string;
   show: boolean;
   position: Position;
   value: TextboxSettings;
@@ -78,7 +78,7 @@ export interface RadioboxSettings {
 }
 
 export interface RadioboxSettingFormState {
-  uid: string,
+  uid: string;
   show: boolean;
   position: Position;
   value: RadioboxSettings;
@@ -92,7 +92,7 @@ export interface DropdownboxSettings {
 }
 
 export interface DropdownboxSettingFormState {
-  uid: string,
+  uid: string;
   show: boolean;
   position: Position;
   width: number;
@@ -103,12 +103,12 @@ export interface DateboxSettings {
   recipient: string;
   format: string;
   required: boolean;
-  lockedToday:boolean;
+  lockedToday: boolean;
   selectedDate: Date | null;
 }
 
 export interface DateboxSettingFormState {
-  uid: string,
+  uid: string;
   show: boolean;
   position: Position;
   width: number;
@@ -121,9 +121,8 @@ export interface InitialsboxSettings {
   initialImage: string;
 }
 
-
 export interface InitialsboxSettingFormState {
-  uid: string,
+  uid: string;
   show: boolean;
   position: Position;
   width: number;
@@ -170,7 +169,9 @@ export interface DropdownboxListProps {
 
 export interface DateboxSettingProps {
   showDateboxSettingForm: DateboxSettingFormState;
-  setShowDateboxSettingForm: React.Dispatch<React.SetStateAction<DateboxSettingFormState>>;
+  setShowDateboxSettingForm: React.Dispatch<
+    React.SetStateAction<DateboxSettingFormState>
+  >;
   recipients: Recipient[];
   setDateboxSetting: (payload: any) => void;
   signMode: boolean;
@@ -178,7 +179,9 @@ export interface DateboxSettingProps {
 
 export interface DateboxCalendarProps {
   showDateboxCalendarForm: DateboxSettingFormState;
-  setShowDateboxCalendarForm: React.Dispatch<React.SetStateAction<DateboxSettingFormState>>;
+  setShowDateboxCalendarForm: React.Dispatch<
+    React.SetStateAction<DateboxSettingFormState>
+  >;
   recipients: Recipient[];
   setDateboxCalendar: (payload: any) => void;
   signMode: boolean;
@@ -186,7 +189,9 @@ export interface DateboxCalendarProps {
 
 export interface InitialsboxGroupProps {
   showInitialsboxSettingForm: InitialsboxSettingFormState;
-  setShowInitialsboxSettingForm: React.Dispatch<React.SetStateAction<InitialsboxSettingFormState>>;
+  setShowInitialsboxSettingForm: React.Dispatch<
+    React.SetStateAction<InitialsboxSettingFormState>
+  >;
   recipients: Recipient[];
   setInitialsboxSetting: (payload: any) => void;
   signMode: boolean;
@@ -203,25 +208,25 @@ export interface FileAddBoardProps {
 
 //document data
 export interface DocData {
-  filename: string,
-  recipients: Recipient[],
+  filename: string;
+  recipients: Recipient[];
 }
 
 //canvas control icon file
 export interface ControlSVGFile {
-  textbox: string,
-  textbox_edit: string,
-  radiobox_empty: string,
-  radiobox_filled: string,
-  radiobox_edit: string,
-  radio_add_button: string,
-  dropdownbox: string,
-  arrow_bottom: string,
-  datebox: string,
-  calendar: string,
-  initialsbox: string,
-  gear: string,
-  date: string,
-  dropdown: string,
-  initials: string,
+  textbox: string;
+  textbox_edit: string;
+  radiobox_empty: string;
+  radiobox_filled: string;
+  radiobox_edit: string;
+  radio_add_button: string;
+  dropdownbox: string;
+  arrow_bottom: string;
+  datebox: string;
+  calendar: string;
+  initialsbox: string;
+  gear: string;
+  date: string;
+  dropdown: string;
+  initials: string;
 }

@@ -1,20 +1,18 @@
-# Next.js & NextUI Template
+# Next.js & HeroUI Template
 
-This is a template for creating applications using Next.js 15 (app directory) and NextUI(HeroUI) (v2).
+This is a template for creating applications using Next.js 14 (app directory) and HeroUI (v2).
 
-[Try it on CodeSandbox](https://githubbox.com/nextui-org/next-app-template)
+[Try it on CodeSandbox](https://githubbox.com/heroui-inc/heroui/next-app-template)
 
 ## Technologies Used
 
-- [Next.js 15](https://nextjs.org/docs/getting-started)
-- [NextUI v2](https://nextui.org/)
+- [Next.js 14](https://nextjs.org/docs/getting-started)
+- [HeroUI v2](https://heroui.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Tailwind Variants](https://tailwind-variants.org)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Framer Motion](https://www.framer.com/motion/)
 - [next-themes](https://github.com/pacocoursey/next-themes)
-- [fabric.js]
-- [pdfjs]
 
 ## How to Use
 
@@ -23,7 +21,7 @@ This is a template for creating applications using Next.js 15 (app directory) an
 To create a new project based on this template using `create-next-app`, run the following command:
 
 ```bash
-npx create-next-app -e https://github.com/nextui-org/next-app-template
+npx create-next-app -e https://github.com/heroui-inc/next-app-template
 ```
 
 ### Install dependencies
@@ -45,11 +43,11 @@ npm run dev
 If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
 
 ```bash
-public-hoist-pattern[]=*@nextui-org/*
+public-hoist-pattern[]=*@heroui/*
 ```
 
 After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
 
 ## License
 
-Licensed under the [MIT license](https://github.com/nextui-org/next-app-template/blob/main/LICENSE).
+Licensed under the [MIT license](https://github.com/heroui-inc/next-app-template/blob/main/LICENSE).

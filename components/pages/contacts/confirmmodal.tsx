@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -27,18 +26,20 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   id,
   actionState,
 }) => {
-
   const handleAction = async () => {
     if (id.length) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("session") || ""}`,
+            },
+            body: JSON.stringify({ ids: id }),
           },
-          body: JSON.stringify({ ids: id }),
-        });
+        );
 
         if (!response.ok) {
           actionState(false);

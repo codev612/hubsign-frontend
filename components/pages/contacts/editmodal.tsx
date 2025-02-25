@@ -6,27 +6,25 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Input
 } from "@heroui/react";
-import { updateContact } from "@/app/dashboard/contacts/action";
-import { ActionInitialState } from "@/interface/interface"
 
-import Cookies from "js-cookie";
+import { updateContact } from "@/app/dashboard/contacts/action";
+import { ActionInitialState } from "@/interface/interface";
 
 interface ModalProps {
   isOpen: boolean;
   title: string;
   item: any;
-  actionState: ({state, data}:{state: boolean; data:any}) => void;
+  actionState: ({ state, data }: { state: boolean; data: any }) => void;
   // onOpen: () => void;
   onOpenChange: (isOpen: boolean) => void; // Adjust if the signature for onOpenChange is different
 }
 
 const initialState: ActionInitialState = {
-    state:"",
-    data: {},
-    message: "",
-    isLoading: false,
+  state: "",
+  data: {},
+  message: "",
+  isLoading: false,
 };
 
 const EditModal: React.FC<ModalProps> = ({
@@ -51,11 +49,11 @@ const EditModal: React.FC<ModalProps> = ({
 
   useEffect(() => {
     setIsLoading(state.isLoading || false);
-    if( state.state==="success" ) {
-        actionState({state: true, data:state.data});
-        onOpenChange(false);
+    if (state.state === "success") {
+      actionState({ state: true, data: state.data });
+      onOpenChange(false);
     } else {
-        actionState({state: false, data:{}});
+      actionState({ state: false, data: {} });
     }
   }, [state]);
 
@@ -70,7 +68,6 @@ const EditModal: React.FC<ModalProps> = ({
     //       },
     //       body: JSON.stringify({ ids: id }),
     //     });
-
     //     console.log(id);
     //     if (!response.ok) {
     //       actionState(false);
@@ -87,46 +84,54 @@ const EditModal: React.FC<ModalProps> = ({
   return (
     <>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <form
-        action={formAction}
-        onSubmit={() => setIsLoading(true)}
-        >
-            <ModalContent>
+        <form action={formAction} onSubmit={() => setIsLoading(true)}>
+          <ModalContent>
             {(onClose) => (
-                <>
-                <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {title}
+                </ModalHeader>
                 <ModalBody className="text-sm">
-                    <label>Contact name</label>
-                    <input 
-                    name="name" 
-                    type="text" 
-                    placeholder="Enter contact name" 
+                  <label htmlFor="name">Contact name</label>
+                  <input
+                    required
                     className="border-1 rounded-lg p-2"
+                    id="name"
+                    name="name"
+                    placeholder="Enter contact name"
+                    type="text"
                     value={name}
-                    onChange={(e)=>setName(e.target.value)} 
-                    required />
-                    <label>Contact email</label>
-                    <input 
-                    name="email" 
-                    type="email" 
-                    placeholder="Enter contact email" 
-                    className="border-1 rounded-lg p-2" 
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <label htmlFor="email">Contact email</label>
+                  <input
+                    required
+                    className="border-1 rounded-lg p-2"
+                    id="email"
+                    name="email"
+                    placeholder="Enter contact email"
+                    type="email"
                     value={email}
-                    onChange={(e)=>setEmail(e.target.value)}
-                    required />
-                    <input hidden readOnly name="id" value={id} />
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <input hidden readOnly name="id" value={id} />
                 </ModalBody>
                 <ModalFooter>
-                    <Button variant="bordered" onPress={onClose}>
+                  <Button variant="bordered" onPress={onClose}>
                     Close
-                    </Button>
-                    <Button type="submit" className="text-white" color="primary" isLoading={isLoading} >
+                  </Button>
+                  <Button
+                    className="text-white"
+                    color="primary"
+                    isLoading={isLoading}
+                    type="submit"
+                  >
                     Save Contact
-                    </Button>
+                  </Button>
                 </ModalFooter>
-                </>
+              </>
             )}
-            </ModalContent>
+          </ModalContent>
         </form>
       </Modal>
     </>

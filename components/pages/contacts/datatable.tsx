@@ -25,11 +25,13 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
 import { useRouter } from "next/navigation";
+
 import ConfirmModal from "./confirmmodal";
 import EditModal from "./editmodal";
-import { Contact } from "@/interface/interface"
 
-type Data = Contact
+import { Contact } from "@/interface/interface";
+
+type Data = Contact;
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -270,7 +272,11 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   }, [sortDescriptor, items]);
 
   //for removing confirm modal
-  const { isOpen:isDeleteConfirmOpen, onOpen: onDeleteConfirmOpen, onOpenChange: onDeleteConfirmOpenChange } = useDisclosure();
+  const {
+    isOpen: isDeleteConfirmOpen,
+    onOpen: onDeleteConfirmOpen,
+    onOpenChange: onDeleteConfirmOpenChange,
+  } = useDisclosure();
   const [deleteItem, setDeleteItem] = useState<string[]>([]);
   const [actionState, setActionState] = useState(false);
 
@@ -284,26 +290,41 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   };
 
   //for removing confirm modal
-  const { isOpen:isEditOpen, onOpen: onEditOpen, onOpenChange: onEditOpenChange } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onOpenChange: onEditOpenChange,
+  } = useDisclosure();
   const [editItem, setEditItem] = useState({
-    id:"",
-    name:"",
-    email:""
+    id: "",
+    name: "",
+    email: "",
   });
-  const [editActionState, setEditActionState] = useState({state: false, data:{
-    _id:"",
-    email:"",
-    name:"",
-  }});
+  const [editActionState, setEditActionState] = useState({
+    state: false,
+    data: {
+      _id: "",
+      email: "",
+      name: "",
+    },
+  });
 
-  const handleEditOpen = ({id, name, email}:{id:string, name:string, email:string}) => {
-    setEditItem({id, name, email});
+  const handleEditOpen = ({
+    id,
+    name,
+    email,
+  }: {
+    id: string;
+    name: string;
+    email: string;
+  }) => {
+    setEditItem({ id, name, email });
     onEditOpen();
   };
- 
+
   //showing contacts after remove
   useEffect(() => {
-    if ( actionState ) {
+    if (actionState) {
       setData(data.filter((item) => !deleteItem.includes(item._id)));
       setActionState(false);
       setDeleteItem([]);
@@ -313,16 +334,21 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
 
   //showing contacts after add or edit
   useEffect(() => {
-    if ( editActionState.state ) {
-      const newData = data.map( item => item._id === editActionState.data._id ? {...item, name: editActionState.data.name} : item );
+    if (editActionState.state) {
+      const newData = data.map((item) =>
+        item._id === editActionState.data._id
+          ? { ...item, name: editActionState.data.name }
+          : item,
+      );
+
       setData(newData);
       setEditActionState({
         state: false,
         data: {
-          _id:"",
-          email:"",
-          name:"",
-        }
+          _id: "",
+          email: "",
+          name: "",
+        },
       });
     }
   }, [editActionState]);
@@ -378,7 +404,13 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
                 <DropdownItem
                   key="edit"
                   // onPress={() => router.push(`/dashboard/contacts/${data._id}`)}
-                  onPress={()=>handleEditOpen({id: data._id, name: data.name, email: data.email})}
+                  onPress={() =>
+                    handleEditOpen({
+                      id: data._id,
+                      name: data.name,
+                      email: data.email,
+                    })
+                  }
                 >
                   Edit
                 </DropdownItem>
@@ -616,9 +648,9 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
       />
       <EditModal
         actionState={setEditActionState}
-        item={editItem}
         isOpen={isEditOpen}
-        title={`${editItem.id===""?"New":"Edit"} Contact`}
+        item={editItem}
+        title={`${editItem.id === "" ? "New" : "Edit"} Contact`}
         onOpenChange={onEditOpenChange}
       />
       <Table
@@ -635,7 +667,7 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
         selectedKeys={selectedKeys}
         selectionMode="multiple"
         shadow="none"
-        sortDescriptor={sortDescriptor}
+        // sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
         onSelectionChange={setSelectedKeys}

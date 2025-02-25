@@ -20,24 +20,28 @@ export const getUser = cache(async () => {
   if (!session) redirect("/signin");
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/profile`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session}`, // Attach token to Authorization header
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/profile`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`, // Attach token to Authorization header
+        },
       },
-    });
+    );
 
     const json = await response.json();
 
     if (!response.ok) {
-      console.log(response)
+      console.log(response);
       redirect("/signin");
     }
 
     return json;
   } catch (error) {
     console.log(error);
+
     return null;
   }
 });
@@ -48,13 +52,16 @@ export const getContacts = async () => {
   if (!session) redirect("/signin");
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session}`, // Attach token to Authorization header
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`, // Attach token to Authorization header
+        },
       },
-    });
+    );
 
     const json = await response.json();
 

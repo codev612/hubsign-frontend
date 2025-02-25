@@ -8,7 +8,7 @@ import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined
 import { Button } from "@heroui/button";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { siteConfig } from "@/config/site";
+
 import Dot from "@/components/ui/dot";
 import StateBoard from "@/components/ui/stateboard";
 

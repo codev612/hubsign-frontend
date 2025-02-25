@@ -1,12 +1,7 @@
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-} from "@heroui/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider } from "@heroui/react";
 import React from "react";
 import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
+
 import LoadingButton from "@/components/ui/loadingbutton";
 
 interface PlanCardProps {

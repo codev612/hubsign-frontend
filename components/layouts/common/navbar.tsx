@@ -10,6 +10,7 @@ import { Kbd } from "@heroui/kbd";
 import { Input } from "@heroui/input";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
+
 import { SearchIcon, Logo } from "@/components/icons";
 import UserAvatar from "@/components/ui/user";
 

@@ -1,6 +1,6 @@
 import React from "react";
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import * as dateFns from "date-fns";
 
 interface CalendarProps {
@@ -8,13 +8,26 @@ interface CalendarProps {
   setSelectedDate: (date: Date | null) => void;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ selectedDate, setSelectedDate }) => {
+const Calendar: React.FC<CalendarProps> = ({
+  selectedDate,
+  setSelectedDate,
+}) => {
   const [currentDate, setCurrentDate] = React.useState(new Date());
 
   // Months array
   const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   // Years range (2000 to 2050)
@@ -30,31 +43,35 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, setSelectedDate }) =>
   const generateDays = () => {
     let days = [];
     let day = startDate;
-    
+
     while (day <= endDate) {
       days.push(day);
       day = dateFns.addDays(day, 1);
     }
+
     return days;
   };
 
   // Handle month change
   const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMonth = parseInt(e.target.value);
+
     setCurrentDate(dateFns.setMonth(currentDate, newMonth));
   };
 
   // Handle year change
   const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newYear = parseInt(e.target.value);
+
     setCurrentDate(dateFns.setYear(currentDate, newYear));
   };
 
   // Handle "Today" button click
   const handleTodayClick = () => {
     const today = new Date();
-    setCurrentDate(today); 
-    setSelectedDate(today); 
+
+    setCurrentDate(today);
+    setSelectedDate(today);
   };
 
   return (
@@ -63,36 +80,40 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, setSelectedDate }) =>
       <div className="flex p-2 justify-between items-center mb-4">
         {/* Month Select */}
 
-        <select 
+        <select
           className="border p-2 rounded-lg"
           value={dateFns.getMonth(currentDate)}
           onChange={handleMonthChange}
         >
           {months.map((month, index) => (
-            <option key={index} value={index}>{month}</option>
+            <option key={index} value={index}>
+              {month}
+            </option>
           ))}
         </select>
 
         {/* Year Select */}
-        <select 
+        <select
           className="border p-2 rounded-lg"
           value={dateFns.getYear(currentDate)}
           onChange={handleYearChange}
         >
           {years.map((year) => (
-            <option key={year} value={year}>{year}</option>
+            <option key={year} value={year}>
+              {year}
+            </option>
           ))}
         </select>
 
         {/* Buttons aligned to the right */}
         <div className="flex gap-1">
-          <button 
+          <button
             className="p-0 rounded hover:bg-gray-300"
             onClick={() => setCurrentDate(dateFns.subMonths(currentDate, 1))}
           >
             <KeyboardArrowLeftIcon />
           </button>
-          <button 
+          <button
             className="p-0 rounded hover:bg-gray-300"
             onClick={() => setCurrentDate(dateFns.addMonths(currentDate, 1))}
           >
@@ -104,21 +125,22 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, setSelectedDate }) =>
       {/* Calendar Grid */}
       <div className="grid bg-white grid-cols-7 text-center text-sm font-medium">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-          <div key={day} className="p-2 bg-[#F8F8F8]">{day}</div>
+          <div key={day} className="p-2 bg-[#F8F8F8]">
+            {day}
+          </div>
         ))}
         {generateDays().map((day, index) => {
           const isCurrentMonth = dateFns.isSameMonth(day, currentDate);
           const isToday = dateFns.isToday(day);
-          const isSelected = selectedDate && dateFns.isSameDay(day, selectedDate);
+          const isSelected =
+            selectedDate && dateFns.isSameDay(day, selectedDate);
 
           return (
             <button
               key={index}
               className={`p-2 rounded-md ${
-                !isCurrentMonth ? "text-gray-400" : "" 
-              } ${
-                isToday ? "border-2 border-blue-500" : "" 
-              } ${
+                !isCurrentMonth ? "text-gray-400" : ""
+              } ${isToday ? "border-2 border-blue-500" : ""} ${
                 isSelected ? "bg-blue-500 text-white" : "hover:bg-gray-200"
               }`}
               onClick={() => setSelectedDate(day)} // Controlled by parent
@@ -131,7 +153,7 @@ const Calendar: React.FC<CalendarProps> = ({ selectedDate, setSelectedDate }) =>
 
       {/* Today button */}
       <div className="p-2 bg-white">
-        <button 
+        <button
           className="w-full p-1 border-1 border-gray-100 rounded-lg bg-white hover:bg-gray-200"
           onClick={handleTodayClick}
         >

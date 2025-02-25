@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { siteConfig } from "@/config/site";
+
 import { credential } from "@/interface/interface";
 import { createSession } from "@/lib/session";
 
@@ -21,13 +21,16 @@ export async function signin(prevState: any, formData: FormData) {
   userInfo.email = formData.get("email") as string as string;
   userInfo.password = formData.get("password") as string as string;
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signin`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...userInfo }),
     },
-    body: JSON.stringify({ ...userInfo }),
-  });
+  );
 
   const json = await response.json();
 

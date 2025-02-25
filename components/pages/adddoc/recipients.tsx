@@ -7,6 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+
 import { Recipient } from "@/interface/interface";
 
 interface RecipientProps {
@@ -58,7 +59,6 @@ const RecipientItem: React.FC<{
   customSigningOrder,
   isDisabled,
 }) => {
-
   const ref = React.useRef<HTMLDivElement>(null);
 
   const [, drop] = useDrop({
@@ -214,7 +214,7 @@ const Recipients: React.FC<RecipientProps> = ({
   contacts,
   user,
   recipients,
-  setRecipient
+  setRecipient,
 }) => {
   // const [recpts, setRcpts] = useState<Recipient[]>([]);
   const [searchResults, setSearchResults] = useState<Recipient[]>([]);
@@ -235,24 +235,28 @@ const Recipients: React.FC<RecipientProps> = ({
   ) => {
     // Update the recipients state
     const updatedRecipients = [...recipients];
+
     updatedRecipients[index] = { ...updatedRecipients[index], [field]: value };
     setRecipient(updatedRecipients);
 
     // Update search results
 
-    const filteredContacts = contacts.filter(contact => {
-        // Check if the contact is not in recipients
-        const isInRecipients = updatedRecipients.some(recipient => recipient.email === contact.email);
-        return !isInRecipients && (
-            contact.email.toLowerCase().includes(value.toLowerCase()) ||
-            contact.name.toLowerCase().includes(value.toLowerCase())
-        );
+    const filteredContacts = contacts.filter((contact) => {
+      // Check if the contact is not in recipients
+      const isInRecipients = updatedRecipients.some(
+        (recipient) => recipient.email === contact.email,
+      );
+
+      return (
+        !isInRecipients &&
+        (contact.email.toLowerCase().includes(value.toLowerCase()) ||
+          contact.name.toLowerCase().includes(value.toLowerCase()))
+      );
     });
 
     // Update search results with not included contacts
     setSearchResults(filteredContacts);
   };
-
 
   const handleDeleteRcpt = (index: number) => {
     const updatedRecipients = recipients.filter((_, i) => i !== index);
@@ -261,7 +265,6 @@ const Recipients: React.FC<RecipientProps> = ({
   };
 
   const handleSelectContact = (index: number, contact: Recipient) => {
-
     const updatedRecipients = [...recipients];
 
     updatedRecipients[index] = { name: contact.name, email: contact.email };

@@ -6,7 +6,9 @@ import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { useActionState } from "react";
 import Cookies from "js-cookie";
+
 import { inputEmail } from "../action";
+
 import LoadingButton from "@/components/ui/loadingbutton";
 import StateBoard from "@/components/ui/stateboard";
 
