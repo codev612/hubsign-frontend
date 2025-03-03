@@ -4,14 +4,11 @@ import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { fabric } from "fabric";
 import { Dialog, Transition } from "@headlessui/react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { Backdrop } from "@mui/material";
-
-import Loader from "./Loader";
-
 import { useCanvas } from "@/context/canvas";
 import { pageHeight, pageWidth } from "@/constants/canvas";
+import jsPDF from "jspdf";
+import Loader from "./Loader";
 
 interface ExportPopupProps {
   open: boolean;
@@ -22,7 +19,7 @@ interface ExportPopupProps {
 const ExportPopup: React.FC<ExportPopupProps> = (props) => {
   const contextValues = useCanvas();
   const [exportCanvas, setExportCanvas] = useState<fabric.StaticCanvas | null>(
-    null,
+    null
   );
   const [numPages, setNumPages] = useState<number | null>(null);
   const [currPage, setCurrPage] = useState<number>(1);
@@ -50,7 +47,7 @@ const ExportPopup: React.FC<ExportPopupProps> = (props) => {
     contextValues.edits[newPage] &&
       exportCanvas?.loadFromJSON(
         contextValues.edits[newPage],
-        exportCanvas.renderAll.bind(exportCanvas),
+        exportCanvas.renderAll.bind(exportCanvas)
       );
   };
 
@@ -64,47 +61,54 @@ const ExportPopup: React.FC<ExportPopupProps> = (props) => {
 
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
-    import.meta.url,
+    import.meta.url
   ).toString();
+
+  const renderPageToPDF = (pdf: jsPDF, pageNum: number, callback: () => void) => {
+    // Load the current page's fabric content from the context
+    const canvasElement = exportCanvas?.toCanvasElement();
+    if (!canvasElement) return;
+
+    // Draw the Fabric canvas to a data URL (image)
+    const imgData = canvasElement.toDataURL("image/png");
+
+    // Add this image as a page in the PDF
+    pdf.addImage(imgData, "PNG", 0, 0, 210, 297); // A4 size in mm (210x297mm)
+    if (pageNum < numPages!) {
+      pdf.addPage(); // Add a new page for the next page of the document
+    }
+
+    callback(); // Trigger the next step after rendering
+  };
 
   const onExport = () => {
     setCurrPage(1);
     setExporting(true);
-    const docToExport = document.querySelector("#toExport") as HTMLElement;
     const pdf = new jsPDF("p", "mm", "a4");
 
-    setTimeout(() => {
-      let i = 0;
-      const intervalId = setInterval(() => {
-        html2canvas(docToExport).then((canvas) => {
-          const imgData = canvas.toDataURL("image/png");
+    const exportPDFPages = async () => {
+      for (let page = 1; page <= numPages!; page++) {
+        setCurrPage(page);
+        exportCanvas?.clear();
+        // Ensure that the canvas content is loaded and rendered before exporting
+        contextValues.edits[page] &&
+          exportCanvas?.loadFromJSON(contextValues.edits[page], () => {
+            exportCanvas.renderAll(); // Render the current page's canvas
+            renderPageToPDF(pdf, page, () => {
+              if (page === numPages) {
+                // Only save the PDF after all pages are rendered
+                setTimeout(() => {
+                  pdf.save("Edge_lamp_editor.pdf");
+                  setExporting(false);
+                  props.setOpen(false); // Close the modal
+                }, 500);
+              }
+            });
+          });
+      }
+    };
 
-          pdf.addImage(imgData, "PNG", 0, 0, 100, 100);
-        });
-
-        i += 1;
-        if (i <= numPages!) {
-          changePage(1);
-          pdf.addPage();
-          pdf.setPage(i);
-        } else {
-          stopInterval();
-        }
-      }, 3000);
-
-      const stopInterval = () => {
-        clearInterval(intervalId);
-        // Get the total number of pages
-        const pageCount = (pdf as any).internal.getNumberOfPages();
-
-        // Delete the last page
-        pdf.deletePage(pageCount);
-        // Save the PDF
-        pdf.save("Edge_lamp_editor.pdf");
-        setExporting(false);
-        props.setOpen(false);
-      };
-    }, 1000);
+    exportPDFPages();
   };
 
   return (
@@ -173,7 +177,7 @@ const ExportPopup: React.FC<ExportPopupProps> = (props) => {
                                   <canvas id="canvas-export" />
                                 </div>
                                 <Page
-                                  data-doc-page // Use a data attribute instead of id
+                                  data-doc-page
                                   className={`px-4 py-2 ${
                                     !isExporting && "shadow-lg border"
                                   } ${contextValues.theme && "border-[rgba(36,36,36,0)]"}`}

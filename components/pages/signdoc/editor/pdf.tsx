@@ -1,9 +1,10 @@
 import type { PDFDocumentProxy } from "pdfjs-dist";
-
+import jsPDF from "jspdf";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, rgb } from "pdf-lib";
+import html2canvas from "html2canvas";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { fabric } from "fabric";
@@ -73,7 +74,6 @@ const PDFBoard: React.FC = () => {
       }
 
       if (canvasContextValues.currPage !== currentPage) {
-        console.log(currentPage);
         canvasContextValues.setCurrPage(currentPage);
       }
     };
@@ -102,38 +102,28 @@ const PDFBoard: React.FC = () => {
 
   //variables for setting forms
   const showCheckboxSettingForm = canvasContextValues.showCheckboxSettingForm;
-  const setShowCheckboxSettingForm =
-    canvasContextValues.setShowCheckboxSettingForm;
+  const setShowCheckboxSettingForm = canvasContextValues.setShowCheckboxSettingForm;
 
   const showTextboxSettingForm = canvasContextValues.showTextboxSettingForm;
-  const setShowTextboxSettingForm =
-    canvasContextValues.setShowTextboxSettingForm;
+  const setShowTextboxSettingForm = canvasContextValues.setShowTextboxSettingForm;
 
   const showRadioboxSettingForm = canvasContextValues.showRadioboxSettingForm;
-  const setShowRadioboxSettingForm =
-    canvasContextValues.setShowRadioboxSettingForm;
+  const setShowRadioboxSettingForm = canvasContextValues.setShowRadioboxSettingForm;
 
-  const showDropdownboxSettingForm =
-    canvasContextValues.showDropdownboxSettingForm;
-  const setShowDropdownboxSettingForm =
-    canvasContextValues.setShowDropdownboxSettingForm;
+  const showDropdownboxSettingForm = canvasContextValues.showDropdownboxSettingForm;
+  const setShowDropdownboxSettingForm = canvasContextValues.setShowDropdownboxSettingForm;
 
   const showDropdownboxListForm = canvasContextValues.showDropdownboxListForm;
-  const setShowDropdownboxListForm =
-    canvasContextValues.setShowDropdownboxListForm;
+  const setShowDropdownboxListForm = canvasContextValues.setShowDropdownboxListForm;
 
   const showDateboxSettingForm = canvasContextValues.showDateboxSettingForm;
-  const setShowDateboxSettingForm =
-    canvasContextValues.setShowDateboxSettingForm;
+  const setShowDateboxSettingForm = canvasContextValues.setShowDateboxSettingForm;
 
   const showDateboxCalendarForm = canvasContextValues.showDateboxCalendarForm;
-  const setShowDateboxCalendarForm =
-    canvasContextValues.setShowDateboxCalendarForm;
+  const setShowDateboxCalendarForm = canvasContextValues.setShowDateboxCalendarForm;
 
-  const showInitialsboxSettingForm =
-    canvasContextValues.showInitialsboxSettingForm;
-  const setShowInitialsboxSettingForm =
-    canvasContextValues.setShowInitialsboxSettingForm;
+  const showInitialsboxSettingForm = canvasContextValues.showInitialsboxSettingForm;
+  const setShowInitialsboxSettingForm = canvasContextValues.setShowInitialsboxSettingForm;
 
   // Create a type for our form configuration
   type FormConfig = {
@@ -266,6 +256,7 @@ const PDFBoard: React.FC = () => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
+        
         const json = await response.json();
 
         setDocData({
@@ -308,56 +299,66 @@ const PDFBoard: React.FC = () => {
     return fabricCanvas;
   };
 
-  const exportPDF = async () => {
-    if (!canvasContextValues.canvas) return;
-
-    // Step 1: Load the existing PDF
-    const existingPdfBytes = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/document/pdf/${docData.filename}`,
-    ).then((res) => res.arrayBuffer());
-
-    const pdfDoc = await PDFDocument.load(existingPdfBytes);
-
-    // Step 2: Add canvas data as images on each page
-    const canvas = canvasContextValues.canvas;
-
-    for (let i = 0; i < numPages; i++) {
-      const page = pdfDoc.getPage(i);
-
-      // Set the current page on the canvas
-      canvasContextValues.setCurrPage(i + 1);
-      canvas.renderAll(); // Rerender the current page to ensure it's updated
-
-      // Convert canvas to image
-      const imageDataUrl = canvas.toDataURL({
-        format: "png",
-        multiplier: 2, // Higher quality export
-      });
-
-      // Embed the image into the PDF
-      // const pngImage = await pdfDoc.embedPng(imageDataUrl);
-      // const { width, height } = page.getSize();
-
-      // page.drawImage(pngImage, {
-      //   x: 0,
-      //   y: 0,
-      //   width,
-      //   height,
-      // });
+  const exportPDF = async (): Promise<void> => {
+    const doc = document.querySelector("#singlePageExport") as HTMLElement | null;
+    if (!doc) {
+      console.error("Element #singlePageExport not found!");
+      return;
     }
-
-    // Step 3: Download the modified PDF
-    const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-
-    // Trigger download
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = `${docData.filename.replace(".pdf", "")}-signed.pdf`;
-    link.click();
-  };
+  
+    // const MAX_DIMENSION = 14400; // jsPDF limit
+    // const scaleFactor = Math.min(1, MAX_DIMENSION / Math.max(pageWidth, pageHeight));
+  
+    try {
+      // Render the full canvas
+      const canvas = await html2canvas(doc, {
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+        scale: 1,
+      });
+      
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [pageWidth, pageHeight], // Single page size
+      });
+  
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        console.error("Canvas context not found!");
+        return;
+      }
+  
+      // Loop through each page section and add it to the PDF
+      for (let i = 0; i < numPages; i++) {
+        const offsetY = i * pageHeight; // Y offset for each slice
+  
+        // Create a temporary canvas for each page slice
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = pageHeight; // Height of one PDF page
+  
+        const pageCtx = pageCanvas.getContext("2d");
+        if (!pageCtx) continue;
+  
+        // Copy a portion of the original canvas to the new page canvas
+        pageCtx.drawImage(canvas, 0, -offsetY);
+  
+        // Convert page canvas to image
+        const imgData = pageCanvas.toDataURL("image/png");
+  
+        // Add the image to the PDF
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
+        // console.log(pageHeight)
+      }
+  
+      pdf.save("exported-document.pdf");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  };  
 
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -422,11 +423,11 @@ const PDFBoard: React.FC = () => {
                         <div key={i}>
                           <Page
                             key={i}
-                            height={1123}
+                            height={pageHeight}
                             pageNumber={i + 1}
-                            width={868}
+                            width={pageWidth}
                           />
-                          <Divider />
+                          {/* <Divider /> */}
                         </div>
                       ))}
                     </div>
