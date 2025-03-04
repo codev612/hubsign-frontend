@@ -30,6 +30,7 @@ import {
   ControlSVGFile,
   Recipient,
 } from "@/interface/interface";
+import { pageWidth, pageHeight } from "@/constants/canvas";
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
@@ -67,9 +68,7 @@ type CanvasContextProps = {
   setCurrPage: React.Dispatch<React.SetStateAction<number>>;
   selectedFile: File | null;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
-  exportPage: React.MutableRefObject<HTMLDivElement | null>;
-  exportPdf: () => void;
-  downloadPage: () => void;
+  exportPDF: () => Promise<void>;
   isExporting: boolean;
   theme: boolean;
   setTheme: React.Dispatch<React.SetStateAction<boolean>>;
@@ -340,19 +339,69 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     fetchFileContent();
   }, []);
 
-  const downloadPage = () => {
-    setExporting(true);
-    const doc = document.querySelector<HTMLDivElement>("#singlePageExport");
-
-    if (doc) {
-      html2canvas(doc).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF();
-
-        pdf.addImage(imgData, "PNG", 0, 0, 200, 200);
-        pdf.save("edge_lamp_edited.pdf");
-        setExporting(false);
+  //export editing cavas as a pdf
+  const exportPDF = async (): Promise<void> => {
+    const doc = document.querySelector("#singlePageExport") as HTMLElement | null;
+    if (!doc) {
+      console.error("Element #singlePageExport not found!");
+      return;
+    }
+  
+    try {
+      setExporting(true);
+      // Render the full canvas
+      const canvas = await html2canvas(doc, {
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+        scale: 1,
       });
+      
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [pageWidth, pageHeight], // Single page size
+      });
+  
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        console.error("Canvas context not found!");
+        return;
+      }
+
+      if(!numPages){
+        return;
+      }
+  
+      // Loop through each page section and add it to the PDF
+      for (let i = 0; i < numPages; i++) {
+        const offsetY = i * pageHeight; // Y offset for each slice
+  
+        // Create a temporary canvas for each page slice
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = pageHeight; // Height of one PDF page
+  
+        const pageCtx = pageCanvas.getContext("2d");
+        if (!pageCtx) continue;
+  
+        // Copy a portion of the original canvas to the new page canvas
+        pageCtx.drawImage(canvas, 0, -offsetY);
+  
+        // Convert page canvas to image
+        const imgData = pageCanvas.toDataURL("image/png");
+  
+        // Add the image to the PDF
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
+        // console.log(pageHeight)
+      }
+  
+      pdf.save("exported-document.pdf");
+      setExporting(false);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      setExporting(false);
     }
   };
 
@@ -510,10 +559,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   };
 
-  const exportPdf = () => {
-    setExportPages((prev) => [...prev, exportPage.current!]);
-  };
-
   return (
     <CanvasContext.Provider
       value={{
@@ -537,9 +582,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         toggleDraw,
         color,
         setColor,
-        exportPage,
-        exportPdf,
-        downloadPage,
+        exportPDF,
         isExporting,
         theme,
         setTheme,

@@ -63,7 +63,6 @@ export const UserProvider: React.FC<UserContextProviderProps> = ({
         setUserData(json);
       } catch (error) {
         console.log(error);
-
         return;
       }
     };

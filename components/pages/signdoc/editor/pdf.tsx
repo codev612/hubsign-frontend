@@ -3,13 +3,11 @@ import jsPDF from "jspdf";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useParams } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
-import { PDFDocument, rgb } from "pdf-lib";
 import html2canvas from "html2canvas";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { fabric } from "fabric";
 import Cookies from "js-cookie";
-import { Divider } from "@heroui/react";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 import SkipPreviousOutlinedIcon from "@mui/icons-material/SkipPreviousOutlined";
@@ -299,66 +297,16 @@ const PDFBoard: React.FC = () => {
     return fabricCanvas;
   };
 
-  const exportPDF = async (): Promise<void> => {
-    const doc = document.querySelector("#singlePageExport") as HTMLElement | null;
-    if (!doc) {
-      console.error("Element #singlePageExport not found!");
+  //save canvas
+  const saveCanvas = async(): Promise<void> => {
+    const canvas = canvasContextValues.canvas
+    if(!canvas) {
+      console.log("can't find canvas");
       return;
     }
-  
-    // const MAX_DIMENSION = 14400; // jsPDF limit
-    // const scaleFactor = Math.min(1, MAX_DIMENSION / Math.max(pageWidth, pageHeight));
-  
-    try {
-      // Render the full canvas
-      const canvas = await html2canvas(doc, {
-        useCORS: true,
-        logging: false,
-        allowTaint: true,
-        scale: 1,
-      });
-      
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: [pageWidth, pageHeight], // Single page size
-      });
-  
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        console.error("Canvas context not found!");
-        return;
-      }
-  
-      // Loop through each page section and add it to the PDF
-      for (let i = 0; i < numPages; i++) {
-        const offsetY = i * pageHeight; // Y offset for each slice
-  
-        // Create a temporary canvas for each page slice
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = pageHeight; // Height of one PDF page
-  
-        const pageCtx = pageCanvas.getContext("2d");
-        if (!pageCtx) continue;
-  
-        // Copy a portion of the original canvas to the new page canvas
-        pageCtx.drawImage(canvas, 0, -offsetY);
-  
-        // Convert page canvas to image
-        const imgData = pageCanvas.toDataURL("image/png");
-  
-        // Add the image to the PDF
-        if (i > 0) pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
-        // console.log(pageHeight)
-      }
-  
-      pdf.save("exported-document.pdf");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-    }
-  };  
+    const canvasJSON = canvas.toJSON();
+    console.log(canvasJSON);
+  }
 
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -371,7 +319,7 @@ const PDFBoard: React.FC = () => {
       <div className="w-full">
         <div className="flex flex-col justify-center items-center">
           <div className="w-[868]">
-            <ControlBar docData={docData} exportPDF={exportPDF} />
+            <ControlBar docData={docData} exportPDF={canvasContextValues.exportPDF} />
           </div>
           <div
             className="flex items-center justify-center"
@@ -473,6 +421,7 @@ const PDFBoard: React.FC = () => {
               >
                 <SkipNextOutlinedIcon />
               </button>
+              <button onClick={saveCanvas}>saveCanvas</button>
             </div>
           )}
         </div>
