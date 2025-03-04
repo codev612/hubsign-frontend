@@ -611,6 +611,8 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                             alt="initials"
                             className="h-[60px] w-auto object-contain"
                             src={img.dataUrl}
+                            width={100}
+                            height={100}
                           />
                         </button>
                         <button
