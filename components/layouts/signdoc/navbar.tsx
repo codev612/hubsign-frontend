@@ -1,13 +1,10 @@
 "use client";
 
+import { useCanvas } from "@/context/canvas";
 import { Navbar as NextUINavbar, NavbarContent } from "@heroui/navbar";
 import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
-import { Input } from "@heroui/input";
 import { useRouter } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
-import { SearchIcon } from "@/components/icons";
 import UserAvatar from "@/components/ui/user";
 
 interface NavbarProps {
@@ -16,30 +13,12 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
   const router = useRouter();
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
-  );
 
   const handleClick = () => {
     router.back();
   };
+
+  const canvasContextValues = useCanvas();
 
   return (
     <NextUINavbar
@@ -70,7 +49,11 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <Button className="text-forecolor" color="primary">
+        <Button 
+        className="text-forecolor" 
+        color="primary"
+        onPress={() => canvasContextValues.setShowReviewModal(true)}
+        >
           Review and Finish
         </Button>
       </NavbarContent>

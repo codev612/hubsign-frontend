@@ -35,6 +35,8 @@ import { pageWidth, pageHeight } from "@/constants/canvas";
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
   setCanvas: React.Dispatch<React.SetStateAction<fabric.Canvas | null>>;
+  showReviewModal: boolean | false;
+  setShowReviewModal: React.Dispatch<React.SetStateAction<boolean | false>>;
   //sidebar control functions
   addText: (canvi: fabric.Canvas, startLeft: number, startTop: number) => void;
   addCheckbox: (canvi: fabric.Canvas, left: number, top: number) => void;
@@ -130,8 +132,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [isExporting, setExporting] = useState(false);
   const [hideCanvas, setHiddenCanvas] = useState(false);
-  const exportPage = useRef<HTMLDivElement | null>(null);
-  const [exportPages, setExportPages] = useState<HTMLDivElement[]>([]);
 
   const [signMode, setSignMode] = useState<boolean>(false);
   const [onlyMyself, setOnlyMyself] = useState<boolean>(false);
@@ -139,6 +139,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   // current selected recipient
   const [activeRecipient, setActiveRecipient] = useState<string>("");
   const [recipients, setRecipients] = useState<Recipient[]>([]);
+
+  //show review and finish modal
+  const[showReviewModal, setShowReviewModal] = useState<boolean>(false);
 
   const userContextValues = useUser();
 
@@ -564,6 +567,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       value={{
         canvas,
         setCanvas,
+        showReviewModal,
+        setShowReviewModal,
         //sidebar controls
         addText,
         addCheckbox,

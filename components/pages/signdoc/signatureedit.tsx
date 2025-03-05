@@ -178,9 +178,6 @@ const SignatureEditModal: React.FC<ModalProps> = ({
         }
 
         const json = await response.json();
-
-        console.log(json);
-        // Assuming json is an array of saved images
         setSavedImages(json);
       } catch (error) {
         console.error("Error fetching saved images:", error);
@@ -578,10 +575,12 @@ const SignatureEditModal: React.FC<ModalProps> = ({
                     </div>
                     <div className="flex flex-col text-sm gap-2 items-center justify-center h-[260px] w-full bg-[#F8F8F8]">
                       {selectedFile ? (
-                        <img
+                        <Image
                           alt="Uploaded signature"
                           className="max-w-full max-h-full object-contain rounded-md"
                           src={URL.createObjectURL(selectedFile)}
+                          width={500}
+                          height={300}
                         />
                       ) : (
                         <FileAdd

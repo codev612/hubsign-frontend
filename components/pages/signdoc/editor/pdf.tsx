@@ -1,9 +1,9 @@
+
+import React, { useState, useEffect, useRef } from "react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import jsPDF from "jspdf";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useParams } from "next/navigation";
-import React, { useState, useEffect, useRef } from "react";
-import html2canvas from "html2canvas";
+import { useDisclosure } from "@heroui/react";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import { fabric } from "fabric";
@@ -12,7 +12,6 @@ import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 import SkipPreviousOutlinedIcon from "@mui/icons-material/SkipPreviousOutlined";
 import SkipNextOutlinedIcon from "@mui/icons-material/SkipNextOutlined";
-
 import Loader from "./Loader";
 import ControlBar from "./ControlBar";
 import Checkboxgroup from "./settingforms/checkboxgroup";
@@ -37,6 +36,7 @@ import { DocData, DropdownboxListProps } from "@/interface/interface";
 import SideBar from "@/components/pages/signdoc/editor/SideBar";
 import { useCanvas } from "@/context/canvas";
 import { pageHeight, pageWidth } from "@/constants/canvas";
+import ReviewModal from "../reviewdoc";
 
 const PDFBoard: React.FC = () => {
   const params = useParams();
@@ -51,6 +51,20 @@ const PDFBoard: React.FC = () => {
   const [numPages, setNumPages] = useState<number>(0);
 
   const pdfWrapperRef = useRef<HTMLDivElement | null>(null);
+
+  //modal for edit initials and signature
+  const {
+    isOpen: isReviewOpen,
+    onOpen: onReviewOpen,
+    onOpenChange: onReviewOpenChange,
+  } = useDisclosure();
+
+  //show review and finish modal
+  useEffect(() => {
+    if(canvasContextValues.showReviewModal){
+      onReviewOpen();
+    }
+  }, [canvasContextValues.showReviewModal])
 
   //tracking pdf scroll
   useEffect(() => {
@@ -314,119 +328,127 @@ const PDFBoard: React.FC = () => {
   ).toString();
 
   return (
-    <div className="min-h-[100vh]">
-      <SideBar docData={docData} />
-      <div className="w-full">
-        <div className="flex flex-col justify-center items-center">
-          <div className="w-[868]">
-            <ControlBar docData={docData} exportPDF={canvasContextValues.exportPDF} />
-          </div>
-          <div
-            className="flex items-center justify-center"
-            id="singlePageExport"
-          >
-            {docIsLoading && (
-              <>
-                <div className="w-[100%] h-[100%] top-[0] fixed bg-[rgba(50,50,50,0.2)] z-[1001] backdrop-blur-sm" />
-                <div className="fixed z-[1100] flex w-[100%] h-[100%] top-[0] justify-center items-center">
-                  <Loader color={"#606060"} size={120} />
-                </div>
-              </>
-            )}
-
-            {docData.filename ? (
-              <div ref={pdfWrapperRef} id="pdfWrapper">
-                <Document
-                  // file={canvasContextValues.selectedFile}
-                  className="flex justify-center"
-                  file={`${process.env.NEXT_PUBLIC_SERVER_URL}/document/pdf/${docData.filename}`}
-                  onLoadSuccess={onDocumentLoadSuccess}
-                >
-                  <div id="doc">
-                    <div
-                      className="absolute z-[9] p-0"
-                      // id="canvasWrapper"
-                      style={{ visibility: "visible" }}
-                    >
-                      <canvas id="canvas" />
-                      {/* Render setting form Components Dynamically */}
-                      {settingForms.map(({ show, Component, props }, index) =>
-                        show ? <Component key={index} {...props} /> : null,
-                      )}
-                    </div>
-                    <div
-                      className={`${
-                        !canvasContextValues.isExporting &&
-                        canvasContextValues.theme
-                          ? "bg-[rgb(25,25,25)] shadow-[0px_0px_16px_rgb(0,0,0)] border-none"
-                          : "shadow-lg border"
-                      }`}
-                    >
-                      {/* <Page
-                    pageNumber={canvasContextValues.currPage}
-                    width={868}
-                    height={842}
-                  /> */}
-                      {Array.from({ length: numPages }, (_, i) => (
-                        <div key={i}>
-                          <Page
-                            key={i}
-                            height={pageHeight}
-                            pageNumber={i + 1}
-                            width={pageWidth}
-                          />
-                          {/* <Divider /> */}
-                        </div>
-                      ))}
-                    </div>
+    <>
+      <ReviewModal
+        title="Summary"
+        isOpen={isReviewOpen}
+        onOpenChange={onReviewOpenChange}
+        recepients={[]}
+      />
+      <div className="min-h-[100vh]">
+        <SideBar docData={docData} />
+        <div className="w-full">
+          <div className="flex flex-col justify-center items-center">
+            <div className="w-[868]">
+              <ControlBar docData={docData} exportPDF={canvasContextValues.exportPDF} />
+            </div>
+            <div
+              className="flex items-center justify-center"
+              id="singlePageExport"
+            >
+              {docIsLoading && (
+                <>
+                  <div className="w-[100%] h-[100%] top-[0] fixed bg-[rgba(50,50,50,0.2)] z-[1001] backdrop-blur-sm" />
+                  <div className="fixed z-[1100] flex w-[100%] h-[100%] top-[0] justify-center items-center">
+                    <Loader color={"#606060"} size={120} />
                   </div>
-                </Document>
+                </>
+              )}
+
+              {docData.filename ? (
+                <div ref={pdfWrapperRef} id="pdfWrapper">
+                  <Document
+                    // file={canvasContextValues.selectedFile}
+                    className="flex justify-center"
+                    file={`${process.env.NEXT_PUBLIC_SERVER_URL}/document/pdf/${docData.filename}`}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                  >
+                    <div id="doc">
+                      <div
+                        className="absolute z-[9] p-0"
+                        // id="canvasWrapper"
+                        style={{ visibility: "visible" }}
+                      >
+                        <canvas id="canvas" />
+                        {/* Render setting form Components Dynamically */}
+                        {settingForms.map(({ show, Component, props }, index) =>
+                          show ? <Component key={index} {...props} /> : null,
+                        )}
+                      </div>
+                      <div
+                        className={`${
+                          !canvasContextValues.isExporting &&
+                          canvasContextValues.theme
+                            ? "bg-[rgb(25,25,25)] shadow-[0px_0px_16px_rgb(0,0,0)] border-none"
+                            : "shadow-lg border"
+                        }`}
+                      >
+                        {/* <Page
+                      pageNumber={canvasContextValues.currPage}
+                      width={868}
+                      height={842}
+                    /> */}
+                        {Array.from({ length: numPages }, (_, i) => (
+                          <div key={i}>
+                            <Page
+                              key={i}
+                              height={pageHeight}
+                              pageNumber={i + 1}
+                              width={pageWidth}
+                            />
+                            {/* <Divider /> */}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </Document>
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+          <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">
+            {canvasContextValues.currPage > 1 && (
+              <div className="flex flex-row gap-1">
+                <button
+                  className="px-4 py-2 bg-gray-700 rounded-md text-white"
+                  onClick={() => scrollToPage(1)}
+                >
+                  <SkipPreviousOutlinedIcon />
+                </button>
+                <button
+                  className="px-4 py-2 bg-gray-700 rounded-md text-white"
+                  onClick={() => scrollToPage(canvasContextValues.currPage - 1)}
+                >
+                  <ArrowBackIosOutlinedIcon fontSize="small" />
+                </button>
               </div>
-            ) : (
-              ""
+            )}
+            <div className="px-4 py-2 bg-gray-700 rounded-md text-white">
+              {canvasContextValues.currPage} of {numPages}
+            </div>
+            {canvasContextValues.currPage < numPages && (
+              <div className="flex flex-row gap-1">
+                <button
+                  className="px-4 py-2 bg-gray-700 rounded-md text-white"
+                  onClick={() => scrollToPage(canvasContextValues.currPage + 1)}
+                >
+                  <ArrowForwardIosOutlinedIcon fontSize="small" />
+                </button>
+                <button
+                  className="px-4 py-2 bg-gray-700 rounded-md text-white"
+                  onClick={() => scrollToPage(numPages)}
+                >
+                  <SkipNextOutlinedIcon />
+                </button>
+                <button onClick={saveCanvas}>saveCanvas</button>
+              </div>
             )}
           </div>
-        </div>
-        <div className="flex fixed bottom-2 items-center justify-center w-full gap-3 z-50">
-          {canvasContextValues.currPage > 1 && (
-            <div className="flex flex-row gap-1">
-              <button
-                className="px-4 py-2 bg-gray-700 rounded-md text-white"
-                onClick={() => scrollToPage(1)}
-              >
-                <SkipPreviousOutlinedIcon />
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-700 rounded-md text-white"
-                onClick={() => scrollToPage(canvasContextValues.currPage - 1)}
-              >
-                <ArrowBackIosOutlinedIcon fontSize="small" />
-              </button>
-            </div>
-          )}
-          <div className="px-4 py-2 bg-gray-700 rounded-md text-white">
-            {canvasContextValues.currPage} of {numPages}
-          </div>
-          {canvasContextValues.currPage < numPages && (
-            <div className="flex flex-row gap-1">
-              <button
-                className="px-4 py-2 bg-gray-700 rounded-md text-white"
-                onClick={() => scrollToPage(canvasContextValues.currPage + 1)}
-              >
-                <ArrowForwardIosOutlinedIcon fontSize="small" />
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-700 rounded-md text-white"
-                onClick={() => scrollToPage(numPages)}
-              >
-                <SkipNextOutlinedIcon />
-              </button>
-              <button onClick={saveCanvas}>saveCanvas</button>
-            </div>
-          )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
