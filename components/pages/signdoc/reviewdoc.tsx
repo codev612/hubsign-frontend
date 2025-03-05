@@ -8,11 +8,13 @@ import {
   Button,
   Input,
   Switch,
+  Divider,
 } from "@heroui/react";
 import { useCanvas } from "@/context/canvas";
 import { Recipient } from "@/interface/interface";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
+import { getFutureDate } from "@/utils/canvas/utils";
 
 interface ModalProps {
   isOpen: boolean;
@@ -36,10 +38,10 @@ const ReviewModal: React.FC<ModalProps> = ({
 
     const [isAutoReminder, setIsAutoReminder] = useState<boolean>(false);
     const [reminderIn, setReminderIn] = useState<number>(1); // send first reminder in x days
-    const [reminderRepeat, setReminderRepeat] = useState<number>(1); // repeat reminder in every x days
+    const [reminderRepeat, setReminderRepeat] = useState<number>(7); // repeat reminder in every x days
 
     const [isCustomExpDay, setIsCustomExpDay] = useState<boolean>(false);
-    const [expiresDay, setExpiresDay] = useState<number>(30) // expires in x days
+    const [expiresDay, setExpiresDay] = useState<number>(120) // expires in x days
 
     const onClose = () => {
         canvasContextValues.setShowReviewModal(false);
@@ -102,8 +104,38 @@ const ReviewModal: React.FC<ModalProps> = ({
                                         <AddOutlinedIcon />
                                     </button>
                                 </div>}
+                                <Divider />
                                 <Switch isSelected={isAutoReminder} onValueChange={setIsAutoReminder}>Auto-reminders</Switch>
+                                {isAutoReminder && <div className="flex flex-row gap-1 items-center">
+                                    <span className="text-medium">Send first reminder in</span>
+                                    <input
+                                    className="border-1 rounded-md w-[33] text-center"
+                                    value={reminderIn}
+                                    onChange={(e) => setReminderIn(Number(e.target.value))}
+                                    />
+                                    <span className="text-medium">days</span>
+                                </div>}
+                                {isAutoReminder && <div className="flex flex-row gap-1 items-center">
+                                    <span className="text-medium">Repeat reminder every</span>
+                                    <input
+                                    className="border-1 rounded-md w-[33] text-center"
+                                    value={reminderRepeat}
+                                    onChange={(e) => setReminderRepeat(Number(e.target.value))}
+                                    />
+                                    <span className="text-medium">days</span>
+                                </div>}
+                                <Divider />
                                 <Switch isSelected={isCustomExpDay} onValueChange={setIsCustomExpDay}>Set custom expiration day</Switch>
+                                {isCustomExpDay && <p className="text-sm text-text">By default, documents expire in 120 days. Recepients can no longer view or sign documents after it expires</p>}
+                                {isCustomExpDay && <div className="flex flex-col">
+                                    <p className="text-medium">Days until document expires</p>
+                                    <input 
+                                    className="border-1 rounded-lg w-full p-2 text-medium text-text" 
+                                    value={expiresDay}
+                                    onChange={(e)=>setExpiresDay(Number(e.target.value))}
+                                    />
+                                    <p><span className="text-sm text-text">Document will expire on</span><span className="text-medium">{` ${getFutureDate(expiresDay)}`}</span></p>
+                                </div>}
                             </div>
                         </div>
                     </ModalBody>

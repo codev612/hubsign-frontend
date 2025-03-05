@@ -33,3 +33,14 @@ export const updateSvgColors = (
     .replace(/fill="[^"]*"/g, `fill="${newFill}"`) // Replace fill color
     .replace(/stroke="[^"]*"/g, `stroke="${newStroke}"`); // Replace stroke color
 };
+
+export const getFutureDate = (days: number): string => {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+
+  const mm = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-based
+  const dd = String(date.getDate()).padStart(2, "0");
+  const yyyy = date.getFullYear();
+
+  return `${mm}/${dd}/${yyyy}`;
+};
