@@ -333,7 +333,7 @@ const PDFBoard: React.FC = () => {
         title="Summary"
         isOpen={isReviewOpen}
         onOpenChange={onReviewOpenChange}
-        recepients={[]}
+        recepients={docData.recipients}
       />
       <div className="min-h-[100vh]">
         <SideBar docData={docData} />

@@ -7,27 +7,49 @@ import {
   ModalFooter,
   Button,
   Input,
+  Switch,
 } from "@heroui/react";
 import { useCanvas } from "@/context/canvas";
+import { Recipient } from "@/interface/interface";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 
 interface ModalProps {
   isOpen: boolean;
   title: string;
   onOpenChange: (isOpen: boolean) => void;
-  recepients: string[];
+  recepients: Recipient[];
 }
 
 const ReviewModal: React.FC<ModalProps> = ({
-  isOpen,
-  onOpenChange,
-  title,
-  recepients,
+    isOpen,
+    onOpenChange,
+    title,
+    recepients,
 }) => {
 
     const canvasContextValues = useCanvas();
 
+    const [isCC, setIsCC] = useState<boolean>(false);
+    const [ccRecepients, setCCRecepients] = useState<string[]>([]);// cc recepients
+    const [addCC, setAddCC] = useState<string>("");  // add cc recepient item
+
+    const [isAutoReminder, setIsAutoReminder] = useState<boolean>(false);
+    const [reminderIn, setReminderIn] = useState<number>(1); // send first reminder in x days
+    const [reminderRepeat, setReminderRepeat] = useState<number>(1); // repeat reminder in every x days
+
+    const [isCustomExpDay, setIsCustomExpDay] = useState<boolean>(false);
+    const [expiresDay, setExpiresDay] = useState<number>(30) // expires in x days
+
     const onClose = () => {
         canvasContextValues.setShowReviewModal(false);
+    }
+
+    const handleAddCC = () => {
+        if (!ccRecepients.includes(addCC)) {
+            setCCRecepients((prevItems) => (addCC ? [...prevItems, addCC] : prevItems));
+            setAddCC("");
+        }
     }
 
     const handleAccept = () => {
@@ -45,10 +67,44 @@ const ReviewModal: React.FC<ModalProps> = ({
             <ModalContent>
                 {(onClose) => (
                 <>
-                    <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
+                    <ModalHeader className="flex flex-col gap-1 title-large">{title}</ModalHeader>
                     <ModalBody>
-                        <div className="flex flex-col title-medium">
-                            <h1>Recepients</h1>
+                        <div className="flex flex-col gap-3">
+                            <div className="flex flex-col title-medium gap-1">
+                                <h1>Recepients</h1>
+                                {(recepients.length > 0) && recepients.map((rec,index) => <div key={index} className="flex flex-row text-medium text-text gap-1 items-center">
+                                    <span>{`${index+1}.`}</span>
+                                    <input 
+                                    className="border-1 rounded-lg w-full p-2"
+                                    value={rec.email}
+                                    readOnly
+                                    />
+                                </div>)}
+                            </div>
+                            <div className="flex flex-col title-medium gap-1">
+                                <h1>Advanced</h1>
+                                <Switch isSelected={isCC} onValueChange={setIsCC}>CC others who need a copy</Switch>
+                                {isCC && ccRecepients.length > 0 && ccRecepients.map((rec, index) => <div key={index} className="flex flex-row gap-2 text-medium text-text">
+                                    <input className="border-1 rounded-lg w-full p-2" defaultValue={rec} />
+                                    <button
+                                    className="border-1 rounded-md w-[33]"
+                                    onClick={() => setCCRecepients(ccRecepients.filter((_, i) => i !== index))}
+                                    >
+                                        <RemoveOutlinedIcon />                                    
+                                    </button>
+                                </div>)}
+                                {isCC && <div className="flex flex-row text-medium text-text gap-2">
+                                    <input className="border-1 rounded-lg w-full p-2" value={addCC} onChange={(e) => setAddCC(e.target.value)}/>
+                                    <button
+                                    className="border-1 rounded-md w-[33]"
+                                    onClick={handleAddCC}
+                                    >
+                                        <AddOutlinedIcon />
+                                    </button>
+                                </div>}
+                                <Switch isSelected={isAutoReminder} onValueChange={setIsAutoReminder}>Auto-reminders</Switch>
+                                <Switch isSelected={isCustomExpDay} onValueChange={setIsCustomExpDay}>Set custom expiration day</Switch>
+                            </div>
                         </div>
                     </ModalBody>
                     <ModalFooter>
