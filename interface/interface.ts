@@ -231,3 +231,17 @@ export interface ControlSVGFile {
   dropdown: string;
   initials: string;
 }
+
+//document advanced data, cc, expired day
+export interface AdvancedData {
+  advanced: object;
+  cc: string[];
+  autoReminder: object;
+  customExpDay: number;
+}
+
+export interface DocSavedState {
+  draft: boolean;
+  template: boolean;
+  inprogress: boolean;
+}

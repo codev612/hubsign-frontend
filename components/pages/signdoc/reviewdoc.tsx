@@ -16,6 +16,8 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 import { getFutureDate } from "@/utils/canvas/utils";
 import { DOC_STATUS } from "@/constants/document";
+import { AdvancedData } from "@/interface/interface";
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 
 interface ModalProps {
   isOpen: boolean;
@@ -44,6 +46,16 @@ const ReviewModal: React.FC<ModalProps> = ({
     const [isCustomExpDay, setIsCustomExpDay] = useState<boolean>(false);
     const [expiresDay, setExpiresDay] = useState<number>(120) // expires in x days
 
+    const [docSaved, setDocSaved] = useState<boolean>(false);
+
+    useEffect(() => {
+        if(canvasContextValues.docSaved.inprogress) {
+            setDocSaved(true);
+        } else {
+            setDocSaved(false);
+        }
+    }, [canvasContextValues.docSaved.inprogress])
+
     const onClose = () => {
         canvasContextValues.setShowReviewModal(false);
     }
@@ -56,7 +68,7 @@ const ReviewModal: React.FC<ModalProps> = ({
     }
 
     const handleSaveDoc = () => {
-        const advancedData = {
+        const advancedData:AdvancedData = {
             advanced: {
                 cc: isCC,
                 autoReminder: isAutoReminder,
@@ -69,7 +81,7 @@ const ReviewModal: React.FC<ModalProps> = ({
             },
             customExpDay: expiresDay,
         }
-        canvasContextValues.handleSaveDoc(advancedData, DOC_STATUS.draft);
+        canvasContextValues.handleSaveDoc(advancedData, DOC_STATUS.inprogress);
     };
 
     return (
@@ -83,9 +95,9 @@ const ReviewModal: React.FC<ModalProps> = ({
             <ModalContent>
                 {(onClose) => (
                 <>
-                    <ModalHeader className="flex flex-col gap-1 title-large">{title}</ModalHeader>
+                    {!docSaved && <ModalHeader className="flex flex-col gap-1 title-large">{title}</ModalHeader>}
                     <ModalBody>
-                        <div className="flex flex-col gap-3">
+                        {!docSaved && <div className="flex flex-col gap-3">
                             <div className="flex flex-col title-medium gap-1">
                                 <h1>Recepients</h1>
                                 {(recepients.length > 0) && recepients.map((rec,index) => <div key={index} className="flex flex-row text-medium text-text gap-1 items-center">
@@ -151,9 +163,16 @@ const ReviewModal: React.FC<ModalProps> = ({
                                     <p><span className="text-sm text-text">Document will expire on</span><span className="text-medium">{` ${getFutureDate(expiresDay)}`}</span></p>
                                 </div>}
                             </div>
-                        </div>
+                        </div>}
+                        {docSaved && <div className="flex flex-col gap-2 items-center">
+                            <CheckCircleOutlineOutlinedIcon fontSize="large" color="success" />
+                            <p className="title-medium">Document sent for signing</p>
+                            <p className="text-text">Your document has been sent to signees. Track this progress in your dashboard.</p>
+                            <Button className="text-forecolor" color="primary" fullWidth>Go to Documents</Button>
+                            <Button fullWidth>Sign Another Document</Button>
+                        </div>}
                     </ModalBody>
-                    <ModalFooter>
+                    {!docSaved && <ModalFooter>
                     <Button variant="bordered" onPress={onClose}>
                         Back
                     </Button>
@@ -165,7 +184,7 @@ const ReviewModal: React.FC<ModalProps> = ({
                     >
                         Send this document
                     </Button>
-                    </ModalFooter>
+                    </ModalFooter>}
                 </>
                 )}
             </ModalContent>

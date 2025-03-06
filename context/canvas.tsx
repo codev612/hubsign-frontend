@@ -30,9 +30,11 @@ import {
   ControlSVGFile,
   Recipient,
   DocData,
+  AdvancedData,
 } from "@/interface/interface";
 import { pageWidth, pageHeight } from "@/constants/canvas";
-import { DOC_STATUS } from "@/constants/document";
+import { DOC_STATUS, INPROGRESS } from "@/constants/document";
+import { DocSavedState } from "@/interface/interface";
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
@@ -106,8 +108,12 @@ type CanvasContextProps = {
 
   docData: DocData;
   setDocData: React.Dispatch<React.SetStateAction<DocData>>;
+  docSaving: boolean;
+  setDocSaving: React.Dispatch<React.SetStateAction<boolean>>;
+  docSaved: DocSavedState;
+  setDocSaved: React.Dispatch<React.SetStateAction<DocSavedState>>;
 
-  handleSaveDoc: (data:any, type:string) => void;
+  handleSaveDoc: (data:AdvancedData, status:string) => void;
 
   signMode: boolean;
 };
@@ -153,11 +159,20 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   //show review and finish modal
   const[showReviewModal, setShowReviewModal] = useState<boolean>(false);
 
-  //document data
+  //document main data
   const [docData, setDocData] = useState<DocData>({
     uid: "",
     filename: "",
     recipients: []
+  });
+
+  //document saving states
+  const [docSaving, setDocSaving] = useState<boolean>(false);
+
+  const [docSaved, setDocSaved] = useState<DocSavedState>({
+    draft: false,
+    template: false,
+    inprogress: false,
   });
 
   const userContextValues = useUser();
@@ -579,8 +594,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   };
 
-  const handleSaveDoc = async (data:any, type:string=DOC_STATUS.draft) => {
-    console.log("savedoc")
+  const handleSaveDoc = async (data:AdvancedData, status:string=DOC_STATUS.draft) => {
+    console.log(status)
     if(canvasObjects.length > 0) {
       const canvas2JsonData:object[] = [];
 
@@ -597,6 +612,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
           },
           body: JSON.stringify({
             uid: docData.uid,
+            status: status,
             canvas: canvas2JsonData,
             advanced: data.advanced,
             cc: data.cc,
@@ -608,6 +624,18 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         if(!response.ok) {
           return;
         };
+
+        switch (status) {
+          case DOC_STATUS.draft:
+            setDocSaved({ ...docSaved, draft: true });
+            break;
+          case DOC_STATUS.inprogress:
+            setDocSaved({ ...docSaved, inprogress: true });
+            break;
+          default:
+            break;
+        };
+
       } catch (error) {
         return;
       }
@@ -679,6 +707,10 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
 
         docData,
         setDocData,
+        docSaving,
+        setDocSaving,
+        docSaved,
+        setDocSaved,
 
         signMode,
       }}
