@@ -44,6 +44,7 @@ const PDFBoard: React.FC = () => {
 
   const [docIsLoading, setDocIsLoading] = useState<boolean>(true);
   const [docData, setDocData] = useState<DocData>({
+    uid: "",
     filename: "",
     recipients: [],
   });

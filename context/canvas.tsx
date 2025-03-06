@@ -11,7 +11,7 @@ import { fabric } from "fabric";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { v4 as uuidv4 } from "uuid";
-
+import Cookies from "js-cookie";
 import { useUser } from "./user";
 
 import CheckboxManager from "@/utils/canvas/classes/checkboxmanager";
@@ -29,6 +29,7 @@ import {
   InitialsboxSettingFormState,
   ControlSVGFile,
   Recipient,
+  DocData,
 } from "@/interface/interface";
 import { pageWidth, pageHeight } from "@/constants/canvas";
 
@@ -127,11 +128,14 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState(false);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [currPage, setCurrPage] = useState<number>(1);
+
   const [selectedFile, setFile] = useState<File | null>(null);
+
   const [color, setColor] = useState<string>("#000");
   const [borderColor, setBorderColor] = useState<string>("#f4a261");
   const [strokeWidth, setStrokeWidth] = useState<number>(1);
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
+
   const [isExporting, setExporting] = useState(false);
   const [hideCanvas, setHiddenCanvas] = useState(false);
 
@@ -144,6 +148,13 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
 
   //show review and finish modal
   const[showReviewModal, setShowReviewModal] = useState<boolean>(false);
+
+  //document data
+  const [docData, setDocData] = useState<DocData>({
+    uid: "",
+    filename: "",
+    recipients: []
+  });
 
   const userContextValues = useUser();
 
@@ -564,8 +575,23 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   };
 
-  const handleSaveDoc = () => {
+  const handleSaveDoc = async () => {
     console.log("savedoc")
+    if(canvasObjects.length > 0) {
+      const canvas2JsonData:object[] = [];
+
+      canvasObjects.forEach( item => {
+        canvas2JsonData.push(item.object)
+      });
+
+      const response = fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/savedoc`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("session") || ""}`,
+        },
+      });
+    }
   }
 
   return (

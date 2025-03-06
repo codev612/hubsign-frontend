@@ -208,6 +208,7 @@ export interface FileAddBoardProps {
 
 //document data
 export interface DocData {
+  uid: string,
   filename: string;
   recipients: Recipient[];
 }
