@@ -587,13 +587,21 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         canvas2JsonData.push(item.object)
       });
 
-      const response = fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/savedoc`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/savedoc`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("session") || ""}`,
         },
+        body: JSON.stringify({
+          uid: docData.uid,
+          canvas: canvas2JsonData,
+        }),
       });
+
+      if(!response.ok) {
+        return;
+      };
     }
   }
 
