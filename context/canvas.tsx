@@ -32,6 +32,7 @@ import {
   DocData,
 } from "@/interface/interface";
 import { pageWidth, pageHeight } from "@/constants/canvas";
+import { DOC_STATUS } from "@/constants/document";
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
@@ -106,7 +107,7 @@ type CanvasContextProps = {
   docData: DocData;
   setDocData: React.Dispatch<React.SetStateAction<DocData>>;
 
-  handleSaveDoc: () => void;
+  handleSaveDoc: (data:any, type:string) => void;
 
   signMode: boolean;
 };
@@ -578,7 +579,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   };
 
-  const handleSaveDoc = async () => {
+  const handleSaveDoc = async (data:any, type:string=DOC_STATUS.draft) => {
     console.log("savedoc")
     if(canvasObjects.length > 0) {
       const canvas2JsonData:object[] = [];
@@ -587,21 +588,29 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         canvas2JsonData.push(item.object)
       });
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/savedoc`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("session") || ""}`,
-        },
-        body: JSON.stringify({
-          uid: docData.uid,
-          canvas: canvas2JsonData,
-        }),
-      });
-
-      if(!response.ok) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/savedoc`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
+          body: JSON.stringify({
+            uid: docData.uid,
+            canvas: canvas2JsonData,
+            advanced: data.advanced,
+            cc: data.cc,
+            autoReminder: data.autoReminder,
+            customExpDay: data.customExpDay,
+          }),
+        });
+  
+        if(!response.ok) {
+          return;
+        };
+      } catch (error) {
         return;
-      };
+      }
     }
   }
 

@@ -15,6 +15,7 @@ import { Recipient } from "@/interface/interface";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 import { getFutureDate } from "@/utils/canvas/utils";
+import { DOC_STATUS } from "@/constants/document";
 
 interface ModalProps {
   isOpen: boolean;
@@ -55,7 +56,20 @@ const ReviewModal: React.FC<ModalProps> = ({
     }
 
     const handleSaveDoc = () => {
-        canvasContextValues.handleSaveDoc();
+        const advancedData = {
+            advanced: {
+                cc: isCC,
+                autoReminder: isAutoReminder,
+                customExpDay: isCustomExpDay,
+            },
+            cc: ccRecepients,
+            autoReminder: {
+                first: reminderIn,
+                repeat: reminderRepeat,
+            },
+            customExpDay: expiresDay,
+        }
+        canvasContextValues.handleSaveDoc(advancedData, DOC_STATUS.draft);
     };
 
     return (
