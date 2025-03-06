@@ -274,9 +274,18 @@ const PDFBoard: React.FC = () => {
 
         setDocData({
           ...docData,
+          uid: params.id as string,
           filename: json.filename,
           recipients: json.recipients,
         });
+
+        canvasContextValues.setDocData({
+          ...canvasContextValues.docData,
+          uid: params.id as string,
+          filename: json.filename,
+          recipients: json.recipients,
+        });
+        
         canvasContextValues.setRecipients(json.recipients);
       } catch (error) {
         // setError("Failed to fetch data");

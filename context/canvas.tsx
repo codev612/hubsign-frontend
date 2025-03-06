@@ -103,6 +103,9 @@ type CanvasContextProps = {
   setRecipients: React.Dispatch<React.SetStateAction<Recipient[]>>;
   handleCanvasObjectSetValue: (payload: any) => void;
 
+  docData: DocData;
+  setDocData: React.Dispatch<React.SetStateAction<DocData>>;
+
   handleSaveDoc: () => void;
 
   signMode: boolean;
@@ -656,6 +659,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         handleCanvasObjectSetValue,
 
         handleSaveDoc,
+
+        docData,
+        setDocData,
 
         signMode,
       }}
