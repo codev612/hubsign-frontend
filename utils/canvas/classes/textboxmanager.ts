@@ -632,44 +632,32 @@ class TextboxManager {
     this.canvi.renderAll(); // Re-render canvas
   }
 
-  //for store on database
-  // Serialize the object state
-  public serialize(): string {
-    const serializableState = {
+  public toJSON() {
+    return {
       uid: this.uid,
+      controlType: this.controlType,
       containerLeft: this.containerLeft,
       containerTop: this.containerTop,
       scaleX: this.scaleX,
       scaleY: this.scaleY,
-      currentTop: this.currentTop,
       recipient: this.recipient,
       signMode: this.signMode,
+      onlyMyself: this.onlyMyself,
       color: this.color,
-      // checkedBydefault: this.checkedBydefault,
-      // defaultTick: this.defaultTick,
+      placeholder: this.placeholder,
+      textvalue: this.textvalue,
+      enteredText: this.enteredText,
       required: this.required,
-      textboxesState: this.textboxesState,
+      customPlaceholder: this.customPlaceholder,
+      controlSVGFile: this.controlSVGFile,
+      textbox: this.textbox?.toObject(),  // Convert Fabric.js object to plain JSON
+      valueBorder: this.valueBorder?.toObject(),
+      iconBorder: this.iconBorder?.toObject(),
+      iconText: this.iconText?.toObject(),
+      svgGroup: this.svgGroup?.toObject(),
+      svgGearGroup: this.svgGearGroup?.toObject(),
     };
-
-    return JSON.stringify(serializableState);
   }
 }
 
 export default TextboxManager;
-
-// const manager = new textboxManager(...); // Create the manager
-// const serializedManager = manager.serialize();
-
-// // Store serializedManager in your database
-// Retrieve the serialized object from the database
-// const storedJson = /* Fetch from DB */;
-
-// const restoredManager = textboxManager.deserialize(
-//   storedJson,
-//   fabricCanvas, // Pass the fabric.Canvas instance
-//   settextboxItems, // React state setter
-//   setShowSettingForm // React state setter
-// );
-
-// // Add the restored manager to the canvas
-// restoredManager.addToCanvas();
