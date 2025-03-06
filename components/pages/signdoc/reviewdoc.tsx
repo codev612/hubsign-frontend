@@ -54,8 +54,8 @@ const ReviewModal: React.FC<ModalProps> = ({
         }
     }
 
-    const handleAccept = () => {
-        
+    const handleSaveDoc = () => {
+        canvasContextValues.handleSaveDoc();
     };
 
     return (
@@ -147,7 +147,7 @@ const ReviewModal: React.FC<ModalProps> = ({
                         className="text-white"
                         color="primary"
                         type="submit"
-                        onPress={() => handleAccept()}
+                        onPress={() => handleSaveDoc()}
                     >
                         Send this document
                     </Button>
