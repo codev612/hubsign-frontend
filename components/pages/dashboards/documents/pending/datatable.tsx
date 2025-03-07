@@ -26,11 +26,12 @@ import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
 import { PlusIcon, VerticalDotsIcon, SearchIcon, ChevronDownIcon } from "@/constants/table";
 
 
-import { users } from "@/constants/common";
+// import { users } from "@/constants/common";
 import Cookies from "js-cookie";
 import Dot from "@/components/ui/dot";
 import Avatar from "@/components/ui/avatar";
-import { generateColorForRecipient } from "@/utils/canvas/utils";
+import { formatDateTime, generateColorForRecipient } from "@/utils/canvas/utils";
+import { Recipient } from "@/interface/interface";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -57,7 +58,7 @@ export const statusOptions = [
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "status", "recipients", "sendDate", "lastaction", "actions"];
 
-type User = (typeof users)[0];
+
 
 export default function DataTable() {
   const [filterValue, setFilterValue] = React.useState("");
@@ -76,16 +77,25 @@ export default function DataTable() {
 
   const [page, setPage] = React.useState(1);
 
-  interface TableRowData {
-    uid: string;
+  interface Activity {
     name: string;
-    recipients: string[];
-    sendDate: string;
-    status: string;
-    lastaction: object;
+    action: string;
   }
 
-  const [tableData, setTableData] = useState<TableRowData[]>([]);
+  interface DocData {
+    uid: string;
+    name: string;
+    recipients: Recipient[];
+    sendDate: string;
+    status: string;
+    sentAt: string;
+    activity: Activity[];
+  }
+
+  const [docData, setDocData] = useState<DocData[]>([]);
+
+  type User = (typeof docData)[0];
+  const users = docData;
 
   useEffect(() => {
     const fetchData = async() => {
@@ -103,6 +113,7 @@ export default function DataTable() {
         }
 
         const json = await response.json();
+        setDocData(json);
         console.log(json);
 
       } catch (error) {
@@ -152,16 +163,6 @@ export default function DataTable() {
 
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
-
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
 
   const onRowsPerPageChange = React.useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -385,18 +386,25 @@ export default function DataTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No items found"} items={sortedItems}>
+      <TableBody emptyContent={"No items found"} items={docData}>
         {(item) => (
           <TableRow key={item.uid}>
             <TableCell>{item.name}</TableCell>
             <TableCell>{item.status}</TableCell>
             <TableCell>
               <div className="flex flex-row">
-                {item.recipients.length > 0 && item.recipients.map((r,i) => <Avatar key={i} color={`${generateColorForRecipient(r.email)}`} name={r.name} size={28} />)}
+                {item.recipients.length > 0 && item.recipients.map((r,i) => 
+                <Avatar 
+                key={i} 
+                color={`${generateColorForRecipient(r.email)}`} 
+                name={r.name} 
+                size={28} 
+                signed={true} 
+                />)}
               </div>
             </TableCell>
-            <TableCell>{item.sentAt}</TableCell>
-            <TableCell>{item.lastaction}</TableCell>
+            <TableCell><p>{formatDateTime(item.sentAt).formattedDate}</p><p>{formatDateTime(item.sentAt).formattedTime}</p></TableCell>
+            <TableCell>{item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}</TableCell>
             <TableCell>edit</TableCell>
           </TableRow>
         )}
