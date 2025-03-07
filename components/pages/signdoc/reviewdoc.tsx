@@ -167,7 +167,7 @@ const ReviewModal: React.FC<ModalProps> = ({
                         {docSaved && <div className="flex flex-col gap-2 items-center">
                             <CheckCircleOutlineOutlinedIcon fontSize="large" color="success" />
                             <p className="title-medium">Document sent for signing</p>
-                            <p className="text-text">Your document has been sent to signees. Track this progress in your dashboard.</p>
+                            <p className="text-text mb-2">Your document has been sent to signees. Track this progress in your dashboard.</p>
                             <Button className="text-forecolor" color="primary" fullWidth>Go to Documents</Button>
                             <Button fullWidth>Sign Another Document</Button>
                         </div>}

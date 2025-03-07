@@ -256,7 +256,7 @@ const PDFBoard: React.FC = () => {
     const fetchDocumentData = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/document/${params.id}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/document/draft/${params.id}`,
           {
             method: "GET",
             headers: {

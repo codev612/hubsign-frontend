@@ -175,6 +175,13 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     inprogress: false,
   });
 
+  //stroe canvas objects
+  type CanvasObjects = {
+    uid: string;
+    object: any;
+  };
+  const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([]);
+
   const userContextValues = useUser();
 
   useEffect(() => {
@@ -187,6 +194,15 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       setOnlyMyself(false);
     }
   }, [recipients]);
+
+  // if canvas objects are modified, saved states are reset
+  useEffect(() => {
+    setDocSaved({
+      draft: false,
+      inprogress: false,
+      template: false,
+    });
+  }, [canvasObjects]);
 
   const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
     textbox: "",
@@ -316,13 +332,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         initialImage: "",
       },
     });
-
-  //stroe canvas objects
-  type CanvasObjects = {
-    uid: string;
-    object: any;
-  };
-  const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([]);
 
   //transfer setting values from setting form to canvas object
   const handleCanvasObjectSetValue = (payload: any) => {
