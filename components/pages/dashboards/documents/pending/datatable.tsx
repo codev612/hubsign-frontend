@@ -24,7 +24,7 @@ import {
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
-import { PlusIcon, VerticalDotsIcon, SearchIcon, ChevronDownIcon } from "@/constants/table";
+import { PlusIcon, VerticalDotsIcon, SearchIcon, ChevronDownIcon, HorizontalDotsIcon } from "@/constants/table";
 
 
 // import { users } from "@/constants/common";
@@ -427,21 +427,27 @@ export default function DataTable() {
               {item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}
             </TableCell>
             <TableCell>
-              <div className="relative flex justify-end items-center gap-2">
+              <div className="relative flex justify-end items-center text-text gap-2">
                 <Dropdown>
                   <DropdownTrigger>
                     <Button isIconOnly size="sm" variant="light">
-                      <VerticalDotsIcon className="text-default-300" />
+                      {/* <VerticalDotsIcon className="text-default-300" /> */}
+                      <HorizontalDotsIcon className="text-default-300"/>
                     </Button>
                   </DropdownTrigger>
-                  <DropdownMenu>
-                    <DropdownItem key="reminder">Send Reminder</DropdownItem>
-                    <DropdownItem key="history">Actions history</DropdownItem>
+                  {item.status===DOC_STATUS.draft && <DropdownMenu>
                     <DropdownItem key="edit">Edit</DropdownItem>
                     <DropdownItem key="copy">Copy</DropdownItem>
                     <DropdownItem key="save">Save as Template</DropdownItem>
                     <DropdownItem key="delete">Delete</DropdownItem>
-                  </DropdownMenu>
+                  </DropdownMenu>}
+                  {item.status!==DOC_STATUS.draft && <DropdownMenu>
+                    <DropdownItem key="reminder">Send Reminder</DropdownItem>
+                    <DropdownItem key="history">Actions history</DropdownItem>
+                    <DropdownItem key="copy">Copy</DropdownItem>
+                    <DropdownItem key="save">Save as Template</DropdownItem>
+                    <DropdownItem key="delete">Delete</DropdownItem>
+                  </DropdownMenu>}
                 </Dropdown>
               </div>
             </TableCell>

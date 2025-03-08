@@ -59,6 +59,32 @@ export const PlusIcon = ({
       </svg>
     );
   };
+
+  export const HorizontalDotsIcon = ({
+    size = 24,
+    width,
+    height,
+    ...props
+  }: IconSvgProps) => {
+    return (
+      <svg
+        aria-hidden="true"
+        fill="none"
+        focusable="false"
+        height={size || height}
+        role="presentation"
+        viewBox="0 0 24 24"
+        width={size || width}
+        {...props}
+      >
+        <path
+          d="M10 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm-6 0c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm12 0c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z"
+          fill="currentColor"
+        />
+      </svg>
+    );
+  };
+  
   
   export const SearchIcon = (props: IconSvgProps) => {
     return (
