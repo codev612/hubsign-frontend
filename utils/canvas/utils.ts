@@ -49,7 +49,7 @@ export const formatDateTime = (dateString:string) => {
   const date = new Date(dateString);
 
   if (isNaN(date.getTime())) {
-      throw new Error("Invalid date format");
+      return { formattedDate: "", formattedTime: "" };
   }
 
   // Format date as mm/dd/yyyy

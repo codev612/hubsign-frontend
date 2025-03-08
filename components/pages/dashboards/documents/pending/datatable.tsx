@@ -420,9 +420,8 @@ export default function DataTable() {
               </div>
             </TableCell>
             <TableCell>
-              <p>date</p>
-              {/* <p className="text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
-              <p className="text-text">{formatDateTime(item.sentAt).formattedTime}</p> */}
+              <p className="text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
+              <p className="text-text">{formatDateTime(item.sentAt).formattedTime}</p>
             </TableCell>
             <TableCell>
               {item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}
