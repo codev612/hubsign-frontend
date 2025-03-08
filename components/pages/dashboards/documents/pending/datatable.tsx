@@ -24,6 +24,11 @@ import {
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
+import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+
 import { PlusIcon, VerticalDotsIcon, SearchIcon, ChevronDownIcon, HorizontalDotsIcon } from "@/constants/table";
 
 
@@ -436,17 +441,17 @@ export default function DataTable() {
                     </Button>
                   </DropdownTrigger>
                   {item.status===DOC_STATUS.draft && <DropdownMenu>
-                    <DropdownItem key="edit">Edit</DropdownItem>
-                    <DropdownItem key="copy">Copy</DropdownItem>
-                    <DropdownItem key="save">Save as Template</DropdownItem>
-                    <DropdownItem key="delete">Delete</DropdownItem>
+                    <DropdownItem key="edit" startContent={<EditOutlinedIcon />}>Edit</DropdownItem>
+                    <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
+                    <DropdownItem key="save" startContent={<PostAddOutlinedIcon />}>Save as Template</DropdownItem>
+                    <DropdownItem key="delete" startContent={<DeleteForeverOutlinedIcon />}>Delete</DropdownItem>
                   </DropdownMenu>}
                   {item.status!==DOC_STATUS.draft && <DropdownMenu>
-                    <DropdownItem key="reminder">Send Reminder</DropdownItem>
-                    <DropdownItem key="history">Actions history</DropdownItem>
-                    <DropdownItem key="copy">Copy</DropdownItem>
-                    <DropdownItem key="save">Save as Template</DropdownItem>
-                    <DropdownItem key="delete">Delete</DropdownItem>
+                    <DropdownItem key="reminder" startContent={<EmailOutlinedIcon />}>Send Reminder</DropdownItem>
+                    <DropdownItem key="history" startContent={<AccessTimeOutlinedIcon />}>Actions history</DropdownItem>
+                    <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
+                    <DropdownItem key="save" startContent={<PostAddOutlinedIcon />}>Save as Template</DropdownItem>
+                    <DropdownItem key="delete" startContent={<DeleteForeverOutlinedIcon />}>Delete</DropdownItem>
                   </DropdownMenu>}
                 </Dropdown>
               </div>
