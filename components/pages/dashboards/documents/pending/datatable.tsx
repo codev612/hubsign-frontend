@@ -19,6 +19,7 @@ import {
   Selection,
   ChipProps,
   SortDescriptor,
+  Chip,
 } from "@heroui/react";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
@@ -32,6 +33,7 @@ import Dot from "@/components/ui/dot";
 import Avatar from "@/components/ui/avatar";
 import { formatDateTime, generateColorForRecipient } from "@/utils/canvas/utils";
 import { Recipient } from "@/interface/interface";
+import { DOC_STATUS } from "@/constants/document";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -58,7 +60,20 @@ export const statusOptions = [
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "status", "recipients", "sendDate", "lastaction", "actions"];
 
-
+const statusColorMap = (status: string) => {
+  switch (status) {
+    case DOC_STATUS.inprogress:
+      return "#1A92F9";
+    case DOC_STATUS.draft:
+      return "#525252"; // Changed from "info" to "warning" (since "info" is not in the allowed list)
+    case DOC_STATUS.completed:
+      return "#23A15D";
+    case DOC_STATUS.declined:
+      return "#DA1E27";
+    default:
+      return "#1A92F9"; // Ensure a valid fallback
+  }
+};
 
 export default function DataTable() {
   const [filterValue, setFilterValue] = React.useState("");
@@ -70,10 +85,6 @@ export default function DataTable() {
   );
   const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
 
   const [page, setPage] = React.useState(1);
 
@@ -390,7 +401,12 @@ export default function DataTable() {
         {(item) => (
           <TableRow key={item.uid}>
             <TableCell>{item.name}</TableCell>
-            <TableCell>{item.status}</TableCell>
+            <TableCell>
+              <div className="flex flex-row gap-1">
+                <Dot color={`${statusColorMap(item.status)}`} size="7px" />
+                <span style={{color:`${statusColorMap(item.status)}`}}>{item.status}</span>
+              </div>
+            </TableCell>
             <TableCell>
               <div className="flex flex-row">
                 {item.recipients.length > 0 && item.recipients.map((r,i) => 
@@ -403,8 +419,14 @@ export default function DataTable() {
                 />)}
               </div>
             </TableCell>
-            <TableCell><p>{formatDateTime(item.sentAt).formattedDate}</p><p>{formatDateTime(item.sentAt).formattedTime}</p></TableCell>
-            <TableCell>{item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}</TableCell>
+            <TableCell>
+              <p>date</p>
+              {/* <p className="text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
+              <p className="text-text">{formatDateTime(item.sentAt).formattedTime}</p> */}
+            </TableCell>
+            <TableCell>
+              {item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}
+            </TableCell>
             <TableCell>edit</TableCell>
           </TableRow>
         )}

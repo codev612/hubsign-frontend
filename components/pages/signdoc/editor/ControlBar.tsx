@@ -10,10 +10,9 @@ import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined";
 
 import { DocData } from "@/interface/interface";
-
-const handleSaveDraft = () => {
-  console.log("savedraft");
-};
+import { AdvancedData } from "@/interface/interface";
+import { useCanvas } from "@/context/canvas";
+import { defaultExpDay, defaultFirstReminder, defaultRepeadtReminder, DOC_STATUS } from "@/constants/document";
 
 type ControlBarProps = {
   docData: DocData;
@@ -21,6 +20,28 @@ type ControlBarProps = {
 };
 
 const ControlBar: React.FC<ControlBarProps> = ({ docData, exportPDF }) => {
+
+  const canvasContextValues = useCanvas();
+
+  const handleSaveDraft = () => {
+    const advancedData:AdvancedData = {
+      advanced: {
+          cc: false,
+          autoReminder: false,
+          customExpDay: false,
+      },
+      cc: [],
+      autoReminder: {
+          first: defaultFirstReminder,
+          repeat: defaultRepeadtReminder,
+      },
+      customExpDay: defaultExpDay,
+    };
+
+    canvasContextValues.handleSaveDoc(advancedData, DOC_STATUS.draft);
+    console.log("savedraft");
+  };
+
   const buttonConfig = [
     {
       icons: [
