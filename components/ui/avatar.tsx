@@ -18,10 +18,6 @@ const getInitials = (name: string): string => {
 
 const Avatar: React.FC<AvatarProps> = ({ name, color, size = 50, signed=false }) => {
     const initials = getInitials(name);
-
-    useEffect(() => {
-        console.log(color)
-    }, [])
         
     return (
         <div className="relative inline-block">

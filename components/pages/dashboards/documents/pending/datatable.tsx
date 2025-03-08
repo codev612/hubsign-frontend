@@ -41,6 +41,7 @@ import { formatDateTime, generateColorForRecipient } from "@/utils/canvas/utils"
 import { Recipient } from "@/interface/interface";
 import { DOC_STATUS } from "@/constants/document";
 import ConfirmModal from "./deleteconfirm";
+import SaveTempModal from "../savetemplate";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -60,9 +61,10 @@ export const columns = [
 ];
 
 export const statusOptions = [
-  { name: "Draft", uid: "draft" },
-  { name: "In Progress", uid: "inprogress" },
-  { name: "Completed", uid: "completed" },
+  { name: "Draft", uid: "Draft" },
+  { name: "In Progress", uid: "In progress" },
+  { name: "Completed", uid: "Completed" },
+  { name: "Declined", uid: "Declined" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "status", "recipients", "sendDate", "lastaction", "actions"];
@@ -96,7 +98,7 @@ export default function DataTable() {
   const [page, setPage] = React.useState(1);
 
   const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
-  const [deleteItem, setDeleteItem] = useState<string>("");
+  const [selectedItem, setSelectedItem] = useState<string>("");
 
   interface Activity {
     name: string;
@@ -112,18 +114,40 @@ export default function DataTable() {
     status: string;
     sentAt: string;
     activity: Activity[];
+    signingOrder: boolean;
   }
 
   const [docData, setDocData] = useState<DocData[]>([]);
+  const [fileredDoc, setFilteredDoc] = useState<DocData[]>([]);
+  const [selectedItemData, setSelectedItemData] = useState<DocData>({
+    uid: "",
+    owner: "",
+    name: "",
+    recipients: [],
+    sendDate: "",
+    status: "",
+    sentAt: "",
+    activity: [],
+    signingOrder: false,
+  });
 
   const {
     isOpen: isDeleteConfirmOpen,
+    onClose: closeDeleteConfirm,
     onOpen: onDeleteConfirmOpen,
     onOpenChange: onDeleteConfirmOpenChange,
-  } = useDisclosure();
+  } = useDisclosure();// for delete confirm modal
+
+  const {
+    isOpen: isSaveTempOpen,
+    onClose: onSaveTempClose,
+    onOpen: onSaveTempOpen,
+    onOpenChange: onSaveTempChange,
+  } = useDisclosure();// for save as template modal
 
   const users = docData;
 
+  //fetch documents from database initially
   useEffect(() => {
     const fetchData = async() => {
       try {
@@ -141,8 +165,7 @@ export default function DataTable() {
 
         const json = await response.json();
         setDocData(json);
-        console.log(json);
-
+        
       } catch (error) {
         console.log(error);
         return;
@@ -150,7 +173,7 @@ export default function DataTable() {
     };
 
     fetchData();
-  }, [])
+  }, []);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -163,24 +186,24 @@ export default function DataTable() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredItems = [...docData];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
+      filteredItems = filteredItems.filter((item) =>
+        item.name.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
+      filteredItems = filteredItems.filter((item) =>
+        Array.from(statusFilter).includes(item.status),
       );
     }
 
-    return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+    return filteredItems;
+  }, [docData, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -218,7 +241,7 @@ export default function DataTable() {
       <div className="flex flex-col gap-1">
         <div className="flex justify-between gap-3 items-end">
           <div className="flex gap-3">
-            {/* <Dropdown>
+            <Dropdown>
               <DropdownTrigger className="hidden sm:flex bg-forecolor border-1">
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
@@ -241,7 +264,7 @@ export default function DataTable() {
                   </DropdownItem>
                 ))}
               </DropdownMenu>
-            </Dropdown> */}
+            </Dropdown>
             {/* <Dropdown>
               <DropdownTrigger className="hidden sm:flex border-1 bg-forecolor">
                 <Button
@@ -382,11 +405,12 @@ export default function DataTable() {
     [],
   );
 
+  // delete one document
   const handleDelete = async () => {
     console.log('delete')
     try {
-      if(deleteConfirm && deleteItem) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/${deleteItem}`, {
+      if(deleteConfirm && selectedItem) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/${selectedItem}`, {
           method:"DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -395,20 +419,34 @@ export default function DataTable() {
         });
 
         setDeleteConfirm(false);
-        setDeleteItem("");
-
+  
         if(!response.ok) {
           return;
         };
 
+        let newDocData = docData;
+        newDocData = docData.filter( item => item.uid !== selectedItem);
+        setDocData(newDocData);
+        setSelectedItem("");
+
+        closeDeleteConfirm();
       }
     } catch (error) {
       console.log(error);
       setDeleteConfirm(false);
-      setDeleteItem("");
+      setSelectedItem("");
       return;
     }
   };
+
+  const handleSelectItem = (id:string) => {
+    setSelectedItem(id);
+    setSelectedItemData(docData.filter(item=>item.uid === id)[0]);
+  }
+
+  const handleSaveTemp = async (recipients: Recipient[], name:string) => {
+    console.log(recipients, name);
+  }
 
   useEffect(() => {
     if(deleteConfirm) {
@@ -422,6 +460,12 @@ export default function DataTable() {
       isOpen={isDeleteConfirmOpen}
       onOpenChange={onDeleteConfirmOpenChange}
       action={setDeleteConfirm}
+      />
+      <SaveTempModal 
+      isOpen={isSaveTempOpen}
+      onOpenChange={onSaveTempChange}
+      action={handleSaveTemp}
+      selectedItemData={selectedItemData}
       />
       <Table
         // isHeaderSticky
@@ -454,7 +498,7 @@ export default function DataTable() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No items found"} items={docData}>
+        <TableBody emptyContent={"No items found"} items={filteredItems}>
           {(item) => (
             <TableRow key={item.uid}>
               <TableCell>
@@ -494,21 +538,30 @@ export default function DataTable() {
                 <div className="relative flex justify-end items-center text-text gap-2">
                   <Dropdown>
                     <DropdownTrigger>
-                      <Button isIconOnly size="sm" variant="light">
+                      <button  
+                      className="border-1 rounded-md"
+                      onClick={()=>handleSelectItem(item.uid)}>
                         {/* <VerticalDotsIcon className="text-default-300" /> */}
                         <HorizontalDotsIcon className="text-default-300"/>
-                      </Button>
+                      </button>
                     </DropdownTrigger>
                     {item.status===DOC_STATUS.draft && <DropdownMenu>
                       <DropdownItem key="edit" startContent={<EditOutlinedIcon />}>Edit</DropdownItem>
                       <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
-                      <DropdownItem key="save" startContent={<PostAddOutlinedIcon />}>Save as Template</DropdownItem>
+                      <DropdownItem 
+                      key="save" 
+                      startContent={<PostAddOutlinedIcon />}
+                      onPress={()=>{
+                        onSaveTempOpen();
+                      }}
+                      >
+                        Save as Template
+                      </DropdownItem>
                       <DropdownItem 
                       key="delete" 
                       startContent={<DeleteForeverOutlinedIcon />} 
                       onPress={()=>{
                         onDeleteConfirmOpen();
-                        setDeleteItem(item.uid);
                       }}
                       >
                         Delete
@@ -518,13 +571,18 @@ export default function DataTable() {
                       <DropdownItem key="reminder" startContent={<EmailOutlinedIcon />}>Send Reminder</DropdownItem>
                       <DropdownItem key="history" startContent={<AccessTimeOutlinedIcon />}>Actions history</DropdownItem>
                       <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
-                      <DropdownItem key="save" startContent={<PostAddOutlinedIcon />}>Save as Template</DropdownItem>
+                      <DropdownItem 
+                      key="save" 
+                      startContent={<PostAddOutlinedIcon />}
+                      onPress={()=>{
+                        onSaveTempOpen();
+                      }}
+                      >Save as Template</DropdownItem>
                       <DropdownItem 
                       key="delete" 
                       startContent={<DeleteForeverOutlinedIcon />} 
                       onPress={()=>{
                         onDeleteConfirmOpen();
-                        setDeleteItem(item.uid);
                       }}
                       >
                         Delete

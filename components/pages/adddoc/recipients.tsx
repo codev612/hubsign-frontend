@@ -296,7 +296,7 @@ const Recipients: React.FC<RecipientProps> = ({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      {recipients.map((recipient, index) => (
+      {recipients.length > 0 && recipients.map((recipient, index) => (
         <RecipientItem
           key={index}
           activeIndex={activeIndex}

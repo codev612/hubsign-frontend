@@ -16,11 +16,7 @@ import { useRouter } from "next/navigation";
 
 import { Logo } from "@/components/icons";
 import UserAvatar from "@/components/ui/user";
-
-// Define the props for the Sidebar component
-interface SidebarProps {
-  user: any;
-}
+import { useUser } from "@/context/user";
 
 const items = [
   {
@@ -45,9 +41,9 @@ const items = [
   },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ user }) => {
+const Sidebar = () => {
   const router = useRouter();
-
+  const userContextValues = useUser();
   return (
     <div className="flex flex-col min-w-[266px] h-screen border-r border-gray-200 w-64 p-4 bg-background gap-4 overflow-y-auto">
       <Link className="mb-4" href={"/"}>
@@ -55,8 +51,8 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       </Link>
       <div className="mb-4">
         <UserAvatar
-          email={user.email}
-          username={`${user.firstname} ${user.lastname}`}
+          email={userContextValues.userData.email}
+          username={`${userContextValues.userData.firstname} ${userContextValues.userData.lastname}`}
         />
       </div>
       <Snippet
