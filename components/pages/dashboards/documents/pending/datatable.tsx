@@ -1,6 +1,7 @@
 "use client";
 
 import React, { SVGProps, useEffect, useState } from "react";
+import { useDisclosure } from "@heroui/react";
 import {
   Table,
   TableHeader,
@@ -39,6 +40,7 @@ import Avatar from "@/components/ui/avatar";
 import { formatDateTime, generateColorForRecipient } from "@/utils/canvas/utils";
 import { Recipient } from "@/interface/interface";
 import { DOC_STATUS } from "@/constants/document";
+import ConfirmModal from "./deleteconfirm";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -93,6 +95,9 @@ export default function DataTable() {
 
   const [page, setPage] = React.useState(1);
 
+  const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
+  const [deleteItem, setDeleteItem] = useState<string>("");
+
   interface Activity {
     name: string;
     action: string;
@@ -100,6 +105,7 @@ export default function DataTable() {
 
   interface DocData {
     uid: string;
+    owner: string
     name: string;
     recipients: Recipient[];
     sendDate: string;
@@ -110,7 +116,12 @@ export default function DataTable() {
 
   const [docData, setDocData] = useState<DocData[]>([]);
 
-  type User = (typeof docData)[0];
+  const {
+    isOpen: isDeleteConfirmOpen,
+    onOpen: onDeleteConfirmOpen,
+    onOpenChange: onDeleteConfirmOpenChange,
+  } = useDisclosure();
+
   const users = docData;
 
   useEffect(() => {
@@ -371,94 +382,161 @@ export default function DataTable() {
     [],
   );
 
+  const handleDelete = async () => {
+    console.log('delete')
+    try {
+      if(deleteConfirm && deleteItem) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/${deleteItem}`, {
+          method:"DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
+        });
+
+        setDeleteConfirm(false);
+        setDeleteItem("");
+
+        if(!response.ok) {
+          return;
+        };
+
+      }
+    } catch (error) {
+      console.log(error);
+      setDeleteConfirm(false);
+      setDeleteItem("");
+      return;
+    }
+  };
+
+  useEffect(() => {
+    if(deleteConfirm) {
+      handleDelete();
+    }
+  },[deleteConfirm])
+
   return (
-    <Table
-      // isHeaderSticky
-      aria-label="Example table with custom cells, pagination and sorting"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      checkboxesProps={{
-        classNames: {
-          wrapper: "after:bg-link after:text-background text-white",
-        },
-      }}
-      classNames={classNames}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      shadow="none"
-      // sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No items found"} items={docData}>
-        {(item) => (
-          <TableRow key={item.uid}>
-            <TableCell>{item.name}</TableCell>
-            <TableCell>
-              <div className="flex flex-row gap-1">
-                <Dot color={`${statusColorMap(item.status)}`} size="7px" />
-                <span style={{color:`${statusColorMap(item.status)}`}}>{item.status}</span>
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className="flex flex-row">
-                {item.recipients.length > 0 && item.recipients.map((r,i) => 
-                <Avatar 
-                key={i} 
-                color={`${generateColorForRecipient(r.email)}`} 
-                name={r.name} 
-                size={28} 
-                signed={true} 
-                />)}
-              </div>
-            </TableCell>
-            <TableCell>
-              <p className="text-text text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
-              <p className="text-placeholder">{formatDateTime(item.sentAt).formattedTime}</p>
-            </TableCell>
-            <TableCell>
-              {item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}
-            </TableCell>
-            <TableCell>
-              <div className="relative flex justify-end items-center text-text gap-2">
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button isIconOnly size="sm" variant="light">
-                      {/* <VerticalDotsIcon className="text-default-300" /> */}
-                      <HorizontalDotsIcon className="text-default-300"/>
-                    </Button>
-                  </DropdownTrigger>
-                  {item.status===DOC_STATUS.draft && <DropdownMenu>
-                    <DropdownItem key="edit" startContent={<EditOutlinedIcon />}>Edit</DropdownItem>
-                    <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
-                    <DropdownItem key="save" startContent={<PostAddOutlinedIcon />}>Save as Template</DropdownItem>
-                    <DropdownItem key="delete" startContent={<DeleteForeverOutlinedIcon />}>Delete</DropdownItem>
-                  </DropdownMenu>}
-                  {item.status!==DOC_STATUS.draft && <DropdownMenu>
-                    <DropdownItem key="reminder" startContent={<EmailOutlinedIcon />}>Send Reminder</DropdownItem>
-                    <DropdownItem key="history" startContent={<AccessTimeOutlinedIcon />}>Actions history</DropdownItem>
-                    <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
-                    <DropdownItem key="save" startContent={<PostAddOutlinedIcon />}>Save as Template</DropdownItem>
-                    <DropdownItem key="delete" startContent={<DeleteForeverOutlinedIcon />}>Delete</DropdownItem>
-                  </DropdownMenu>}
-                </Dropdown>
-              </div>
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <ConfirmModal 
+      isOpen={isDeleteConfirmOpen}
+      onOpenChange={onDeleteConfirmOpenChange}
+      action={setDeleteConfirm}
+      />
+      <Table
+        // isHeaderSticky
+        aria-label="Example table with custom cells, pagination and sorting"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        checkboxesProps={{
+          classNames: {
+            wrapper: "after:bg-link after:text-background text-white",
+          },
+        }}
+        classNames={classNames}
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        shadow="none"
+        // sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+              className="text-text"
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No items found"} items={docData}>
+          {(item) => (
+            <TableRow key={item.uid}>
+              <TableCell>
+                <div className="flex flex-col">
+                  <p className="text-text text-medium">{item.name}</p>
+                  <p className="text-placeholder text-small">{`Created by ${item.owner}`}</p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-row gap-1" >
+                  <Dot color={`${statusColorMap(item.status)}`} size="7px" />
+                  <span style={{color:`${statusColorMap(item.status)}`}}>{item.status}</span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-row">
+                  {item.recipients.length > 0 && item.recipients.map((r,i) => 
+                  <Avatar 
+                  key={i} 
+                  color={`${generateColorForRecipient(r.email)}`} 
+                  name={r.name} 
+                  size={28} 
+                  signed={true} 
+                  />)}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-col">
+                  <p className="text-text text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
+                  <p className="text-placeholder">{formatDateTime(item.sentAt).formattedTime}</p>
+                </div>
+              </TableCell>
+              <TableCell>
+                {item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}
+              </TableCell>
+              <TableCell>
+                <div className="relative flex justify-end items-center text-text gap-2">
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button isIconOnly size="sm" variant="light">
+                        {/* <VerticalDotsIcon className="text-default-300" /> */}
+                        <HorizontalDotsIcon className="text-default-300"/>
+                      </Button>
+                    </DropdownTrigger>
+                    {item.status===DOC_STATUS.draft && <DropdownMenu>
+                      <DropdownItem key="edit" startContent={<EditOutlinedIcon />}>Edit</DropdownItem>
+                      <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
+                      <DropdownItem key="save" startContent={<PostAddOutlinedIcon />}>Save as Template</DropdownItem>
+                      <DropdownItem 
+                      key="delete" 
+                      startContent={<DeleteForeverOutlinedIcon />} 
+                      onPress={()=>{
+                        onDeleteConfirmOpen();
+                        setDeleteItem(item.uid);
+                      }}
+                      >
+                        Delete
+                      </DropdownItem>
+                    </DropdownMenu>}
+                    {item.status!==DOC_STATUS.draft && <DropdownMenu>
+                      <DropdownItem key="reminder" startContent={<EmailOutlinedIcon />}>Send Reminder</DropdownItem>
+                      <DropdownItem key="history" startContent={<AccessTimeOutlinedIcon />}>Actions history</DropdownItem>
+                      <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
+                      <DropdownItem key="save" startContent={<PostAddOutlinedIcon />}>Save as Template</DropdownItem>
+                      <DropdownItem 
+                      key="delete" 
+                      startContent={<DeleteForeverOutlinedIcon />} 
+                      onPress={()=>{
+                        onDeleteConfirmOpen();
+                        setDeleteItem(item.uid);
+                      }}
+                      >
+                        Delete
+                      </DropdownItem>
+                    </DropdownMenu>}
+                  </Dropdown>
+                </div>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </>
   );
 }

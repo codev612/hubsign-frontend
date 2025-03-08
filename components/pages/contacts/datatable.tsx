@@ -26,7 +26,7 @@ import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
 import { useRouter } from "next/navigation";
 
-import ConfirmModal from "./confirmmodal";
+import ConfirmModal from "./deleteconfirm";
 import EditModal from "./editmodal";
 
 import { Contact } from "@/interface/interface";
