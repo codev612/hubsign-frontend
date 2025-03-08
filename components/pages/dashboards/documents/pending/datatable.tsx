@@ -420,13 +420,31 @@ export default function DataTable() {
               </div>
             </TableCell>
             <TableCell>
-              <p className="text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
-              <p className="text-text">{formatDateTime(item.sentAt).formattedTime}</p>
+              <p className="text-text text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
+              <p className="text-placeholder">{formatDateTime(item.sentAt).formattedTime}</p>
             </TableCell>
             <TableCell>
               {item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}
             </TableCell>
-            <TableCell>edit</TableCell>
+            <TableCell>
+              <div className="relative flex justify-end items-center gap-2">
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button isIconOnly size="sm" variant="light">
+                      <VerticalDotsIcon className="text-default-300" />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu>
+                    <DropdownItem key="reminder">Send Reminder</DropdownItem>
+                    <DropdownItem key="history">Actions history</DropdownItem>
+                    <DropdownItem key="edit">Edit</DropdownItem>
+                    <DropdownItem key="copy">Copy</DropdownItem>
+                    <DropdownItem key="save">Save as Template</DropdownItem>
+                    <DropdownItem key="delete">Delete</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+            </TableCell>
           </TableRow>
         )}
       </TableBody>

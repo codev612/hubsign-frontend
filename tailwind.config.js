@@ -44,6 +44,7 @@ module.exports = {
             background: "#E6E6E6",
             forecolor: "#F4F4F4",
             text: "#525252",
+            placeholder: "#6F6F6F",
             primary: "#2563EB",
             error: "#f31260",
             link: "#2563EB",
