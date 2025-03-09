@@ -524,6 +524,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       signMode,
       setShowRadioboxSettingForm,
       controlSVGFile,
+      removeCanvasObject,
     ); // Initialize with 1 checkboxes
 
     setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);

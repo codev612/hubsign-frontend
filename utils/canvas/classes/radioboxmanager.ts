@@ -2,7 +2,7 @@ import { fabric } from "fabric";
 
 import { generateColorForRecipient, hexToRgba } from "../utils";
 
-import { ControlSVGFile } from "@/interface/interface";
+import { ControlSVGFile, RadioboxSettingFormState } from "@/interface/interface";
 
 class RadioboxManager {
   private recipient: string = "";
@@ -27,10 +27,9 @@ class RadioboxManager {
   private addButtonElement: fabric.Object[] = [];
   private radioboxGroup: fabric.Group;
   private radioboxWrapper: fabric.Rect;
-  private tickPattern: fabric.Pattern;
-  private crossPattern: fabric.Pattern;
-  private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  private setShowSettingForm: React.Dispatch<React.SetStateAction<RadioboxSettingFormState>>;
   private controlSVGFile: ControlSVGFile;
+  private removeCanvasObject: (uid:string)=>void;
 
   constructor(
     uid: string,
@@ -40,8 +39,9 @@ class RadioboxManager {
     numCheckboxes: number,
     recipient: string,
     signMode: boolean,
-    setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
+    setShowSettingForm: React.Dispatch<React.SetStateAction<RadioboxSettingFormState>>,
     controlSVGFile: ControlSVGFile,
+    removeCanvasObject: (uid:string)=>void,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -57,12 +57,11 @@ class RadioboxManager {
     this.signMode = signMode;
     this.color = generateColorForRecipient(recipient);
 
-    this.tickPattern = new fabric.Pattern({ source: "", repeat: "no-repeat" });
-    this.crossPattern = new fabric.Pattern({ source: "", repeat: "no-repeat" });
     this.radioboxWrapper = new fabric.Rect();
 
     this.radioboxGroup = this.createRadioboxGroup();
     this.setShowSettingForm = setShowSettingForm;
+    this.removeCanvasObject = removeCanvasObject;
 
     this.checkboxesState = Array(numCheckboxes).fill(this.checkedBydefault); // Initial state of checkboxes
 
@@ -442,8 +441,6 @@ class RadioboxManager {
       },
       value: {
         recipient: this.recipient,
-        defaultTick: this.defaultTick,
-        checkedBydefault: this.checkedBydefault,
         required: this.required,
       },
     });
@@ -461,8 +458,6 @@ class RadioboxManager {
       },
       value: {
         recipient: this.recipient,
-        defaultTick: this.defaultTick,
-        checkedBydefault: this.checkedBydefault,
         required: this.required,
       },
     });
@@ -491,53 +486,6 @@ class RadioboxManager {
     });
 
     this.canvi.renderAll();
-  }
-
-  private createPattern() {
-    this.color = generateColorForRecipient(this.recipient);
-
-    const patternCanvas = document.createElement("canvas");
-
-    patternCanvas.width = 20;
-    patternCanvas.height = 20;
-    const ctx = patternCanvas.getContext("2d")!;
-
-    // Recreate the tick pattern
-    ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
-    ctx.strokeStyle = this.color; // Update the color
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(4, 10);
-    ctx.lineTo(8, 14);
-    ctx.lineTo(16, 4);
-    ctx.stroke();
-
-    const tickPatternDataURL = patternCanvas.toDataURL();
-
-    this.tickPattern = new fabric.Pattern({
-      source: tickPatternDataURL,
-      repeat: "no-repeat",
-    });
-
-    ctx.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
-    ctx.strokeStyle = this.color; // Update the color
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(4, 4);
-    ctx.lineTo(16, 16);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(16, 4);
-    ctx.lineTo(4, 16);
-    ctx.stroke();
-
-    const crossPatternDataURL = patternCanvas.toDataURL();
-
-    this.crossPattern = new fabric.Pattern({
-      source: crossPatternDataURL,
-      repeat: "no-repeat",
-    });
   }
 
   public setValue(value: any) {
@@ -572,87 +520,11 @@ class RadioboxManager {
       this.elements = [];
 
       // Trigger React state updates if required
-      this.setShowSettingForm({ show: false });
+      this.removeCanvasObject(this.uid);
 
       this.canvi.renderAll();
     }
   }
-
-  //for store on database
-  // Serialize the object state
-  public serialize(): string {
-    const serializableState = {
-      uid: this.uid,
-      containerLeft: this.containerLeft,
-      containerTop: this.containerTop,
-      scaleX: this.scaleX,
-      scaleY: this.scaleY,
-      currentTop: this.currentTop,
-      numCheckboxes: this.numCheckboxes,
-      recipient: this.recipient,
-      signMode: this.signMode,
-      color: this.color,
-      checkedBydefault: this.checkedBydefault,
-      defaultTick: this.defaultTick,
-      required: this.required,
-      checkboxesState: this.checkboxesState,
-    };
-
-    return JSON.stringify(serializableState);
-  }
-
-  // Restore the object state
-  public static deserialize(
-    json: string,
-    canvi: fabric.Canvas,
-    setCheckboxItems: React.Dispatch<React.SetStateAction<number>>,
-    setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
-    controlSVGFile: ControlSVGFile,
-  ): RadioboxManager {
-    const parsed = JSON.parse(json);
-    const manager = new RadioboxManager(
-      parsed.uid,
-      canvi,
-      parsed.containerLeft,
-      parsed.containerTop,
-      parsed.numCheckboxes,
-      parsed.recipient,
-      parsed.signMode,
-      setShowSettingForm,
-      controlSVGFile,
-    );
-
-    manager.scaleX = parsed.scaleX;
-    manager.scaleY = parsed.scaleY;
-    manager.currentTop = parsed.currentTop;
-    manager.color = parsed.color;
-    manager.checkedBydefault = parsed.checkedBydefault;
-    manager.defaultTick = parsed.defaultTick;
-    manager.required = parsed.required;
-    manager.checkboxesState = parsed.checkboxesState;
-
-    // Recreate the radiobox group and patterns
-    manager.updateRadioboxGroup();
-
-    return manager;
-  }
 }
 
 export default RadioboxManager;
-
-// const manager = new CheckboxManager(...); // Create the manager
-// const serializedManager = manager.serialize();
-
-// // Store serializedManager in your database
-// Retrieve the serialized object from the database
-// const storedJson = /* Fetch from DB */;
-
-// const restoredManager = CheckboxManager.deserialize(
-//   storedJson,
-//   fabricCanvas, // Pass the fabric.Canvas instance
-//   setCheckboxItems, // React state setter
-//   setShowSettingForm // React state setter
-// );
-
-// // Add the restored manager to the canvas
-// restoredManager.addToCanvas();
