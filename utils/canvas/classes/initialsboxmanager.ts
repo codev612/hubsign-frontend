@@ -6,7 +6,7 @@ import {
   updateSvgColors,
 } from "../utils";
 
-import { ControlSVGFile } from "@/interface/interface";
+import { ControlSVGFile, InitialsboxSettingFormState, InitialsboxSettings } from "@/interface/interface";
 import {
   canvasControlMinHeight,
   canvasControlMinWidth,
@@ -29,7 +29,8 @@ class InitialsboxManager {
   private border: fabric.Rect;
   private iconBorder: fabric.Rect = new fabric.Rect();
   private iconText: fabric.Text = new fabric.Text("");
-  private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  private setShowSettingForm: React.Dispatch<React.SetStateAction<InitialsboxSettingFormState>>;
+  private removeCanvasObject: (uid:string)=>void;
   //setting form properties
   private recipient: string = "";
   private required: boolean = true;
@@ -49,8 +50,9 @@ class InitialsboxManager {
     startTop: number,
     recipient: string,
     signMode: boolean,
-    setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
+    setShowSettingForm: React.Dispatch<React.SetStateAction<InitialsboxSettingFormState>>,
     controlSVGFile: ControlSVGFile,
+    removeCanvasObject: (uid:string)=>void,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -66,6 +68,7 @@ class InitialsboxManager {
     this.color = generateColorForRecipient(recipient);
 
     this.setShowSettingForm = setShowSettingForm;
+    this.removeCanvasObject = removeCanvasObject;
 
     this.textbox = new fabric.Textbox("");
     this.border = new fabric.Rect();
@@ -73,31 +76,12 @@ class InitialsboxManager {
     this.signImage = new fabric.Image("");
 
     this.tracktextboxGroup();
+    this.setupDeleteKeyHandler();
   }
 
   private createInitialboxes() {
     this.containerTop = this.currentTop;
 
-    // const svgString = this.controlSVGFile.initialsbox;
-    // const updatedSvgString = updateSvgColors(svgString, hexToRgba(this.color, 0.1), hexToRgba(this.color, 1));
-
-    // // Load SVG into Fabric.js
-    // fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
-    //   if (this.svgGroup) {
-    //     this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
-    //   }
-
-    //   this.svgGroup = fabric.util.groupSVGElements(objects, options);
-    //   (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
-    //   this.svgGroup.set({
-    //     left: this.containerLeft,
-    //     top: this.containerTop,
-    //     selectable: true,
-    //   })
-
-    //   this.trackSvgGroup();
-    //   this.canvi.add(this.svgGroup);
-    // });
     const svgString = this.controlSVGFile.initials;
     const updatedSvgString = updateSvgColors(
       svgString,
@@ -258,39 +242,6 @@ class InitialsboxManager {
           this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 18) / 2,
       });
 
-      // const svgGearString = this.controlSVGFile.gear;
-      // const updatedSvgGearString = updateSvgColors(svgGearString, hexToRgba(this.color, 1), hexToRgba(this.color, 1));
-
-      // fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
-      //   if (this.svgGearGroup) {
-      //     this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
-      //   }
-
-      //   this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
-      //   (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
-      //   this.svgGearGroup.set({
-      //     left: this.iconBorder.left! + this.iconBorder.getScaledWidth() + 8,
-      //     top: this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 24) / 2,
-      //     selectable: false,
-      //     evented: true,
-      //   });
-
-      //   this.svgGearGroup.scaleToWidth(20);
-      //   this.svgGearGroup.scaleToHeight(20);
-
-      //   this.svgGearGroup.on("mousedown", () => {
-      //     console.log("setting clicked")
-      //     this.showShowSettingForm();
-      //   });
-
-      //   this.canvi.add(this.svgGearGroup);
-      // });
-
-      // this.iconBorder.set({
-      //   rx: 10 * 56 / this.iconBorder.getScaledHeight(),
-      //   ry: 10 * 200 / this.iconBorder.getScaledWidth(),
-      // });
-
       this.canvi.renderAll();
     });
 
@@ -415,6 +366,7 @@ class InitialsboxManager {
         left: groupPosition.left, // Position horizontally below the group
         top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
       },
+      width: 100,
       value: {
         recipient: this.recipient,
         required: this.required,
@@ -433,6 +385,7 @@ class InitialsboxManager {
         left: groupPosition.left, // Position horizontally below the group
         top: groupPosition.top + groupPosition.height + 10, // Position vertically below the group
       },
+      width: 100,
       value: {
         recipient: this.recipient,
         required: this.required,
@@ -442,13 +395,10 @@ class InitialsboxManager {
   }
 
   public addToCanvas() {
-    //   this.canvi.add(this.textboxGroup);
     this.createInitialboxes();
-    this.canvi.add(this.textbox);
-    //   this.canvi.renderAll();
   }
 
-  public setValue(value: any) {
+  public setValue(value: InitialsboxSettings) {
     this.recipient = value.recipient;
     this.color = generateColorForRecipient(this.recipient);
     this.required = value.required;
@@ -505,82 +455,6 @@ class InitialsboxManager {
       this.canvi.renderAll();
     });
   }
-
-  // private updateSignedbox() {
-
-  //   if (this.svgGroup) {
-  //     this.canvi.remove(this.svgGroup);
-  //     this.canvi.renderAll();
-
-  //     const border = new fabric.Rect({
-  //       left: this.containerLeft,
-  //       top: this.containerTop,
-  //       stroke: this.color,
-  //       strokeWidth: 2,
-  //       fill: "transparent",
-  //       borderColor: "transparent",
-  //       width: 200,
-  //       height: 56,
-  //       rx: 10,
-  //       ry: 10,
-  //       evented: true,
-  //     });
-
-  //     const text = new fabric.Text(this.placeholder, {
-  //       left: this.containerLeft + 5,
-  //       top: this.containerTop + 5,
-  //       fill: "#000",
-  //       fontSize: 10,
-  //       selectable: false,
-  //     });
-
-  //     fabric.Image.fromURL(this.initialImage, (img) => {
-  //       img.scaleToWidth(200);
-  //       img.scaleToHeight(51);
-  //       img.set({
-  //         left: this.containerLeft,
-  //         top: this.containerTop + 5,
-  //         evented: true,
-  //       });
-  //       this.signImage = img;
-  //       this.canvi.add(img).renderAll();
-  //     });
-
-  //     this.canvi.add(text);
-  //     this.canvi.add(border);
-
-  //     border.on('moving', () => {
-  //       text.set({
-  //         left: border.left! + 5 * border.getScaledWidth() / 200,
-  //         top: border.top! + 5 * border.getScaledHeight() / 56,
-  //       });
-
-  //       this.signImage.set({
-  //         left: border.left! + 5,
-  //         top: border.top! + 5,
-  //       });
-  //     });
-
-  //     border.on('scaling', () => {
-  //       text.set({
-  //         left: border.left! + 5 * border.getScaledWidth() / 200,
-  //         top: border.top! + 5 * border.getScaledHeight() / 56,
-  //       });
-
-  //       this.signImage.set({
-  //         left: border.left! + 5,
-  //         top: border.top! + 5,
-  //       });
-
-  //       this.signImage.scaleToWidth(border.getScaledWidth()-5 * border.getScaledWidth() / 200);
-  //       this.signImage.scaleToHeight(border.getScaledHeight()-5 * border.getScaledHeight() / 56);
-  //     });
-
-  //     border.on("resizing", () => {
-  //       console.log("resizing")
-  //     })
-  //   };
-  // }
 
   private updateSignedbox() {
     // Store the previous position of svgGroup
@@ -649,35 +523,6 @@ class InitialsboxManager {
       this.trackIconGroup();
       this.canvi.add(this.svgGroup);
       this.canvi.renderAll();
-
-      // Handle scaling
-      // this.svgGroup.on("scaling", () => {
-      //   const scaleX = this.svgGroup.scaleX || 1;
-      //   const scaleY = this.svgGroup.scaleY || 1;
-
-      //   // Resize the border
-      //   border.set({
-      //     width: 200 * scaleX,
-      //     height: 56 * scaleY,
-      //   });
-
-      //   // Resize text and image proportionally
-      //   text.set({
-      //     left: 5 * scaleX,
-      //     top: 5 * scaleY,
-      //     fontSize: 10 * scaleX, // Scale font size
-      //   });
-
-      //   img.set({
-      //     left: 5 * scaleX,
-      //     top: 5 * scaleY,
-      //   });
-
-      //   img.scaleToWidth(200 * scaleX);
-      //   img.scaleToHeight(51 * scaleY);
-
-      //   this.svgGroup.setCoords(); // Update the group's bounding box
-      // });
     });
   }
 
@@ -698,44 +543,34 @@ class InitialsboxManager {
     this.canvi.renderAll(); // Re-render canvas
   }
 
-  //for store on database
-  // Serialize the object state
-  public serialize(): string {
-    const serializableState = {
-      uid: this.uid,
-      containerLeft: this.containerLeft,
-      containerTop: this.containerTop,
-      scaleX: this.scaleX,
-      scaleY: this.scaleY,
-      currentTop: this.currentTop,
-      recipient: this.recipient,
-      signMode: this.signMode,
-      color: this.color,
-      // checkedBydefault: this.checkedBydefault,
-      // defaultTick: this.defaultTick,
-      required: this.required,
-      textboxesState: this.textboxesState,
-    };
+  private setupDeleteKeyHandler() {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Delete" || event.key === "Backspace") {
+        this.removeGroup();
+      }
+    });
+  };
 
-    return JSON.stringify(serializableState);
-  }
+  public removeGroup() {
+    // Remove the checkbox group from the canvas
+    const activeObject = this.canvi.getActiveObject();
+    
+    if (activeObject === this.textbox || activeObject === this.iconBorder || this.svgGroup) {
+      this.canvi.remove(
+        this.svgGroup, 
+        this.svgGearGroup, 
+        this.iconBorder, 
+        this.iconText,
+        this.textbox,
+        this.border,
+        this.signImage,
+        // this.arrowBottom,
+      );
+      this.removeCanvasObject(this.uid);
+
+      this.canvi.renderAll();
+    }
+  };
 }
 
 export default InitialsboxManager;
-
-// const manager = new textboxManager(...); // Create the manager
-// const serializedManager = manager.serialize();
-
-// // Store serializedManager in your database
-// Retrieve the serialized object from the database
-// const storedJson = /* Fetch from DB */;
-
-// const restoredManager = textboxManager.deserialize(
-//   storedJson,
-//   fabricCanvas, // Pass the fabric.Canvas instance
-//   settextboxItems, // React state setter
-//   setShowSettingForm // React state setter
-// );
-
-// // Add the restored manager to the canvas
-// restoredManager.addToCanvas();
