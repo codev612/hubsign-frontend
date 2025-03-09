@@ -42,6 +42,7 @@ class TextboxManager {
   private svgGroup: fabric.Object;
   private svgGearGroup: fabric.Object;
   private leftPadding: number = 10;
+  private removeCanvasObject: (uid:string)=>void;
 
   constructor(
     uid: string,
@@ -53,6 +54,7 @@ class TextboxManager {
     onlyMyself: boolean,
     setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
     controlSVGFile: ControlSVGFile,
+    removeCanvasObject: (uid:string)=>void,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -70,12 +72,14 @@ class TextboxManager {
     this.color = generateColorForRecipient(recipient);
 
     this.setShowSettingForm = setShowSettingForm;
+    this.removeCanvasObject = removeCanvasObject;
 
     this.textbox = new fabric.Textbox("");
     this.svgGroup = new fabric.Object();
     this.svgGearGroup = new fabric.Object();
 
     this.tracktextboxGroup();
+    this.setupDeleteKeyHandler();// delete object when delete key has been pressed
   }
 
   private createtextboxes() {
@@ -151,7 +155,6 @@ class TextboxManager {
         this.svgGearGroup.scaleToHeight(20);
 
         this.svgGearGroup.on("mousedown", () => {
-          console.log("setting clicked");
           this.showShowSettingForm();
         });
 
@@ -348,7 +351,6 @@ class TextboxManager {
         this.svgGearGroup.scaleToHeight(20);
 
         this.svgGearGroup.on("mousedown", () => {
-          console.log("setting clicked");
           this.showShowSettingForm();
         });
 
@@ -516,7 +518,6 @@ class TextboxManager {
     this.recipient = value.recipient;
     this.color = generateColorForRecipient(this.recipient);
     this.customPlaceholder = value.customPlaceholder;
-    console.log(value.placeholder);
     this.placeholder = value.placeholder;
     this.required = value.required;
 
@@ -615,7 +616,6 @@ class TextboxManager {
   }
 
   public updateTextboxGroup() {
-    console.log("updated");
     // Update the color of each checkbox individually
     this.textbox.set({
       // backgroundColor: hexToRgba(this.color, 0.1), // Update the fill based on the state
@@ -630,7 +630,29 @@ class TextboxManager {
     });
 
     this.canvi.renderAll(); // Re-render canvas
-  }
+  };
+
+  private setupDeleteKeyHandler() {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Delete" || event.key === "Backspace") {
+        this.removeGroup();
+      }
+    });
+  };
+
+  public removeGroup() {
+    // Remove the checkbox group from the canvas
+    const activeObject = this.canvi.getActiveObject();
+
+    if (activeObject === this.textbox || activeObject === this.iconBorder) {
+
+      this.canvi.remove(this.valueBorder, this.textbox);
+      this.canvi.remove(this.svgGroup, this.svgGearGroup, this.iconBorder, this.iconText);
+      this.removeCanvasObject(this.uid);
+
+      this.canvi.renderAll();
+    }
+  };
 
   public toJSON() {
     return {

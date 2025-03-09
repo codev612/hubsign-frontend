@@ -45,6 +45,7 @@ class DropdownboxManager {
   private svgGearGroup: fabric.Object = new fabric.Object();
   private arrowBottom: fabric.Object;
   private leftPadding: number = 10;
+  private removeCanvasObject: (uid:string)=>void
 
   constructor(
     uid: string,
@@ -57,6 +58,7 @@ class DropdownboxManager {
     setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
     setShowListForm: React.Dispatch<React.SetStateAction<any>>,
     controlSVGFile: ControlSVGFile,
+    removeCanvasObject: (uid:string)=>void,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -74,6 +76,7 @@ class DropdownboxManager {
 
     this.setShowSettingForm = setShowSettingForm;
     this.setShowListForm = setShowListForm;
+    this.removeCanvasObject = removeCanvasObject;
 
     this.textbox = new fabric.Textbox("");
     this.border = new fabric.Rect();
@@ -81,6 +84,7 @@ class DropdownboxManager {
     this.arrowBottom = new fabric.Object();
 
     this.tracktextboxGroup();
+    this.setupDeleteKeyHandler();
   }
 
   private createtextboxes() {
@@ -705,7 +709,6 @@ class DropdownboxManager {
 
   public addToCanvas() {
     this.createtextboxes();
-    this.canvi.add(this.textbox);
   }
 
   public setValue(value: any) {
@@ -825,7 +828,38 @@ class DropdownboxManager {
     });
 
     this.canvi.renderAll(); // Re-render canvas
-  }
+  };
+
+  private setupDeleteKeyHandler() {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Delete" || event.key === "Backspace") {
+        this.removeGroup();
+      }
+    });
+  };
+
+  public removeGroup() {
+    // Remove the checkbox group from the canvas
+    const activeObject = this.canvi.getActiveObject();
+    console.log(activeObject)
+
+    if (activeObject === this.textbox || activeObject === this.iconBorder) {
+
+      // this.canvi.remove(this.valueBorder, this.textbox);
+      this.canvi.remove(
+        this.svgGroup, 
+        this.svgGearGroup, 
+        this.iconBorder, 
+        this.iconText,
+        this.textbox,
+        this.border,
+        this.arrowBottom,
+      );
+      this.removeCanvasObject(this.uid);
+
+      this.canvi.renderAll();
+    }
+  };
 
   //for store on database
   // Serialize the object state

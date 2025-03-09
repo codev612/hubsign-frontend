@@ -1,6 +1,7 @@
 import { fabric } from "fabric";
 
 import { generateColorForRecipient } from "../utils";
+import { CheckboxSettingFormState } from "@/interface/interface";
 
 class CheckboxManager {
   private recipient: string = "";
@@ -26,7 +27,8 @@ class CheckboxManager {
   private checkboxGroup: fabric.Group;
   private tickPattern: fabric.Pattern;
   private crossPattern: fabric.Pattern;
-  private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  private setShowSettingForm: React.Dispatch<React.SetStateAction<CheckboxSettingFormState>>;
+  private removeCanvasObject: (uid:string)=>void;
 
   constructor(
     uid: string,
@@ -36,7 +38,8 @@ class CheckboxManager {
     numCheckboxes: number,
     recipient: string,
     signMode: boolean,
-    setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
+    setShowSettingForm: React.Dispatch<React.SetStateAction<CheckboxSettingFormState>>,
+    removeCanvasObject: (uid:string)=>void
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -54,6 +57,7 @@ class CheckboxManager {
     this.checkboxGroup = this.createCheckboxGroup();
 
     this.setShowSettingForm = setShowSettingForm;
+    this.removeCanvasObject = removeCanvasObject;
 
     this.checkboxesState = Array(numCheckboxes).fill(this.checkedBydefault); // Initial state of checkboxes
 
@@ -351,12 +355,12 @@ class CheckboxManager {
   private setupDeleteKeyHandler() {
     document.addEventListener("keydown", (event) => {
       if (event.key === "Delete" || event.key === "Backspace") {
-        this.removeCheckboxGroup();
+        this.removeGroup();
       }
     });
   }
 
-  public removeCheckboxGroup() {
+  public removeGroup() {
     // Remove the checkbox group from the canvas
     const activeObject = this.canvi.getActiveObject();
 
@@ -369,8 +373,7 @@ class CheckboxManager {
       this.addButtonElement = [];
       this.elements = [];
 
-      // Trigger React state updates if required
-      this.setShowSettingForm({ ...this.showShowSettingForm, show: false });
+      this.removeCanvasObject(this.uid);
 
       this.canvi.renderAll();
     }
@@ -405,6 +408,7 @@ class CheckboxManager {
     canvi: fabric.Canvas,
     setCheckboxItems: React.Dispatch<React.SetStateAction<number>>,
     setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
+    removeCanvasObject:(uid:string)=>void,
   ): CheckboxManager {
     const parsed = JSON.parse(json);
 
@@ -417,6 +421,7 @@ class CheckboxManager {
       parsed.recipient,
       parsed.signMode,
       setShowSettingForm,
+      removeCanvasObject,
     );
 
     manager.scaleX = parsed.scaleX;

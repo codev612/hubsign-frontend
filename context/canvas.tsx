@@ -182,6 +182,11 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
   const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([]);
 
+  const removeCanvasObject = (uid:string) => {
+    const newObjects:CanvasObjects[] = canvasObjects.filter((item) => item.uid !== uid);
+    setCanvasObjects(newObjects);
+  };
+
   const userContextValues = useUser();
 
   useEffect(() => {
@@ -466,6 +471,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       onlyMyself,
       setShowTextboxSettingForm,
       controlSVGFile,
+      removeCanvasObject,
     ); // Initialize with 1 checkboxes
 
     setCanvasObjects([...canvasObjects, { uid, object: textboxGroup }]);
@@ -489,12 +495,17 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       activeRecipient,
       signMode,
       setShowCheckboxSettingForm,
+      removeCanvasObject,
     ); // Initialize with 1 checkboxes
 
     setCanvasObjects([...canvasObjects, { uid, object: checkboxGroup }]);
 
     checkboxGroup.addToCanvas(); // Add the group to the canvas
   };
+
+  useEffect(() => {
+    console.log(canvasObjects);
+  }, [canvasObjects])
 
   //radiobox
   const addRadiobox = (
@@ -538,6 +549,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       setShowDropdownboxSettingForm,
       setShowDropdownboxListForm,
       controlSVGFile,
+      removeCanvasObject,
     ); // Initialize with 1 checkboxes
 
     setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);
@@ -563,6 +575,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       setShowDateboxSettingForm,
       setShowDateboxCalendarForm,
       controlSVGFile,
+      removeCanvasObject,
     ); // Initialize with 1 checkboxes
 
     setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);

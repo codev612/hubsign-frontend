@@ -33,7 +33,7 @@ interface DocData {
 interface ModalProps {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
-    action: (recepients: Recipient[], name: string) => void;
+    action: (recepients: Recipient[], name: string, signingOrder:boolean) => void;
     selectedItemData: DocData;
 }
   
@@ -45,10 +45,12 @@ const SaveTempModal: React.FC<ModalProps> = ({
   }) => {
     const userContextValues = useUser();
 
+    const [tempName, setTempName] = useState<string>("");
     const [recipients, setRecipients] = useState<Recipient[]>([]);
     const [customSigningOrder, setCustomSigningOrder] = useState<boolean>(false);
     // const [contacts, setContacts] = useState<Recipient[]>(userContextValues.contacts);
     useEffect(() => {
+        setTempName(selectedItemData.name)
         setRecipients(selectedItemData.recipients);
         setCustomSigningOrder(selectedItemData.signingOrder);
     }, [selectedItemData])
@@ -62,15 +64,17 @@ const SaveTempModal: React.FC<ModalProps> = ({
                 <ModalBody>
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-col ">
-                            <h1 className="title-medium">Template Name</h1>
+                            <h1 className="title-small">Template Name</h1>
                             <input 
                             placeholder="Enter a template name" 
                             className="w-full border-1 rounded-lg p-2"
+                            value={tempName}
+                            onChange={(e)=>setTempName(e.target.value)}
                             />
                         </div>
                         <div className="flex flex-col gap-1">
                             <div className="flex flex-row justify-between items-center w-full">
-                                <h1 className="title-medium">Add Recipients</h1>
+                                <h1 className="title-small">Add Recipients</h1>
                                 <Checkbox
                                 className="text-white"
                                 isSelected={customSigningOrder}
@@ -93,7 +97,7 @@ const SaveTempModal: React.FC<ModalProps> = ({
                   <Button variant="bordered" onPress={onClose}>
                     Close
                   </Button>
-                  <Button color="primary" className="text-forecolor" onPress={()=>action([{email:'asdf@gmail.com', name:'adfads'}], 'adf')}>
+                  <Button color="primary" className="text-forecolor" onPress={()=>action(recipients, tempName, customSigningOrder)}>
                     Save Template
                   </Button>
                 </ModalFooter>

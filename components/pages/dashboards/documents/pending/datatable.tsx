@@ -29,11 +29,7 @@ import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-
 import { PlusIcon, VerticalDotsIcon, SearchIcon, ChevronDownIcon, HorizontalDotsIcon } from "@/constants/table";
-
-
-// import { users } from "@/constants/common";
 import Cookies from "js-cookie";
 import Dot from "@/components/ui/dot";
 import Avatar from "@/components/ui/avatar";
@@ -42,6 +38,7 @@ import { Recipient } from "@/interface/interface";
 import { DOC_STATUS } from "@/constants/document";
 import ConfirmModal from "./deleteconfirm";
 import SaveTempModal from "../savetemplate";
+import { useRouter } from "next/navigation";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -85,6 +82,7 @@ const statusColorMap = (status: string) => {
 };
 
 export default function DataTable() {
+  const router = useRouter();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([]),
@@ -98,7 +96,23 @@ export default function DataTable() {
   const [page, setPage] = React.useState(1);
 
   const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
+
+  // for using when deleting, saving as template, and etc
   const [selectedItem, setSelectedItem] = useState<string>("");
+  const [docData, setDocData] = useState<DocData[]>([]);
+  const [fileredDoc, setFilteredDoc] = useState<DocData[]>([]);
+  const [selectedItemData, setSelectedItemData] = useState<DocData>({
+    uid: "",
+    owner: "",
+    name: "",
+    filename: "",
+    recipients: [],
+    sendDate: "",
+    status: "",
+    sentAt: "",
+    activity: [],
+    signingOrder: false,
+  });
 
   interface Activity {
     name: string;
@@ -109,6 +123,7 @@ export default function DataTable() {
     uid: string;
     owner: string
     name: string;
+    filename: string;
     recipients: Recipient[];
     sendDate: string;
     status: string;
@@ -117,19 +132,7 @@ export default function DataTable() {
     signingOrder: boolean;
   }
 
-  const [docData, setDocData] = useState<DocData[]>([]);
-  const [fileredDoc, setFilteredDoc] = useState<DocData[]>([]);
-  const [selectedItemData, setSelectedItemData] = useState<DocData>({
-    uid: "",
-    owner: "",
-    name: "",
-    recipients: [],
-    sendDate: "",
-    status: "",
-    sentAt: "",
-    activity: [],
-    signingOrder: false,
-  });
+  
 
   const {
     isOpen: isDeleteConfirmOpen,
@@ -165,7 +168,7 @@ export default function DataTable() {
 
         const json = await response.json();
         setDocData(json);
-        
+
       } catch (error) {
         console.log(error);
         return;
@@ -444,8 +447,34 @@ export default function DataTable() {
     setSelectedItemData(docData.filter(item=>item.uid === id)[0]);
   }
 
-  const handleSaveTemp = async (recipients: Recipient[], name:string) => {
+  const handleSaveTemp = async (recipients: Recipient[], name:string, signingOrder: boolean) => {
     console.log(recipients, name);
+    console.log(selectedItemData.filename);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/template/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("session") || ""}`,
+        },
+        body: JSON.stringify({
+          name,
+          recipients,
+          filename: selectedItemData.filename,
+          signingOrder,
+        }),
+      });
+
+      if(!response.ok) {
+        return;
+      };
+      onSaveTempClose();
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
   }
 
   useEffect(() => {
@@ -546,7 +575,11 @@ export default function DataTable() {
                       </button>
                     </DropdownTrigger>
                     {item.status===DOC_STATUS.draft && <DropdownMenu>
-                      <DropdownItem key="edit" startContent={<EditOutlinedIcon />}>Edit</DropdownItem>
+                      <DropdownItem 
+                        key="edit" 
+                        startContent={<EditOutlinedIcon />}
+                        onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
+                      >Edit</DropdownItem>
                       <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
                       <DropdownItem 
                       key="save" 
