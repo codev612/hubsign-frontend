@@ -35,6 +35,7 @@ import {
 import { pageWidth, pageHeight } from "@/constants/canvas";
 import { DOC_STATUS, INPROGRESS } from "@/constants/document";
 import { DocSavedState } from "@/interface/interface";
+import { SVGFILE } from "@/constants/svgFiles"
 
 type CanvasContextProps = {
   canvas: fabric.Canvas | null;
@@ -212,21 +213,13 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   }, [canvasObjects]);
 
   const [controlSVGFile, setControlSVGFile] = useState<ControlSVGFile>({
-    textbox: "",
-    textbox_edit: "",
-    radiobox_empty: "",
-    radiobox_filled: "",
-    radiobox_edit: "",
-    dropdownbox: "",
-    radio_add_button: "",
-    arrow_bottom: "",
-    datebox: "",
-    calendar: "",
-    initialsbox: "",
-    gear: "",
-    date: "",
-    dropdown: "",
-    initials: "",
+    textbox: SVGFILE.textbox,
+    arrow_bottom: SVGFILE.arrowBottom,
+    calendar: SVGFILE.calendar,
+    gear: SVGFILE.gear,    
+    date: SVGFILE.date,
+    dropdown: SVGFILE.dropdown,
+    initials: SVGFILE.initials,
   });
   // canvas edit object
   const [edits, setEdits] = React.useState({});
@@ -349,46 +342,43 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   };
 
-  //save canvas object in db
-  const handleCanvasObjectsSave = () => {};
+  // const svgFiles = [
+  //   "textbox",
+  //   "arrow_bottom",
+  //   "date",
+  //   "calendar",
+  //   "gear",
+  //   "dropdown",
+  //   "initials",
+  // ];
 
-  const svgFiles = [
-    "textbox",
-    "arrow_bottom",
-    "date",
-    "calendar",
-    "gear",
-    "dropdown",
-    "initials",
-  ];
+  // //fetching svg files for canvas object
+  // useEffect(() => {
+  //   const fetchFileContent = async () => {
+  //     for (const item of svgFiles) {
+  //       try {
+  //         const response = await fetch(
+  //           `/api/readfile/controls?filename=${encodeURIComponent(item)}`,
+  //         );
 
-  //fetching svg files for canvas object
-  useEffect(() => {
-    const fetchFileContent = async () => {
-      for (const item of svgFiles) {
-        try {
-          const response = await fetch(
-            `/api/readfile/controls?filename=${encodeURIComponent(item)}`,
-          );
+  //         if (!response.ok) {
+  //           console.error("Error fetching:", item);
+  //           continue;
+  //         }
+  //         const data = await response.json();
 
-          if (!response.ok) {
-            console.error("Error fetching:", item);
-            continue;
-          }
-          const data = await response.json();
+  //         setControlSVGFile((prev) => ({
+  //           ...prev,
+  //           [item]: data.content,
+  //         }));
+  //       } catch (err) {
+  //         console.error(`Failed to fetch ${item}:`, err);
+  //       }
+  //     }
+  //   };
 
-          setControlSVGFile((prev) => ({
-            ...prev,
-            [item]: data.content,
-          }));
-        } catch (err) {
-          console.error(`Failed to fetch ${item}:`, err);
-        }
-      }
-    };
-
-    fetchFileContent();
-  }, []);
+  //   fetchFileContent();
+  // }, []);
 
   //export editing cavas as a pdf
   const exportPDF = async (): Promise<void> => {
@@ -665,27 +655,30 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
 
   const handleRestoreDoc = () => {
     if(!canvas) return;
-    console.log(docData.canvas);
+    console.log(docData);
     const uid = uuidv4();
-    const textboxGroup = new TextboxManager(
-      uid,
-      canvas,
-      100,
-      100,
-      activeRecipient,
-      signMode,
-      onlyMyself,
-      setShowTextboxSettingForm,
-      controlSVGFile,
-      removeCanvasObject,
-    ); // Initialize with 1 checkboxes
+    if(docData.canvas.length > 0) {
+      const textboxGroup = new TextboxManager(
+        docData.uid,
+        canvas,
+        docData.canvas[0].containerLeft,
+        docData.canvas[0].containerTop,
+        docData.canvas[0].recipient,
+        signMode,
+        onlyMyself,
+        setShowTextboxSettingForm,
+        controlSVGFile,
+        removeCanvasObject,
+        docData.canvas[0]
+      ); // Initialize with 1 checkboxes
 
-    setCanvasObjects([...canvasObjects, { uid, object: textboxGroup }]);
+      setCanvasObjects([...canvasObjects, { uid, object: textboxGroup }]);
 
-    textboxGroup.addToCanvas();
+      textboxGroup.restoreToCanvas();
+    }
 
   };
-
+  // if canvas object exists in document data, it'll be restored
   useEffect(() => {
     if(canvas) handleRestoreDoc();
   }, [canvas])

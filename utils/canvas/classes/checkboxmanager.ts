@@ -2,6 +2,7 @@ import { fabric } from "fabric";
 
 import { generateColorForRecipient } from "../utils";
 import { CheckboxSettingFormState } from "@/interface/interface";
+import { canvasObject } from "@/constants/canvas";
 
 class CheckboxManager {
   private recipient: string = "";
@@ -10,7 +11,7 @@ class CheckboxManager {
   private defaultTick: boolean = true;
   private checkedBydefault: boolean = true;
   private required: boolean = true;
-  private controlType = "checkbox";
+  private controlType = canvasObject.checkbox;
   private uid: string;
   private canvi: fabric.Canvas;
   private containerLeft: number;

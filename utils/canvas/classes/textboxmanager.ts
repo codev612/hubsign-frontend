@@ -6,15 +6,16 @@ import {
   updateSvgColors,
 } from "../utils";
 
-import { ControlSVGFile } from "@/interface/interface";
+import { CanvasObject, ControlSVGFile, TextboxObject, TextboxSettingFormState, TextboxSettings } from "@/interface/interface";
 import {
   canvasControlMinHeight,
   canvasControlMinWidth,
   canvasControlRadious,
+  canvasObject,
 } from "@/constants/canvas";
 
 class TextboxManager {
-  private controlType = "textbox";
+  private controlType = canvasObject.textbox;
   private signMode: boolean = false;
   private onlyMyself: boolean = false;
   private color: string;
@@ -29,7 +30,7 @@ class TextboxManager {
   private iconBorder: fabric.Rect = new fabric.Rect();
   private valueBorder: fabric.Rect = new fabric.Rect();
   private iconText: fabric.Text = new fabric.Text("");
-  private setShowSettingForm: React.Dispatch<React.SetStateAction<any>>;
+  private setShowSettingForm: React.Dispatch<React.SetStateAction<TextboxSettingFormState>>;
   //setting form properties
   private recipient: string = "";
   private required: boolean = true;
@@ -51,10 +52,10 @@ class TextboxManager {
     recipient: string,
     signMode: boolean,
     onlyMyself: boolean,
-    setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
+    setShowSettingForm: React.Dispatch<React.SetStateAction<TextboxSettingFormState>>,
     controlSVGFile: ControlSVGFile,
     removeCanvasObject: (uid:string)=>void,
-    jsonData?: any,
+    jsonData?: TextboxObject,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -75,6 +76,7 @@ class TextboxManager {
     this.removeCanvasObject = removeCanvasObject;
 
     this.textbox = new fabric.Textbox("");
+    
     this.svgGroup = new fabric.Object();
     this.svgGearGroup = new fabric.Object();
 
@@ -92,6 +94,8 @@ class TextboxManager {
         hexToRgba(this.color, 0.1),
         hexToRgba(this.color, 1),
       );
+
+      console.log(this.controlSVGFile)
 
       // Load SVG into Fabric.js
       fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
@@ -510,11 +514,135 @@ class TextboxManager {
   public addToCanvas() {
     //   this.canvi.add(this.textboxGroup);
     this.createtextboxes();
-    this.canvi.add(this.textbox);
-    //   this.canvi.renderAll();
   }
 
-  public setValue(value: any) {
+  public restoreToCanvas() {
+    this.containerTop = this.currentTop;
+
+    if (!this.signMode && !this.onlyMyself) {
+      const svgString = this.controlSVGFile.textbox;
+      const updatedSvgString = updateSvgColors(
+        svgString,
+        hexToRgba(this.color, 0.1),
+        hexToRgba(this.color, 1),
+      );
+
+      // Load SVG into Fabric.js
+      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+        if (this.svgGroup) {
+          this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+        }
+
+        this.svgGroup = fabric.util.groupSVGElements(objects, options);
+        (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        this.svgGroup.set({
+          left: this.containerLeft + 100 - 24 - 8,
+          top: this.containerTop + (56 - 24) / 2,
+          selectable: false,
+        });
+
+        this.iconBorder = new fabric.Rect({
+          width: 200,
+          height: 56,
+          left: this.containerLeft,
+          top: this.containerTop,
+          rx: 10,
+          ry: 10,
+          fill: hexToRgba(this.color, 0.1),
+          stroke: hexToRgba(this.color, 1),
+        });
+
+        this.iconText = new fabric.Text("Text", {
+          fontSize: 18,
+          fontFamily: "Gothic",
+          left: this.containerLeft + 100,
+          top: this.containerTop + 16,
+          selectable: false,
+        });
+
+        this.trackIconGroup();
+        this.canvi.add(this.svgGroup, this.iconBorder, this.iconText);
+      });
+
+      const svgGearString = this.controlSVGFile.gear;
+      const updatedSvgGearString = updateSvgColors(
+        svgGearString,
+        hexToRgba(this.color, 1),
+        hexToRgba(this.color, 1),
+      );
+
+      // console.log(this.controlSVGFile)
+      
+      // await this.loadSVGGearAsync(updatedSvgGearString)
+      fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+        if (this.svgGearGroup) {
+          this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
+        }
+
+        this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+        (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        this.svgGearGroup.set({
+          left: this.containerLeft + 200 + 8,
+          top: this.containerTop + (56 - 24) / 2,
+          selectable: false,
+          evented: true,
+        });
+
+        this.svgGearGroup.scaleToWidth(20);
+        this.svgGearGroup.scaleToHeight(20);
+
+        this.svgGearGroup.on("mousedown", () => {
+          this.showShowSettingForm();
+        });
+
+        this.canvi.add(this.svgGearGroup);
+      });
+    } else {
+      // Create a border rectangle
+      this.valueBorder = new fabric.Rect({
+        left: this.containerLeft - this.leftPadding,
+        top: this.containerTop - this.leftPadding,
+        width: 200 + 1 + 2 * this.leftPadding,
+        height: 32 + 4 + 2 * this.leftPadding,
+        stroke: hexToRgba(this.color, 1),
+        strokeDashArray: [0, 0],
+        strokeWidth: 1,
+        fill: hexToRgba(this.color, 0.05),
+        selectable: false,
+        evented: true,
+        rx: canvasControlRadious,
+        ry: canvasControlRadious,
+      });
+
+      // Create the textbox
+      this.textbox = new fabric.Textbox(
+        this.enteredText === "" ? this.placeholder : this.enteredText,
+        {
+          left: this.containerLeft,
+          top: this.containerTop,
+          width: 200,
+          fontSize: 32,
+          textAlign: "left",
+          padding: this.leftPadding,
+          // backgroundColor: hexToRgba(this.color, 0.05),
+          backgroundColor: "transparent",
+          fill: this.enteredText === "" ? "#6F6F6F" : "#262626",
+          // borderColor: 'transparent',
+          cornerStyle: "circle",
+          transparentCorners: false,
+          evented: true,
+        },
+      );
+
+      this.tracktextboxGroup();
+
+      this.canvi.add(this.valueBorder, this.textbox);
+    }
+
+    this.canvi.renderAll();
+  }
+
+  public setValue(value: TextboxSettings) {
     this.recipient = value.recipient;
     this.color = generateColorForRecipient(this.recipient);
     this.customPlaceholder = value.customPlaceholder;

@@ -11,10 +11,11 @@ import {
   canvasControlMinHeight,
   canvasControlMinWidth,
   canvasControlRadious,
+  canvasObject,
 } from "@/constants/canvas";
 
 class InitialsboxManager {
-  private controlType = "initialsbox";
+  private controlType = canvasObject.initialbox;
   private signMode: boolean = false;
   private color: string;
   private uid: string;

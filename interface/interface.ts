@@ -206,27 +206,56 @@ export interface FileAddBoardProps {
   description: string;
 }
 
+//base canvas object interface
+export interface BaseCanvasObject {
+  uid: string;
+  controlType: string; // e.g., "textbox", "rect", "circle", "image", etc.
+  containerLeft: number;
+  containerTop: number;
+  recipient: string;
+  required: boolean;
+  width?: number;
+  height?: number;
+  scaleX?: number;
+  scaleY?: number;
+  [key: string]: any; // Allow additional properties specific to different object types
+}
+
+export interface TextboxObject extends BaseCanvasObject {
+  enteredText: string;
+  customPlaceholder: boolean;
+  inconBorder: object;
+  iconText: object;
+  placeholder: string;
+  textbox: object;
+  textvalue: string;
+  valueBorder: object;
+  svgGroup: object;
+  svgGearGroup: object;
+}
+
+export type CanvasObject = TextboxObject
+
 //document data
 export interface DocData {
   uid: string,
   filename: string;
   recipients: Recipient[];
-  canvas: [];
+  canvas: CanvasObject[];
 }
 
+// "textbox",
+//     "arrow_bottom",
+//     "date",
+//     "calendar",
+//     "gear",
+//     "dropdown",
+//     "initials",
 //canvas control icon file
 export interface ControlSVGFile {
   textbox: string;
-  textbox_edit: string;
-  radiobox_empty: string;
-  radiobox_filled: string;
-  radiobox_edit: string;
-  radio_add_button: string;
-  dropdownbox: string;
   arrow_bottom: string;
-  datebox: string;
   calendar: string;
-  initialsbox: string;
   gear: string;
   date: string;
   dropdown: string;

@@ -11,10 +11,11 @@ import {
   canvasControlMinHeight,
   canvasControlMinWidth,
   canvasControlRadious,
+  canvasObject,
 } from "@/constants/canvas";
 
 class DropdownboxManager {
-  private controlType = "dropdownbox";
+  private controlType = canvasObject.dropdownbox;
   private signMode: boolean = false;
   private onlyMyself: boolean = false;
   private color: string;

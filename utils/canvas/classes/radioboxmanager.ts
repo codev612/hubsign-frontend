@@ -3,6 +3,7 @@ import { fabric } from "fabric";
 import { generateColorForRecipient, hexToRgba } from "../utils";
 
 import { ControlSVGFile, RadioboxSettingFormState } from "@/interface/interface";
+import { canvasObject } from "@/constants/canvas";
 
 class RadioboxManager {
   private recipient: string = "";
@@ -11,7 +12,7 @@ class RadioboxManager {
   private defaultTick: boolean = true;
   private checkedBydefault: boolean = true;
   private required: boolean = true;
-  private controlType = "radiobox";
+  private controlType = canvasObject.radiobox;
   private uid: string;
   private canvi: fabric.Canvas;
   private containerLeft: number;

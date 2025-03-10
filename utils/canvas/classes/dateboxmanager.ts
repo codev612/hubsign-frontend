@@ -12,10 +12,11 @@ import {
   canvasControlMinHeight,
   canvasControlMinWidth,
   canvasControlRadious,
+  canvasObject,
 } from "@/constants/canvas";
 
 class DateboxManager {
-  private controlType = "datebox";
+  private controlType = canvasObject.datebox;
   private signMode: boolean = false;
   private onlyMyself: boolean = false;
   private color: string;
