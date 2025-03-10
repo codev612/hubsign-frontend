@@ -47,6 +47,7 @@ const PDFBoard: React.FC = () => {
     uid: "",
     filename: "",
     recipients: [],
+    canvas: [],
   });
 
   const [numPages, setNumPages] = useState<number>(0);
@@ -277,6 +278,7 @@ const PDFBoard: React.FC = () => {
           uid: params.id as string,
           filename: json.filename,
           recipients: json.recipients,
+          canvas: json.canvas,
         });
 
         canvasContextValues.setDocData({
@@ -284,6 +286,7 @@ const PDFBoard: React.FC = () => {
           uid: params.id as string,
           filename: json.filename,
           recipients: json.recipients,
+          canvas: json.canvas,
         });
         
         canvasContextValues.setRecipients(json.recipients);

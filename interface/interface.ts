@@ -211,6 +211,7 @@ export interface DocData {
   uid: string,
   filename: string;
   recipients: Recipient[];
+  canvas: [];
 }
 
 //canvas control icon file

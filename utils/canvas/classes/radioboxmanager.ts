@@ -499,7 +499,7 @@ class RadioboxManager {
 
   private setupDeleteKeyHandler() {
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Delete" || event.key === "Backspace") {
+      if (event.key === "Delete") {
         this.removeCheckboxGroup();
       }
     });

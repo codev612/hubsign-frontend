@@ -25,7 +25,6 @@ class TextboxManager {
   private scaleX: number;
   private scaleY: number;
   private currentTop: number;
-  private textboxesState: boolean[] = [];
   private textbox: fabric.Textbox;
   private iconBorder: fabric.Rect = new fabric.Rect();
   private valueBorder: fabric.Rect = new fabric.Rect();
@@ -55,6 +54,7 @@ class TextboxManager {
     setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
     controlSVGFile: ControlSVGFile,
     removeCanvasObject: (uid:string)=>void,
+    jsonData?: any,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -634,7 +634,7 @@ class TextboxManager {
 
   private setupDeleteKeyHandler() {
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Delete" || event.key === "Backspace") {
+      if (event.key === "Delete") {
         this.removeGroup();
       }
     });

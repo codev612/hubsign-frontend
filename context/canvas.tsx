@@ -114,6 +114,7 @@ type CanvasContextProps = {
   setDocSaved: React.Dispatch<React.SetStateAction<DocSavedState>>;
 
   handleSaveDoc: (data:AdvancedData, status:string) => void;
+  handleRestoreDoc: (canvasObjects:any) => void;
 
   signMode: boolean;
 };
@@ -163,7 +164,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   const [docData, setDocData] = useState<DocData>({
     uid: "",
     filename: "",
-    recipients: []
+    recipients: [],
+    canvas: [],
   });
 
   //document saving states
@@ -503,10 +505,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     checkboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
-  useEffect(() => {
-    console.log(canvasObjects);
-  }, [canvasObjects])
-
   //radiobox
   const addRadiobox = (
     canvi: fabric.Canvas,
@@ -619,7 +617,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
 
   const handleSaveDoc = async (data:AdvancedData, status:string=DOC_STATUS.draft) => {
-    console.log(status)
     if(canvasObjects.length > 0) {
       const canvas2JsonData:object[] = [];
 
@@ -665,6 +662,33 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       }
     }
   }
+
+  const handleRestoreDoc = () => {
+    if(!canvas) return;
+    console.log(docData.canvas);
+    const uid = uuidv4();
+    const textboxGroup = new TextboxManager(
+      uid,
+      canvas,
+      100,
+      100,
+      activeRecipient,
+      signMode,
+      onlyMyself,
+      setShowTextboxSettingForm,
+      controlSVGFile,
+      removeCanvasObject,
+    ); // Initialize with 1 checkboxes
+
+    setCanvasObjects([...canvasObjects, { uid, object: textboxGroup }]);
+
+    textboxGroup.addToCanvas();
+
+  };
+
+  useEffect(() => {
+    if(canvas) handleRestoreDoc();
+  }, [canvas])
 
   return (
     <CanvasContext.Provider
@@ -728,6 +752,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
         handleCanvasObjectSetValue,
 
         handleSaveDoc,
+        handleRestoreDoc,
 
         docData,
         setDocData,
