@@ -32,6 +32,7 @@ import {
   DocData,
   AdvancedData,
   TextboxObject,
+  CheckboxObject,
 } from "@/interface/interface";
 import { pageWidth, pageHeight, canvasObject } from "@/constants/canvas";
 import { DOC_STATUS, INPROGRESS } from "@/constants/document";
@@ -574,9 +575,13 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     if(canvasObjects.length > 0) {
       const canvas2JsonData:object[] = [];
 
+      console.log(canvasObjects)
+
       canvasObjects.forEach( item => {
         canvas2JsonData.push(item.object)
       });
+
+      console.log(canvas2JsonData);
 
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/savedoc`, {
@@ -639,11 +644,37 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
               item as TextboxObject
             ); // Initialize with 1 checkboxes
       
-            setCanvasObjects([...canvasObjects, { uid: item.uid, object: textboxGroup }]);
+            // setCanvasObjects([...canvasObjects, { uid: item.uid, object: textboxGroup }]);
+            setCanvasObjects((prevObjects) => [
+              ...prevObjects,
+              { uid: item.uid, object: textboxGroup }
+            ]);
       
             textboxGroup.restoreToCanvas();
             break;
+          case canvasObject.checkbox:
+            const checkboxGroup = new CheckboxManager(
+              item.uid,
+              canvas,
+              item.containerLeft,
+              item.containerTop,
+              1,
+              item.recipient,
+              signMode,
+              onlyMyself,
+              setShowCheckboxSettingForm,
+              removeCanvasObject,
+              item as CheckboxObject
+            ); // Initialize with 1 checkboxes
         
+            // setCanvasObjects([...canvasObjects, { uid: item.uid, object: checkboxGroup }]);
+            setCanvasObjects((prevObjects) => [
+              ...prevObjects,
+              { uid: item.uid, object: checkboxGroup }
+            ]);
+        
+            checkboxGroup.addToCanvas(); // Add the group to the canvas
+            break;
           default:
             break;
         }
@@ -653,7 +684,11 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   // if canvas object exists in document data, it'll be restored
   useEffect(() => {
     if(canvas) handleRestoreDoc();
-  }, [canvas])
+  }, [canvas]);
+
+  useEffect(() => {
+    console.log(canvasObjects)
+  }, [canvasObjects])
 
   return (
     <CanvasContext.Provider

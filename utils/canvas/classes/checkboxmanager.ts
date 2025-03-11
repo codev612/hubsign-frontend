@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 
 import { generateColorForRecipient } from "../utils";
-import { CheckboxSettingFormState } from "@/interface/interface";
+import { CheckboxObject, CheckboxSettingFormState } from "@/interface/interface";
 import { canvasObject } from "@/constants/canvas";
 
 class CheckboxManager {
@@ -29,6 +29,7 @@ class CheckboxManager {
   private setShowSettingForm: React.Dispatch<React.SetStateAction<CheckboxSettingFormState>>;
   private removeCanvasObject: (uid:string)=>void;
   private onlyMyself: boolean;
+  private jsonData?: CheckboxObject;
 
   constructor(
     uid: string,
@@ -40,7 +41,8 @@ class CheckboxManager {
     signMode: boolean,
     onlyMyself: boolean,
     setShowSettingForm: React.Dispatch<React.SetStateAction<CheckboxSettingFormState>>,
-    removeCanvasObject: (uid:string)=>void
+    removeCanvasObject: (uid:string)=>void,
+    jsonData?: CheckboxObject,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -63,6 +65,13 @@ class CheckboxManager {
 
     this.checkboxesState = Array(numCheckboxes).fill(this.checkedBydefault); // Initial state of checkboxes
 
+    if(jsonData) {
+      this.jsonData = jsonData;
+      this.required = jsonData.required;
+      this.defaultTick = jsonData.tickPattern ==="tick" ? true : false;
+      this.checkedBydefault = jsonData.checkedBydefault;
+    }
+
     // Track events of the checkbox group
     this.trackCheckboxGroup();
 
@@ -77,7 +86,6 @@ class CheckboxManager {
     this.containerTop = this.currentTop;
 
     for (let i = 0; i < this.numCheckboxes; i++) {
-      console.log(this.tickPattern);
       const checkbox = new fabric.Rect({
         left: this.containerLeft,
         top: this.containerTop + 40 * (i + 1) + 20 * i,
@@ -88,7 +96,7 @@ class CheckboxManager {
         // backgroundColor:this.color,
         borderColor: `${this.color}`,
         stroke: `${this.color}`,
-        strokeWidth: 2,
+        strokeWidth: 1,
         selectable: true,
         hasControls: false,
         lockMovementX: true,
