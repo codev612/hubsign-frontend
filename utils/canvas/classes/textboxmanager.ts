@@ -43,6 +43,7 @@ class TextboxManager {
   private svgGearGroup: fabric.Object;
   private leftPadding: number = 10;
   private removeCanvasObject: (uid:string)=>void;
+  private jsonData?: TextboxObject;
 
   constructor(
     uid: string,
@@ -80,8 +81,19 @@ class TextboxManager {
     this.svgGroup = new fabric.Object();
     this.svgGearGroup = new fabric.Object();
 
+    this.jsonData = jsonData;
+
+    if(this.jsonData) {
+      console.log(jsonData)
+      this.textvalue = this.jsonData.textvalue;
+      this.recipient = this.jsonData.recipient;
+      this.required = this.jsonData.required;
+      this.placeholder = this.jsonData.placeholder;
+      this.customPlaceholder = this.jsonData.customPlaceholder;
+    }
+
     this.tracktextboxGroup();
-    this.setupDeleteKeyHandler();// delete object when delete key has been pressed
+    // this.setupDeleteKeyHandler();// delete object when delete key has been pressed
   }
 
   private createtextboxes() {
@@ -94,8 +106,6 @@ class TextboxManager {
         hexToRgba(this.color, 0.1),
         hexToRgba(this.color, 1),
       );
-
-      console.log(this.controlSVGFile)
 
       // Load SVG into Fabric.js
       fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
@@ -120,6 +130,8 @@ class TextboxManager {
           ry: 10,
           fill: hexToRgba(this.color, 0.1),
           stroke: hexToRgba(this.color, 1),
+          strokeDashArray: undefined,
+          shadow: undefined,
         });
 
         this.iconText = new fabric.Text("Text", {
@@ -529,39 +541,37 @@ class TextboxManager {
 
       // Load SVG into Fabric.js
       fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+
+        this.iconBorder = new fabric.Rect(this.jsonData?.iconBorder);
+
+        console.log(this.jsonData?.iconBorder);
+  
+        this.iconText = new fabric.Text("Text", {
+          fontSize: 18,
+          fontFamily: "Gothic",
+          left: this.containerLeft + this.iconBorder.getScaledWidth()/2,
+          top: this.containerTop + this.iconBorder.getScaledHeight()/2 - 9,
+          selectable: false,
+        });
+
         if (this.svgGroup) {
           this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
         }
 
         this.svgGroup = fabric.util.groupSVGElements(objects, options);
+
         (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
         this.svgGroup.set({
-          left: this.containerLeft + 100 - 24 - 8,
-          top: this.containerTop + (56 - 24) / 2,
-          selectable: false,
-        });
-
-        this.iconBorder = new fabric.Rect({
-          width: 200,
-          height: 56,
-          left: this.containerLeft,
-          top: this.containerTop,
-          rx: 10,
-          ry: 10,
-          fill: hexToRgba(this.color, 0.1),
-          stroke: hexToRgba(this.color, 1),
-        });
-
-        this.iconText = new fabric.Text("Text", {
-          fontSize: 18,
-          fontFamily: "Gothic",
-          left: this.containerLeft + 100,
-          top: this.containerTop + 16,
+          left: this.containerLeft + this.iconBorder.getScaledWidth()/2 - 24 - 8,
+          top: this.containerTop + (this.iconBorder.getScaledHeight() - 24) / 2,
           selectable: false,
         });
 
         this.trackIconGroup();
-        this.canvi.add(this.svgGroup, this.iconBorder, this.iconText);
+        this.canvi.add(
+          this.svgGroup, 
+          this.iconBorder, 
+          this.iconText);
       });
 
       const svgGearString = this.controlSVGFile.gear;
@@ -571,19 +581,18 @@ class TextboxManager {
         hexToRgba(this.color, 1),
       );
 
-      // console.log(this.controlSVGFile)
-      
-      // await this.loadSVGGearAsync(updatedSvgGearString)
       fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
         if (this.svgGearGroup) {
           this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
         }
 
         this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+
         (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+
         this.svgGearGroup.set({
-          left: this.containerLeft + 200 + 8,
-          top: this.containerTop + (56 - 24) / 2,
+          left: this.containerLeft + this.iconBorder.getScaledWidth() + 8,
+          top: this.containerTop + (this.iconBorder.getScaledHeight() - 24) / 2,
           selectable: false,
           evented: true,
         });
@@ -600,40 +609,24 @@ class TextboxManager {
     } else {
       // Create a border rectangle
       this.valueBorder = new fabric.Rect({
-        left: this.containerLeft - this.leftPadding,
-        top: this.containerTop - this.leftPadding,
-        width: 200 + 1 + 2 * this.leftPadding,
-        height: 32 + 4 + 2 * this.leftPadding,
-        stroke: hexToRgba(this.color, 1),
-        strokeDashArray: [0, 0],
-        strokeWidth: 1,
-        fill: hexToRgba(this.color, 0.05),
-        selectable: false,
+        ...this.jsonData?.valueBorder,
         evented: true,
-        rx: canvasControlRadious,
-        ry: canvasControlRadious,
+        selectable: false,
       });
+
+      this.enteredText = this.jsonData?.enteredText || "";
 
       // Create the textbox
       this.textbox = new fabric.Textbox(
         this.enteredText === "" ? this.placeholder : this.enteredText,
         {
-          left: this.containerLeft,
-          top: this.containerTop,
-          width: 200,
-          fontSize: 32,
-          textAlign: "left",
+          ...this.jsonData?.textbox, 
           padding: this.leftPadding,
-          // backgroundColor: hexToRgba(this.color, 0.05),
-          backgroundColor: "transparent",
-          fill: this.enteredText === "" ? "#6F6F6F" : "#262626",
-          // borderColor: 'transparent',
-          cornerStyle: "circle",
-          transparentCorners: false,
           evented: true,
-        },
+        }
       );
 
+      this.textbox.bringToFront();
       this.tracktextboxGroup();
 
       this.canvi.add(this.valueBorder, this.textbox);

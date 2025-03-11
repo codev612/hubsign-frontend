@@ -5,13 +5,13 @@ import { CheckboxSettingFormState } from "@/interface/interface";
 import { canvasObject } from "@/constants/canvas";
 
 class CheckboxManager {
+  private controlType = canvasObject.checkbox;
   private recipient: string = "";
   private signMode: boolean = false;
   private color: string;
   private defaultTick: boolean = true;
   private checkedBydefault: boolean = true;
   private required: boolean = true;
-  private controlType = canvasObject.checkbox;
   private uid: string;
   private canvi: fabric.Canvas;
   private containerLeft: number;
@@ -20,9 +20,7 @@ class CheckboxManager {
   private scaleY: number;
   private currentTop: number;
   private numCheckboxes: number;
-  private checkboxObjects: fabric.Object[] = [];
   private checkboxesState: boolean[] = [];
-  private elements: fabric.Object[] = [];
   private checkboxElements: fabric.Object[] = [];
   private addButtonElement: fabric.Object[] = [];
   private checkboxGroup: fabric.Group;
@@ -30,6 +28,7 @@ class CheckboxManager {
   private crossPattern: fabric.Pattern;
   private setShowSettingForm: React.Dispatch<React.SetStateAction<CheckboxSettingFormState>>;
   private removeCanvasObject: (uid:string)=>void;
+  private onlyMyself: boolean;
 
   constructor(
     uid: string,
@@ -39,6 +38,7 @@ class CheckboxManager {
     numCheckboxes: number,
     recipient: string,
     signMode: boolean,
+    onlyMyself: boolean,
     setShowSettingForm: React.Dispatch<React.SetStateAction<CheckboxSettingFormState>>,
     removeCanvasObject: (uid:string)=>void
   ) {
@@ -53,6 +53,7 @@ class CheckboxManager {
 
     this.recipient = recipient;
     this.signMode = signMode;
+    this.onlyMyself = onlyMyself;
     this.color = generateColorForRecipient(recipient);
 
     this.checkboxGroup = this.createCheckboxGroup();
@@ -69,7 +70,7 @@ class CheckboxManager {
     this.crossPattern = this.createPattern()["cross"];
 
     this.setupDeleteKeyHandler();
-  }
+  };
 
   private createCheckboxes() {
     this.checkboxElements = [];
@@ -99,100 +100,26 @@ class CheckboxManager {
 
       let isChecked = this.checkboxesState[i];
 
-      checkbox.on("mousedown", () => {
-        isChecked = !isChecked;
-        this.checkboxesState[i] = isChecked;
-        checkbox.set(
-          "fill",
-          isChecked
-            ? this.defaultTick
-              ? this.tickPattern
-              : this.crossPattern
-            : "transparent",
-        );
+      if(this.onlyMyself || this.signMode)
+        checkbox.on("mousedown", () => {
+          isChecked = !isChecked;
+          this.checkboxesState[i] = isChecked;
+          checkbox.set(
+            "fill",
+            isChecked
+              ? this.defaultTick
+                ? this.tickPattern
+                : this.crossPattern
+              : "transparent",
+          );
 
-        this.canvi.renderAll();
-      });
+          this.canvi.renderAll();
+        });
+
       // Add checkbox and label to elements
       this.checkboxElements.push(checkbox);
     }
-  }
-
-  private createAddCheckboxButton() {
-    const addCheckboxButton = new fabric.Text("+", {
-      left: this.containerLeft,
-      top: this.containerTop, // Position below checkboxes
-      fontSize: 32,
-      fill: "#007bff",
-      selectable: false,
-      hoverCursor: "pointer",
-    });
-
-    addCheckboxButton.on("mousedown", () => {
-      this.addNewCheckbox();
-      this.showShowSettingForm();
-    });
-
-    this.addButtonElement.push(addCheckboxButton);
-  }
-
-  private addNewCheckbox() {
-    this.scaleX = this.scaleX * this.checkboxGroup.scaleX!;
-    this.scaleY = this.scaleY * this.checkboxGroup.scaleY!;
-
-    const checkbox = new fabric.Rect({
-      left: this.containerLeft,
-      top:
-        this.containerTop +
-        this.checkboxGroup.getScaledHeight() +
-        20 * this.scaleY,
-      width: 20 * this.scaleX,
-      height: 20 * this.scaleY,
-      fill: "transparent",
-      stroke: "#000",
-      strokeWidth: 2,
-      selectable: true,
-      hasControls: false,
-      lockMovementX: true,
-      lockMovementY: true,
-    });
-
-    let isChecked = this.checkboxesState[this.checkboxElements.length];
-
-    checkbox.on("mousedown", () => {
-      isChecked = !isChecked;
-      this.checkboxesState[this.checkboxElements.length] = isChecked;
-      // checkbox.set('fill', isChecked ? '#000' : 'white');
-      // Remove existing checkmarks
-      this.checkboxObjects.forEach((obj) => {
-        if (
-          obj instanceof fabric.Text &&
-          obj.text === "✔" &&
-          obj.left === checkbox.left &&
-          obj.top === checkbox.top
-        ) {
-          this.checkboxObjects.splice(this.checkboxObjects.indexOf(obj), 1);
-        }
-      });
-
-      if (isChecked) {
-        const checkmark = new fabric.Text("✔", {
-          left: this.containerLeft,
-          top: this.containerTop,
-          fontSize: 18,
-          fill: "white",
-        });
-
-        this.checkboxObjects.push(checkmark);
-        this.canvi.add(checkmark);
-      }
-      this.canvi.renderAll();
-    });
-
-    this.checkboxElements.push(checkbox);
-    this.checkboxGroup.addWithUpdate(checkbox);
-    this.canvi.renderAll();
-  }
+  };
 
   private createCheckboxGroup(): fabric.Group {
     this.createCheckboxes(); // Initialize checkboxes
@@ -208,26 +135,29 @@ class CheckboxManager {
     );
 
     return checkboxgroup;
-  }
+  };
 
   // Track scaling of the checkboxGroup
   private trackCheckboxGroup() {
     this.checkboxGroup.on("scaling", () => {
       this.showShowSettingForm();
     });
+
     this.checkboxGroup.on("mouseup", () => {
       this.showShowSettingForm();
     });
+
     this.checkboxGroup.on("deselected", () => {
       this.closeShowSettingForm();
     });
+
     this.checkboxGroup.on("moving", () => {
       // Get the position of the group
       this.containerLeft = this.checkboxGroup.left!;
       this.containerTop = this.checkboxGroup.top!;
       this.closeShowSettingForm();
     });
-  }
+  };
 
   private showShowSettingForm() {
     const groupPosition = this.checkboxGroup.getBoundingRect();
@@ -246,7 +176,7 @@ class CheckboxManager {
         required: this.required,
       },
     });
-  }
+  };
 
   private closeShowSettingForm() {
     const groupPosition = this.checkboxGroup.getBoundingRect();
@@ -265,12 +195,12 @@ class CheckboxManager {
         required: this.required,
       },
     });
-  }
+  };
 
   public addToCanvas() {
     this.canvi.add(this.checkboxGroup);
     this.canvi.renderAll();
-  }
+  };
 
   public updateCheckboxGroup() {
     console.log("updated");
@@ -279,16 +209,12 @@ class CheckboxManager {
       checkbox.set({
         stroke: this.color,
         borderColor: this.color,
-        fill: this.checkedBydefault
-          ? this.defaultTick
-            ? this.tickPattern
-            : this.crossPattern
-          : "transparent", // Update the fill based on the state
+        fill: ( this.checkedBydefault && (this.onlyMyself || this.signMode) ) ? ( this.defaultTick ? this.tickPattern : this.crossPattern ) : "transparent", // Update the fill based on the state
       });
     });
 
     this.canvi.renderAll(); // Re-render canvas
-  }
+  };
 
   private createPattern() {
     this.color = generateColorForRecipient(this.recipient);
@@ -338,7 +264,7 @@ class CheckboxManager {
       tick: tickPattern,
       cross: crossPattern,
     };
-  }
+  };
 
   public setValue(value: any) {
     this.recipient = value.recipient;
@@ -348,10 +274,9 @@ class CheckboxManager {
 
     // Update the color and patterns based on the new recipient
     this.createPattern();
-
     // // Refresh the checkbox group
     this.updateCheckboxGroup();
-  }
+  };
 
   private setupDeleteKeyHandler() {
     document.addEventListener("keydown", (event) => {
@@ -359,7 +284,7 @@ class CheckboxManager {
         this.removeGroup();
       }
     });
-  }
+  };
 
   public removeGroup() {
     // Remove the checkbox group from the canvas
@@ -372,91 +297,36 @@ class CheckboxManager {
       this.checkboxElements = [];
       this.checkboxesState = [];
       this.addButtonElement = [];
-      this.elements = [];
 
       this.removeCanvasObject(this.uid);
 
       this.canvi.renderAll();
     }
-  }
+  };
 
-  //for store on database
-  // Serialize the object state
-  public serialize(): string {
-    const serializableState = {
+  public toJSON() {
+    return {
       uid: this.uid,
+      controlType: this.controlType,
       containerLeft: this.containerLeft,
       containerTop: this.containerTop,
-      scaleX: this.scaleX,
-      scaleY: this.scaleY,
-      currentTop: this.currentTop,
-      numCheckboxes: this.numCheckboxes,
+      scaleX: this.checkboxGroup.scaleX ?? this.scaleX, // Ensure scale is preserved
+      scaleY: this.checkboxGroup.scaleY ?? this.scaleY,
       recipient: this.recipient,
       signMode: this.signMode,
+      onlyMyself: this.onlyMyself,
       color: this.color,
-      checkedBydefault: this.checkedBydefault,
-      defaultTick: this.defaultTick,
       required: this.required,
-      checkboxesState: this.checkboxesState,
+      numCheckboxes: this.numCheckboxes, // Save total checkboxes
+      checkboxesState: this.checkboxesState, // Save checkbox states
+      checkboxPositions: this.checkboxElements.map(cb => ({
+        left: cb.left,
+        top: cb.top
+      })), // Save individual checkbox positions
+      tickPattern: this.defaultTick ? "tick" : "cross", // Store as identifier
+      checkedBydefault: this.checkedBydefault // Save default state
     };
-
-    return JSON.stringify(serializableState);
-  }
-
-  // Restore the object state
-  public static deserialize(
-    json: string,
-    canvi: fabric.Canvas,
-    setCheckboxItems: React.Dispatch<React.SetStateAction<number>>,
-    setShowSettingForm: React.Dispatch<React.SetStateAction<any>>,
-    removeCanvasObject:(uid:string)=>void,
-  ): CheckboxManager {
-    const parsed = JSON.parse(json);
-
-    const manager = new CheckboxManager(
-      parsed.uid,
-      canvi,
-      parsed.containerLeft,
-      parsed.containerTop,
-      parsed.numCheckboxes,
-      parsed.recipient,
-      parsed.signMode,
-      setShowSettingForm,
-      removeCanvasObject,
-    );
-
-    manager.scaleX = parsed.scaleX;
-    manager.scaleY = parsed.scaleY;
-    manager.currentTop = parsed.currentTop;
-    manager.color = parsed.color;
-    manager.checkedBydefault = parsed.checkedBydefault;
-    manager.defaultTick = parsed.defaultTick;
-    manager.required = parsed.required;
-    manager.checkboxesState = parsed.checkboxesState;
-
-    // Recreate the checkbox group and patterns
-    manager.createPattern();
-    manager.updateCheckboxGroup();
-
-    return manager;
-  }
+  };
 }
 
 export default CheckboxManager;
-
-// const manager = new CheckboxManager(...); // Create the manager
-// const serializedManager = manager.serialize();
-
-// // Store serializedManager in your database
-// Retrieve the serialized object from the database
-// const storedJson = /* Fetch from DB */;
-
-// const restoredManager = CheckboxManager.deserialize(
-//   storedJson,
-//   fabricCanvas, // Pass the fabric.Canvas instance
-//   setCheckboxItems, // React state setter
-//   setShowSettingForm // React state setter
-// );
-
-// // Add the restored manager to the canvas
-// restoredManager.addToCanvas();

@@ -31,8 +31,9 @@ import {
   Recipient,
   DocData,
   AdvancedData,
+  TextboxObject,
 } from "@/interface/interface";
-import { pageWidth, pageHeight } from "@/constants/canvas";
+import { pageWidth, pageHeight, canvasObject } from "@/constants/canvas";
 import { DOC_STATUS, INPROGRESS } from "@/constants/document";
 import { DocSavedState } from "@/interface/interface";
 import { SVGFILE } from "@/constants/svgFiles"
@@ -342,44 +343,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   };
 
-  // const svgFiles = [
-  //   "textbox",
-  //   "arrow_bottom",
-  //   "date",
-  //   "calendar",
-  //   "gear",
-  //   "dropdown",
-  //   "initials",
-  // ];
-
-  // //fetching svg files for canvas object
-  // useEffect(() => {
-  //   const fetchFileContent = async () => {
-  //     for (const item of svgFiles) {
-  //       try {
-  //         const response = await fetch(
-  //           `/api/readfile/controls?filename=${encodeURIComponent(item)}`,
-  //         );
-
-  //         if (!response.ok) {
-  //           console.error("Error fetching:", item);
-  //           continue;
-  //         }
-  //         const data = await response.json();
-
-  //         setControlSVGFile((prev) => ({
-  //           ...prev,
-  //           [item]: data.content,
-  //         }));
-  //       } catch (err) {
-  //         console.error(`Failed to fetch ${item}:`, err);
-  //       }
-  //     }
-  //   };
-
-  //   fetchFileContent();
-  // }, []);
-
   //export editing cavas as a pdf
   const exportPDF = async (): Promise<void> => {
     const doc = document.querySelector("#singlePageExport") as HTMLElement | null;
@@ -446,7 +409,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   };
 
-  //textbox
+  //add textbox
   const addText = (
     canvi: fabric.Canvas,
     startLeft: number,
@@ -471,7 +434,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     textboxGroup.addToCanvas();
   };
 
-  //checkbox
+  //add checkbox
   const addCheckbox = (
     canvi: fabric.Canvas,
     startLeft: number,
@@ -486,6 +449,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       1,
       activeRecipient,
       signMode,
+      onlyMyself,
       setShowCheckboxSettingForm,
       removeCanvasObject,
     ); // Initialize with 1 checkboxes
@@ -495,7 +459,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     checkboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
-  //radiobox
+  //add radiobox
   const addRadiobox = (
     canvi: fabric.Canvas,
     startLeft: number,
@@ -520,7 +484,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
-  //dropdownbox
+  //add dropdownbox
   const addDropdownbox = (
     canvi: fabric.Canvas,
     startLeft: number,
@@ -546,7 +510,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
-  //datebox
+  //add datebox
   const addDatebox = (
     canvi: fabric.Canvas,
     startLeft: number,
@@ -572,7 +536,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     radioboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
-  //initialsbox
+  //add initialsbox
   const addInitialsbox = (
     canvi: fabric.Canvas,
     startLeft: number,
@@ -605,7 +569,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       brush.width = strokeWidth;
     }
   };
-
+  // save document as a draft or template
   const handleSaveDoc = async (data:AdvancedData, status:string=DOC_STATUS.draft) => {
     if(canvasObjects.length > 0) {
       const canvas2JsonData:object[] = [];
@@ -653,30 +617,38 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     }
   }
 
+  // restore document from database to canvas
   const handleRestoreDoc = () => {
     if(!canvas) return;
-    console.log(docData);
-    const uid = uuidv4();
+    console.log(docData.canvas);
     if(docData.canvas.length > 0) {
-      const textboxGroup = new TextboxManager(
-        docData.uid,
-        canvas,
-        docData.canvas[0].containerLeft,
-        docData.canvas[0].containerTop,
-        docData.canvas[0].recipient,
-        signMode,
-        onlyMyself,
-        setShowTextboxSettingForm,
-        controlSVGFile,
-        removeCanvasObject,
-        docData.canvas[0]
-      ); // Initialize with 1 checkboxes
-
-      setCanvasObjects([...canvasObjects, { uid, object: textboxGroup }]);
-
-      textboxGroup.restoreToCanvas();
+      docData.canvas.forEach( item => {
+        switch (item.controlType) {
+          case canvasObject.textbox:
+            const textboxGroup = new TextboxManager(
+              item.uid,
+              canvas,
+              item.containerLeft,
+              item.containerTop,
+              item.recipient,
+              signMode,
+              onlyMyself,
+              setShowTextboxSettingForm,
+              controlSVGFile,
+              removeCanvasObject,
+              item as TextboxObject
+            ); // Initialize with 1 checkboxes
+      
+            setCanvasObjects([...canvasObjects, { uid: item.uid, object: textboxGroup }]);
+      
+            textboxGroup.restoreToCanvas();
+            break;
+        
+          default:
+            break;
+        }
+      })
     }
-
   };
   // if canvas object exists in document data, it'll be restored
   useEffect(() => {

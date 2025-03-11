@@ -842,7 +842,6 @@ class DropdownboxManager {
   public removeGroup() {
     // Remove the checkbox group from the canvas
     const activeObject = this.canvi.getActiveObject();
-    console.log(activeObject)
 
     if (activeObject === this.textbox || activeObject === this.iconBorder) {
 

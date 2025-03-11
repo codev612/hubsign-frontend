@@ -224,7 +224,7 @@ export interface BaseCanvasObject {
 export interface TextboxObject extends BaseCanvasObject {
   enteredText: string;
   customPlaceholder: boolean;
-  inconBorder: object;
+  iconBorder: fabric.IRectOptions;
   iconText: object;
   placeholder: string;
   textbox: object;
@@ -234,7 +234,19 @@ export interface TextboxObject extends BaseCanvasObject {
   svgGearGroup: object;
 }
 
-export type CanvasObject = TextboxObject
+export interface CheckboxPosition {
+  left: number;
+  top: number;
+}
+
+export interface CheckboxObject extends BaseCanvasObject {
+  checkboxesState: boolean[];
+  checkboxPositions: CheckboxPosition[];
+  tickPattern: string;
+  checkedBydefault: boolean;
+}
+
+export type CanvasObject = TextboxObject | CheckboxObject
 
 //document data
 export interface DocData {
@@ -244,14 +256,6 @@ export interface DocData {
   canvas: CanvasObject[];
 }
 
-// "textbox",
-//     "arrow_bottom",
-//     "date",
-//     "calendar",
-//     "gear",
-//     "dropdown",
-//     "initials",
-//canvas control icon file
 export interface ControlSVGFile {
   textbox: string;
   arrow_bottom: string;
