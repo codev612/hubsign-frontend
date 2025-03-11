@@ -34,6 +34,10 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
     showCheckboxSettingForm.value.required,
   );
 
+  useEffect(() => {
+    console.log(checkDefaultTick)
+  }, [checkDefaultTick])
+
   return (
     <div
       className="absolute bg-white p-5 rounded-lg shadow-lg flex flex-col w-[260] gap-2 text-text"
@@ -58,8 +62,8 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
         value={checkDefaultTick}
         onChange={(e) => setCheckDefaultTick(e.target.value)}
       >
-        <option key="tick">{`Show as ✔ (Tick)`}</option>
-        <option key="cross">{`Show as ✖ (Cross)`}</option>
+        <option key="tick" value={"tick"}>{`Show as ✔ (Tick)`}</option>
+        <option key="cross" value={"cross"}>{`Show as ✖ (Cross)`}</option>
       </select>
       <Checkbox
         className="text-white"
