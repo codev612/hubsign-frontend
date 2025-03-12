@@ -7,7 +7,7 @@ import {
   updateSvgColors,
 } from "../utils";
 
-import { ControlSVGFile } from "@/interface/interface";
+import { ControlSVGFile, DateboxObject } from "@/interface/interface";
 import {
   canvasControlMinHeight,
   canvasControlMinWidth,
@@ -49,7 +49,8 @@ class DateboxManager {
   private svgGearGroup: fabric.Object = new fabric.Object();
   private calendarIcon: fabric.Object;
   private leftPadding: number = 10;
-  private removeCanvasObject: (uid:string)=>void
+  private removeCanvasObject: (uid:string)=>void;
+  private jsonData?: DateboxObject;
 
   constructor(
     uid: string,
@@ -63,6 +64,7 @@ class DateboxManager {
     setShowCalendarForm: React.Dispatch<React.SetStateAction<any>>,
     controlSVGFile: ControlSVGFile,
     removeCanvasObject: (uid:string)=>void,
+    jsonData?: DateboxObject,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -85,6 +87,18 @@ class DateboxManager {
     this.textbox = new fabric.Textbox("");
     this.border = new fabric.Rect();
     this.calendarIcon = new fabric.Object();
+
+    this.jsonData = jsonData;
+
+    if(this.jsonData) {
+      this.formatedDate = this.jsonData.formatedDate;
+      this.format = this.jsonData.format;
+      this.selectedDate = new Date(this.jsonData.selectedDate);
+      this.recipient = this.jsonData.recipient;
+      this.required = this.jsonData.required;
+      this.placeholder = this.jsonData.placeholder;
+      this.lockedToday = this.jsonData.lockedToday;
+    }
 
     this.tracktextboxGroup();
     this.setupDeleteKeyHandler()
@@ -123,7 +137,8 @@ class DateboxManager {
           rx: 10,
           ry: 10,
           fill: hexToRgba(this.color, 0.1),
-          stroke: hexToRgba(this.color, 1),
+          stroke: hexToRgba(this.color, 1),cornerStyle: "circle",
+          transparentCorners: false,
         });
 
         this.iconText = new fabric.Text("Date", {
@@ -168,7 +183,9 @@ class DateboxManager {
 
         this.canvi.add(this.svgGearGroup);
       });
+
     } else {
+
       const svgString = this.controlSVGFile.calendar;
       const updatedSvgString = updateSvgColors(
         svgString,
@@ -180,6 +197,8 @@ class DateboxManager {
       fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
         this.calendarIcon = fabric.util.groupSVGElements(objects, options);
         (this.calendarIcon as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        
+        
         this.calendarIcon.set({
           left: this.containerLeft + 200 - this.leftPadding,
           top: this.containerTop + 6,
@@ -243,6 +262,168 @@ class DateboxManager {
           this.svgGearGroup.set({
             left: this.textbox.left! + 200 + 15,
             top: this.textbox.top! + (32 - 24) / 2,
+            selectable: false,
+            evented: true,
+          });
+
+          this.svgGearGroup.scaleToWidth(20);
+          this.svgGearGroup.scaleToHeight(20);
+
+          this.svgGearGroup.on("mousedown", () => {
+            this.showShowSettingForm();
+          });
+
+          this.canvi.add(this.svgGearGroup);
+        });
+      }
+
+      this.tracktextboxGroup();
+
+      this.canvi.add(this.border, this.textbox);
+    }
+
+    this.canvi.renderAll();
+  }
+
+  public restoreToCanvas() {
+    this.containerTop = this.currentTop;
+
+    if (!this.signMode && !this.onlyMyself) {
+      const svgString = this.controlSVGFile.date;
+      const updatedSvgString = updateSvgColors(
+        svgString,
+        hexToRgba(this.color, 0.1),
+        hexToRgba(this.color, 1),
+      );
+
+      // Load SVG into Fabric.js
+      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+        if (this.svgGroup) {
+          this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+        }
+
+        this.svgGroup = fabric.util.groupSVGElements(objects, options);
+        (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+
+        this.iconBorder = new fabric.Rect({...this.jsonData?.iconBorder,
+          cornerStyle: "circle",
+          transparentCorners: false,
+        });
+
+        this.svgGroup.set({
+          left: this.iconBorder.left! +
+          (this.iconBorder.getScaledWidth() / 2 - 24 - 8),
+          top: this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 24) / 2,
+          selectable: false,
+        });
+
+        this.iconText = new fabric.Text("Date", {
+          fontSize: 18,
+          fontFamily: "Gothic",
+          left: this.iconBorder.left! + this.iconBorder.getScaledWidth() / 2,
+          top: this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 18) / 2,
+          selectable: false,
+        });
+
+        this.trackIconGroup();
+        this.canvi.add(this.svgGroup, this.iconBorder, this.iconText);
+      });
+
+      const svgGearString = this.controlSVGFile.gear;
+      const updatedSvgGearString = updateSvgColors(
+        svgGearString,
+        hexToRgba(this.color, 1),
+        hexToRgba(this.color, 1),
+      );
+
+      fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+        if (this.svgGearGroup) {
+          this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
+        }
+
+        this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+        (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        this.svgGearGroup.set({
+          left: this.iconBorder.left! + this.iconBorder.getScaledWidth() + 8,
+          top: this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 24) / 2,
+          selectable: false,
+          evented: true,
+        });
+
+        this.svgGearGroup.scaleToWidth(20);
+        this.svgGearGroup.scaleToHeight(20);
+
+        this.svgGearGroup.on("mousedown", () => {
+          this.showShowSettingForm();
+        });
+
+        this.canvi.add(this.svgGearGroup);
+      });
+
+    } else {
+
+      this.border = new fabric.Rect({
+        ...this.jsonData?.border,
+        evented: true,
+        selectable: false,
+      });
+
+      const svgString = this.controlSVGFile.calendar;
+      const updatedSvgString = updateSvgColors(
+        svgString,
+        hexToRgba(this.color, 0.05),
+        hexToRgba(this.color, 1),
+      );
+
+      // Create the textbox
+      this.textbox = new fabric.Textbox(
+        this.formatedDate === "" ? this.placeholder : this.formatedDate,
+        {
+          ...this.jsonData?.textbox, 
+          padding: this.leftPadding,
+          evented: true,
+          cornerStyle: "circle",
+          transparentCorners: false,
+        }
+      );
+
+      // Load SVG into Fabric.js
+      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+        this.calendarIcon = fabric.util.groupSVGElements(objects, options);
+        (this.calendarIcon as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        
+        this.calendarIcon.set({
+          left: this.textbox.left! +
+          this.textbox.width! * this.textbox.scaleX! -
+          this.leftPadding,
+          top: this.textbox.top! +
+          (this.textbox.height! / 2) * this.textbox.scaleY! -
+          this.calendarIcon.height! / 2,
+          selectable: false,
+        });
+
+        this.canvi.add(this.calendarIcon);
+      });
+
+      if (this.onlyMyself) {
+        const svgGearString = this.controlSVGFile.gear;
+        const updatedSvgGearString = updateSvgColors(
+          svgGearString,
+          hexToRgba(this.color, 1),
+          hexToRgba(this.color, 1),
+        );
+
+        fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+          if (this.svgGearGroup) {
+            this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
+          }
+
+          this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+          (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg =
+            true;
+          this.svgGearGroup.set({
+            left: this.textbox.left! + this.textbox.getScaledWidth() + 15,
+            top: this.textbox.top! + (this.textbox.getScaledHeight() - 24) / 2,
             selectable: false,
             evented: true,
           });
@@ -469,7 +650,7 @@ class DateboxManager {
       this.iconText.set({
         left: this.iconBorder.left! + this.iconBorder.getScaledWidth() / 2,
         top:
-          this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 24) / 2,
+          this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 18) / 2,
       });
 
       const svgGearString = this.controlSVGFile.gear;
@@ -547,7 +728,7 @@ class DateboxManager {
       this.iconText.set({
         left: this.iconBorder.left! + this.iconBorder.getScaledWidth() / 2,
         top:
-          this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 24) / 2,
+          this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 18) / 2,
       });
 
       this.svgGearGroup.set({
@@ -601,7 +782,7 @@ class DateboxManager {
 
       this.iconText.set({
         left: this.containerLeft + this.iconBorder.getScaledWidth() / 2,
-        top: this.containerTop + (this.iconBorder.getScaledHeight() - 24) / 2,
+        top: this.containerTop + (this.iconBorder.getScaledHeight() - 18) / 2,
       });
 
       this.svgGearGroup.set({

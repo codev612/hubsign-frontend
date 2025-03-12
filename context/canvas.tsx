@@ -34,6 +34,7 @@ import {
   TextboxObject,
   CheckboxObject,
   DropDownBoxObject,
+  DateboxObject,
 } from "@/interface/interface";
 import { pageWidth, pageHeight, canvasObject } from "@/constants/canvas";
 import { DOC_STATUS, INPROGRESS } from "@/constants/document";
@@ -682,7 +683,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
               item.containerLeft,
               item.containerTop,
               1,
-              activeRecipient,
+              item.recipient,
               signMode,
               onlyMyself,
               setShowRadioboxSettingForm,
@@ -704,7 +705,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
               canvas,
               item.containerLeft,
               item.containerTop,
-              activeRecipient,
+              item.recipient,
               signMode,
               onlyMyself,
               setShowDropdownboxSettingForm,
@@ -726,13 +727,14 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
               canvas,
               item.containerLeft,
               item.containerTop,
-              activeRecipient,
+              item.recipient,
               signMode,
               onlyMyself,
               setShowDateboxSettingForm,
               setShowDateboxCalendarForm,
               controlSVGFile,
               removeCanvasObject,
+              item as DateboxObject
             ); // Initialize with 1 checkboxes
         
             setCanvasObjects((prevObjects) => [
@@ -740,7 +742,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
               { uid: item.uid, object: dateboxGroup }
             ]);
         
-            dateboxGroup.addToCanvas();
+            dateboxGroup.restoreToCanvas();
             break;
           case canvasObject.initialbox:
             const initialboxGroup = new InitialsboxManager(
@@ -748,7 +750,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
               canvas,
               item.containerLeft,
               item.containerTop,
-              activeRecipient,
+              item.recipient,
               signMode,
               setShowInitialsboxSettingForm,
               controlSVGFile,

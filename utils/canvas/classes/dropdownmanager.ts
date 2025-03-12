@@ -97,6 +97,8 @@ class DropdownboxManager {
 
       this.selectedItem = this.jsonData.selectedItem;
       this.dropdownItems = this.jsonData.dropdownItems;
+
+      this.color = generateColorForRecipient(recipient);
     }
 
     this.tracktextboxGroup();
@@ -137,6 +139,8 @@ class DropdownboxManager {
           ry: 10,
           fill: hexToRgba(this.color, 0.1),
           stroke: hexToRgba(this.color, 1),
+          cornerStyle: "circle",
+          transparentCorners: false,
         });
 
         this.iconText = new fabric.Text("Dropdown", {

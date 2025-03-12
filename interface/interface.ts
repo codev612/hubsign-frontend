@@ -270,7 +270,21 @@ export interface DropDownBoxObject extends BaseCanvasObject {
   arrowBottom: object;
 }
 
-export type CanvasObject = TextboxObject | CheckboxObject | RadioboxObject | DropDownBoxObject
+export interface DateboxObject extends BaseCanvasObject {
+  border: object;
+  valueBorder: object;
+  textbox: object;
+  svgGroup: object;
+  svgGearGroup: object;
+  selectedDate: string;
+  placeholder: string;
+  iconBorder: object;
+  iconText: object;
+  lockedToday: boolean;
+  formatedDate: string;
+}
+
+export type CanvasObject = TextboxObject | CheckboxObject | RadioboxObject | DropDownBoxObject | DateboxObject
 
 //document data
 export interface DocData {

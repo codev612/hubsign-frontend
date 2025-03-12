@@ -131,6 +131,8 @@ class TextboxManager {
           stroke: hexToRgba(this.color, 1),
           strokeDashArray: undefined,
           shadow: undefined,
+          cornerStyle: "circle",
+          transparentCorners: false,
         });
 
         this.iconText = new fabric.Text("Text", {
@@ -541,7 +543,10 @@ class TextboxManager {
       // Load SVG into Fabric.js
       fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
 
-        this.iconBorder = new fabric.Rect(this.jsonData?.iconBorder);
+        this.iconBorder = new fabric.Rect({...this.jsonData?.iconBorder, 
+          cornerStyle: "circle",
+          transparentCorners: false,
+        });
 
         this.iconText = new fabric.Text("Text", {
           fontSize: 18,
