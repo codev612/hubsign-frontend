@@ -14,8 +14,8 @@ import Recipients from "../../adddoc/recipients";
 import { useUser } from "@/context/user";
 
 interface Activity {
-    name: string;
-    action: string;
+  username: string;
+  action: string;
 }
 
 interface DocData {

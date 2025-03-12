@@ -152,7 +152,6 @@ class InitialsboxManager {
   }
 
   public restoreToCanvas() {
-    console.log(this.initialImage)
     if(this.initialImage === "") {
       console.log('123')
       this.containerTop = this.currentTop;
@@ -595,8 +594,6 @@ class InitialsboxManager {
     let prevLeft = this.containerLeft;
     let prevTop = this.containerTop;
 
-    console.log(this.width, this.height)
-
     if (this.iconBorder) {
       this.canvi.remove(this.iconBorder);
     }
@@ -657,10 +654,8 @@ class InitialsboxManager {
         scaleY:1,
       });
 
-      this.svgGroup.scaleToHeight(this.height);
-      this.svgGroup.scaleToWidth(this.width);
-
-      console.log(this.svgGroup.width, this.svgGroup.height, this.svgGroup.left);
+      // this.svgGroup.scaleToHeight(this.height);
+      // this.svgGroup.scaleToWidth(this.width);
 
       this.signImage = img;
       this.trackIconGroup();
@@ -698,7 +693,7 @@ class InitialsboxManager {
     // Remove the checkbox group from the canvas
     const activeObject = this.canvi.getActiveObject();
     
-    if (activeObject === this.textbox || activeObject === this.iconBorder || this.svgGroup) {
+    if (activeObject === this.textbox || activeObject === this.iconBorder || activeObject === this.svgGroup) {
       this.canvi.remove(
         this.svgGroup, 
         this.svgGearGroup, 

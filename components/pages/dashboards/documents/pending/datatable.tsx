@@ -39,6 +39,7 @@ import { DOC_STATUS } from "@/constants/document";
 import ConfirmModal from "./deleteconfirm";
 import SaveTempModal from "../savetemplate";
 import { useRouter } from "next/navigation";
+import ManyConfirmModal from "./deletemanyconfirm";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -96,6 +97,7 @@ export default function DataTable() {
   const [page, setPage] = React.useState(1);
 
   const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
+  const [deleteManyConfirm, setDeleteManyConfirm] = useState<boolean>(false);
 
   // for using when deleting, saving as template, and etc
   const [selectedItem, setSelectedItem] = useState<string>("");
@@ -112,11 +114,17 @@ export default function DataTable() {
     sentAt: "",
     activity: [],
     signingOrder: false,
+    createdAt: "",
+    updatedAt: "",
   });
 
+  const [copyItems, setCopyItems] = useState<string[]>([]);
+  const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
+
   interface Activity {
-    name: string;
+    username: string;
     action: string;
+    at: string;
   }
 
   interface DocData {
@@ -130,15 +138,22 @@ export default function DataTable() {
     sentAt: string;
     activity: Activity[];
     signingOrder: boolean;
+    createdAt: string;
+    updatedAt: string;
   }
-
-  
 
   const {
     isOpen: isDeleteConfirmOpen,
     onClose: closeDeleteConfirm,
     onOpen: onDeleteConfirmOpen,
     onOpenChange: onDeleteConfirmOpenChange,
+  } = useDisclosure();// for delete confirm modal
+
+  const {
+    isOpen: isDeleteManyConfirmOpen,
+    onClose: closeDeleteManyConfirm,
+    onOpen: onDeleteManyConfirmOpen,
+    onOpenChange: onDeleteManyConfirmOpenChange,
   } = useDisclosure();// for delete confirm modal
 
   const {
@@ -239,6 +254,36 @@ export default function DataTable() {
     setPage(1);
   }, []);
 
+  const handlePasteItems = async () => {
+    console.log(copyItems);
+    if(copyItems.length > 0) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/copy`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
+          body: JSON.stringify(copyItems),
+        });
+
+        if(!response.ok) {
+          return;
+        }
+
+        const json = await response.json();
+        console.log(json);
+
+         // Append new pasted items to existing docData
+        setDocData((prevDocData) => [...prevDocData, ...json]);
+
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    }
+  }
+
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-1">
@@ -295,18 +340,22 @@ export default function DataTable() {
             <Button
               startContent={<ContentCopyOutlinedIcon />}
               variant="bordered"
+              onPress={()=>setCopyItems(selectedIDs)}
             >
               Copy
             </Button>
             <Button
               startContent={<ContentPasteOutlinedIcon />}
               variant="bordered"
+              onPress={()=>handlePasteItems()}
             >
               Paste
             </Button>
             <Button
               startContent={<DeleteForeverOutlinedIcon />}
               variant="bordered"
+              // onPress={()=>handleMayDelete()}
+              onPress={()=>onDeleteManyConfirmOpen()}
             >
               Delete
             </Button>
@@ -348,6 +397,8 @@ export default function DataTable() {
     onRowsPerPageChange,
     users.length,
     hasSearchFilter,
+    copyItems,
+    selectedIDs,
   ]);
 
   const bottomContent = React.useMemo(() => {
@@ -410,7 +461,6 @@ export default function DataTable() {
 
   // delete one document
   const handleDelete = async () => {
-    console.log('delete')
     try {
       if(deleteConfirm && selectedItem) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/${selectedItem}`, {
@@ -441,6 +491,39 @@ export default function DataTable() {
       return;
     }
   };
+
+  const handleManyDelete = async () => {
+    if(selectedIDs.length > 0) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/delete`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
+          body: JSON.stringify(selectedIDs),
+        });
+
+        setDeleteManyConfirm(false);
+
+        if(!response.ok) {
+          return;
+        }
+
+        const json = await response.json();
+        console.log(json);
+        // Update state: Remove deleted items from docData
+        setDocData((prevDocData) => prevDocData.filter((item) => !selectedIDs.includes(item.uid)));
+        // clear selection after deletion
+        setSelectedIDs([]);
+        closeDeleteManyConfirm();
+
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    }
+  }
 
   const handleSelectItem = (id:string) => {
     setSelectedItem(id);
@@ -483,6 +566,30 @@ export default function DataTable() {
     }
   },[deleteConfirm])
 
+  useEffect(() => {
+    console.log(deleteManyConfirm)
+    if(deleteManyConfirm) {
+      handleManyDelete();
+    }
+  },[deleteManyConfirm])
+
+  useEffect(() => {
+    if (selectedKeys === "all") {
+      const selectedIds = docData.map((item) => item.uid);
+      setSelectedIDs(selectedIds);
+    } else {
+      const selectedIds = Array.from(selectedKeys)
+        .map((key) => {
+          const item = docData.find((d) => d.uid === key);
+
+          return item ? item.uid : null; // This could still yield null
+        })
+        .filter(Boolean) as string[]; // Ensure the filter returns only strings
+
+      setSelectedIDs(selectedIds);
+    }
+  }, [selectedKeys, docData])
+
   return (
     <>
       <ConfirmModal 
@@ -490,6 +597,13 @@ export default function DataTable() {
       onOpenChange={onDeleteConfirmOpenChange}
       action={setDeleteConfirm}
       />
+
+      <ManyConfirmModal 
+      isOpen={isDeleteManyConfirmOpen}
+      onOpenChange={onDeleteManyConfirmOpenChange}
+      action={setDeleteManyConfirm}
+      />
+
       <SaveTempModal 
       isOpen={isSaveTempOpen}
       onOpenChange={onSaveTempChange}
@@ -550,7 +664,7 @@ export default function DataTable() {
                   color={`${generateColorForRecipient(r.email)}`} 
                   name={r.name} 
                   size={28} 
-                  signed={true} 
+                  signed={item.status===DOC_STATUS.completed ? true : false} 
                   />)}
                 </div>
               </TableCell>
@@ -561,7 +675,8 @@ export default function DataTable() {
                 </div>
               </TableCell>
               <TableCell>
-                {item.activity.length > 0 && `${item.activity[0].action!} by ${item.activity[0].name!}`}
+                <p className="text-text text-medium">{item.activity.length > 0 && `${item.activity[item.activity.length-1].action!} by ${item.activity[item.activity.length-1].username!}`}</p>
+                <p className="text-placeholder text-small">{`${formatDateTime(item.createdAt).formattedDate} ${formatDateTime(item.createdAt).formattedTime}`}</p>
               </TableCell>
               <TableCell>
                 <div className="relative flex justify-end items-center text-text gap-2">
@@ -580,7 +695,13 @@ export default function DataTable() {
                         startContent={<EditOutlinedIcon />}
                         onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
                       >Edit</DropdownItem>
-                      <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
+                      <DropdownItem 
+                      key="copy" 
+                      startContent={<ContentCopyOutlinedIcon />}
+                      onPress={()=>setCopyItems([item.uid])}
+                      >
+                        Copy
+                      </DropdownItem>
                       <DropdownItem 
                       key="save" 
                       startContent={<PostAddOutlinedIcon />}
@@ -603,7 +724,13 @@ export default function DataTable() {
                     {item.status!==DOC_STATUS.draft && <DropdownMenu>
                       <DropdownItem key="reminder" startContent={<EmailOutlinedIcon />}>Send Reminder</DropdownItem>
                       <DropdownItem key="history" startContent={<AccessTimeOutlinedIcon />}>Actions history</DropdownItem>
-                      <DropdownItem key="copy" startContent={<ContentCopyOutlinedIcon />}>Copy</DropdownItem>
+                      <DropdownItem 
+                      key="copy" 
+                      startContent={<ContentCopyOutlinedIcon />}
+                      onPress={()=>setCopyItems([item.uid])}
+                      >
+                        Copy
+                      </DropdownItem>
                       <DropdownItem 
                       key="save" 
                       startContent={<PostAddOutlinedIcon />}
