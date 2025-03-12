@@ -7,8 +7,10 @@ import {
 } from "@heroui/react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-
 import { UserAvatarProps } from "@/interface/interface";
+import Avatar from "./avatar";
+import { generateColorForRecipient } from "@/utils/canvas/utils";
+import Button from "@heroui/react";
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
   username = "",
@@ -50,7 +52,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       </Dropdown> */}
       <Dropdown placement="bottom-start">
         <DropdownTrigger>
-          <User
+          {/* <User
             as="button"
             // avatarProps={{
             //   isBordered: true,
@@ -59,7 +61,16 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
             className="transition-transform"
             description={email}
             name={username}
-          />
+          /> */}
+          <button className="px-4 py-2 rounded focus:outline-none">
+            <div className="flex flex-row gap-2">
+              <Avatar name={username} color={generateColorForRecipient(email)} signed={false} />
+              <div className="flex flex-col items-start">
+                <p className="title-small">{username}</p>
+                <p className="text-text text-small">{"plan name"}</p>
+              </div>
+            </div>
+          </button>
         </DropdownTrigger>
         <DropdownMenu aria-label="User Actions" variant="flat">
           {/* <DropdownItem key="profile" className="h-14 gap-2">

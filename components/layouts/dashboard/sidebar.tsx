@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { Logo } from "@/components/icons";
 import UserAvatar from "@/components/ui/user";
 import { useUser } from "@/context/user";
+import Avatar from "@/components/ui/avatar";
 
 const items = [
   {
@@ -54,6 +55,7 @@ const Sidebar = () => {
           email={userContextValues.userData.email}
           username={`${userContextValues.userData.firstname} ${userContextValues.userData.lastname}`}
         />
+        {/* <Avatar /> */}
       </div>
       <Snippet
         hideCopyButton
