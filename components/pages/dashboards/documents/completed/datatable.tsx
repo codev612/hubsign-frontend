@@ -15,12 +15,8 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  User,
   Pagination,
   Selection,
-  ChipProps,
-  SortDescriptor,
-  Chip,
 } from "@heroui/react";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
@@ -29,7 +25,8 @@ import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import { PlusIcon, VerticalDotsIcon, SearchIcon, ChevronDownIcon, HorizontalDotsIcon } from "@/constants/table";
+import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
+import { SearchIcon, ChevronDownIcon, HorizontalDotsIcon } from "@/constants/table";
 import Cookies from "js-cookie";
 import Dot from "@/components/ui/dot";
 import Avatar from "@/components/ui/avatar";
@@ -41,7 +38,6 @@ import SaveTempModal from "../savetemplate";
 import { useRouter } from "next/navigation";
 import ManyConfirmModal from "./deletemanyconfirm";
 import EmptyItems from "../../emptyitems";
-import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
@@ -173,7 +169,7 @@ export default function DataTable() {
   useEffect(() => {
     const fetchData = async() => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/pending`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/completed`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -598,188 +594,188 @@ export default function DataTable() {
     }
   }, [selectedKeys, docData])
 
-  return (
-    <>
-      <ConfirmModal 
-      isOpen={isDeleteConfirmOpen}
-      onOpenChange={onDeleteConfirmOpenChange}
-      action={setDeleteConfirm}
-      />
-
-      <ManyConfirmModal 
-      isOpen={isDeleteManyConfirmOpen}
-      onOpenChange={onDeleteManyConfirmOpenChange}
-      action={setDeleteManyConfirm}
-      />
-
-      <SaveTempModal 
-      isOpen={isSaveTempOpen}
-      onOpenChange={onSaveTempChange}
-      action={handleSaveTemp}
-      selectedItemData={selectedItemData}
-      />
-      <Table
-        // isHeaderSticky
-        aria-label="Example table with custom cells, pagination and sorting"
-        bottomContent={bottomContent}
-        bottomContentPlacement="outside"
-        checkboxesProps={{
-          classNames: {
-            wrapper: "after:bg-link after:text-background text-white",
-          },
-        }}
-        classNames={classNames}
-        selectedKeys={selectedKeys}
-        selectionMode="multiple"
-        shadow="none"
-        // sortDescriptor={sortDescriptor}
-        topContent={topContent}
-        topContentPlacement="outside"
-        onSelectionChange={setSelectedKeys}
-        hideHeader={docData.length > 0 ? false : true}
-      >
-        <TableHeader columns={headerColumns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-              allowsSorting={column.sortable}
-              className="text-text"
-            >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody 
-        emptyContent={
-        filterValue==="" ? <EmptyItems 
-          icon={<TextSnippetOutlinedIcon color="primary" fontSize="large" />} 
-          title="Start here - sign your first document" 
-          description="Create your first document" 
-          button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>router.push('/adddoc')}>New Document</Button>} 
-          />:
-          <EmptyItems 
-          icon={<SearchOutlinedIcon color="primary" fontSize="large" />} 
-          title="No documents found" 
-          description="Try editing your search term or filters" 
-          button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 
+    return (
+        <>
+          <ConfirmModal 
+          isOpen={isDeleteConfirmOpen}
+          onOpenChange={onDeleteConfirmOpenChange}
+          action={setDeleteConfirm}
           />
-        }
-        items={filteredItems}
-        >
-          {(item) => (
-            <TableRow key={item.uid}>
-              <TableCell>
-                <div className="flex flex-col">
-                  <p className="text-text text-medium">{item.name}</p>
-                  <p className="text-placeholder text-small">{`Created by ${item.owner}`}</p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-row gap-1" >
-                  <Dot color={`${statusColorMap(item.status)}`} size="7px" />
-                  <span style={{color:`${statusColorMap(item.status)}`}}>{item.status}</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-row">
-                  {item.recipients.length > 0 && item.recipients.map((r,i) => 
-                  <Avatar 
-                  key={i} 
-                  color={`${generateColorForRecipient(r.email)}`} 
-                  name={r.name} 
-                  size={28} 
-                  signed={item.status===DOC_STATUS.completed ? true : false} 
-                  />)}
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-col">
-                  <p className="text-text text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
-                  <p className="text-placeholder">{formatDateTime(item.sentAt).formattedTime}</p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <p className="text-text text-medium">{item.activity.length > 0 && `${item.activity[item.activity.length-1].action!} by ${item.activity[item.activity.length-1].username!}`}</p>
-                <p className="text-placeholder text-small">{`${formatDateTime(item.createdAt).formattedDate} ${formatDateTime(item.createdAt).formattedTime}`}</p>
-              </TableCell>
-              <TableCell>
-                <div className="relative flex justify-end items-center text-text gap-2">
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <button  
-                      className="border-1 rounded-md"
-                      onClick={()=>handleSelectItem(item.uid)}>
-                        {/* <VerticalDotsIcon className="text-default-300" /> */}
-                        <HorizontalDotsIcon className="text-default-300"/>
-                      </button>
-                    </DropdownTrigger>
-                    {item.status===DOC_STATUS.draft && <DropdownMenu>
-                      <DropdownItem 
-                        key="edit" 
-                        startContent={<EditOutlinedIcon />}
-                        onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
-                      >Edit</DropdownItem>
-                      <DropdownItem 
-                      key="copy" 
-                      startContent={<ContentCopyOutlinedIcon />}
-                      onPress={()=>setCopyItems([item.uid])}
-                      >
-                        Copy
-                      </DropdownItem>
-                      <DropdownItem 
-                      key="save" 
-                      startContent={<PostAddOutlinedIcon />}
-                      onPress={()=>{
-                        onSaveTempOpen();
-                      }}
-                      >
-                        Save as Template
-                      </DropdownItem>
-                      <DropdownItem 
-                      key="delete" 
-                      startContent={<DeleteForeverOutlinedIcon />} 
-                      onPress={()=>{
-                        onDeleteConfirmOpen();
-                      }}
-                      >
-                        Delete
-                      </DropdownItem>
-                    </DropdownMenu>}
-                    {item.status!==DOC_STATUS.draft && <DropdownMenu>
-                      <DropdownItem key="reminder" startContent={<EmailOutlinedIcon />}>Send Reminder</DropdownItem>
-                      <DropdownItem key="history" startContent={<AccessTimeOutlinedIcon />}>Actions history</DropdownItem>
-                      <DropdownItem 
-                      key="copy" 
-                      startContent={<ContentCopyOutlinedIcon />}
-                      onPress={()=>setCopyItems([item.uid])}
-                      >
-                        Copy
-                      </DropdownItem>
-                      <DropdownItem 
-                      key="save" 
-                      startContent={<PostAddOutlinedIcon />}
-                      onPress={()=>{
-                        onSaveTempOpen();
-                      }}
-                      >Save as Template</DropdownItem>
-                      <DropdownItem 
-                      key="delete" 
-                      startContent={<DeleteForeverOutlinedIcon />} 
-                      onPress={()=>{
-                        onDeleteConfirmOpen();
-                      }}
-                      >
-                        Delete
-                      </DropdownItem>
-                    </DropdownMenu>}
-                  </Dropdown>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </>
-  );
+    
+          <ManyConfirmModal 
+          isOpen={isDeleteManyConfirmOpen}
+          onOpenChange={onDeleteManyConfirmOpenChange}
+          action={setDeleteManyConfirm}
+          />
+    
+          <SaveTempModal 
+          isOpen={isSaveTempOpen}
+          onOpenChange={onSaveTempChange}
+          action={handleSaveTemp}
+          selectedItemData={selectedItemData}
+          />
+          <Table
+            // isHeaderSticky
+            aria-label="Example table with custom cells, pagination and sorting"
+            bottomContent={bottomContent}
+            bottomContentPlacement="outside"
+            checkboxesProps={{
+              classNames: {
+                wrapper: "after:bg-link after:text-background text-white",
+              },
+            }}
+            classNames={classNames}
+            selectedKeys={selectedKeys}
+            selectionMode="multiple"
+            shadow="none"
+            // sortDescriptor={sortDescriptor}
+            topContent={topContent}
+            topContentPlacement="outside"
+            onSelectionChange={setSelectedKeys}
+            hideHeader={ docData.length > 0 ? false : true }
+          >
+            <TableHeader columns={headerColumns}>
+              {(column) => (
+                <TableColumn
+                  key={column.uid}
+                  align={column.uid === "actions" ? "center" : "start"}
+                  allowsSorting={column.sortable}
+                  className="text-text"
+                >
+                  {column.name}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody 
+                emptyContent={
+                filterValue==="" ? <EmptyItems 
+                icon={<TextSnippetOutlinedIcon color="primary" fontSize="large" />} 
+                title="Start here - sign your first document" 
+                description="Create your first document" 
+                button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>router.push('/adddoc')}>New Document</Button>} 
+                />:
+                <EmptyItems 
+                icon={<SearchOutlinedIcon color="primary" fontSize="large" />} 
+                title="No documents found" 
+                description="Try editing your search term or filters" 
+                button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 
+                />
+                }
+                items={filteredItems}
+            >
+              {(item) => (
+                <TableRow key={item.uid}>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <p className="text-text text-medium">{item.name}</p>
+                      <p className="text-placeholder text-small">{`Created by ${item.owner}`}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-row gap-1" >
+                      <Dot color={`${statusColorMap(item.status)}`} size="7px" />
+                      <span style={{color:`${statusColorMap(item.status)}`}}>{item.status}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-row">
+                      {item.recipients.length > 0 && item.recipients.map((r,i) => 
+                      <Avatar 
+                      key={i} 
+                      color={`${generateColorForRecipient(r.email)}`} 
+                      name={r.name} 
+                      size={28} 
+                      signed={item.status===DOC_STATUS.completed ? true : false} 
+                      />)}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <p className="text-text text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
+                      <p className="text-placeholder">{formatDateTime(item.sentAt).formattedTime}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <p className="text-text text-medium">{item.activity.length > 0 && `${item.activity[item.activity.length-1].action!} by ${item.activity[item.activity.length-1].username!}`}</p>
+                    <p className="text-placeholder text-small">{`${formatDateTime(item.createdAt).formattedDate} ${formatDateTime(item.createdAt).formattedTime}`}</p>
+                  </TableCell>
+                  <TableCell>
+                    <div className="relative flex justify-end items-center text-text gap-2">
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <button  
+                          className="border-1 rounded-md"
+                          onClick={()=>handleSelectItem(item.uid)}>
+                            {/* <VerticalDotsIcon className="text-default-300" /> */}
+                            <HorizontalDotsIcon className="text-default-300"/>
+                          </button>
+                        </DropdownTrigger>
+                        {item.status===DOC_STATUS.draft && <DropdownMenu>
+                          <DropdownItem 
+                            key="edit" 
+                            startContent={<EditOutlinedIcon />}
+                            onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
+                          >Edit</DropdownItem>
+                          <DropdownItem 
+                          key="copy" 
+                          startContent={<ContentCopyOutlinedIcon />}
+                          onPress={()=>setCopyItems([item.uid])}
+                          >
+                            Copy
+                          </DropdownItem>
+                          <DropdownItem 
+                          key="save" 
+                          startContent={<PostAddOutlinedIcon />}
+                          onPress={()=>{
+                            onSaveTempOpen();
+                          }}
+                          >
+                            Save as Template
+                          </DropdownItem>
+                          <DropdownItem 
+                          key="delete" 
+                          startContent={<DeleteForeverOutlinedIcon />} 
+                          onPress={()=>{
+                            onDeleteConfirmOpen();
+                          }}
+                          >
+                            Delete
+                          </DropdownItem>
+                        </DropdownMenu>}
+                        {item.status!==DOC_STATUS.draft && <DropdownMenu>
+                          <DropdownItem key="reminder" startContent={<EmailOutlinedIcon />}>Send Reminder</DropdownItem>
+                          <DropdownItem key="history" startContent={<AccessTimeOutlinedIcon />}>Actions history</DropdownItem>
+                          <DropdownItem 
+                          key="copy" 
+                          startContent={<ContentCopyOutlinedIcon />}
+                          onPress={()=>setCopyItems([item.uid])}
+                          >
+                            Copy
+                          </DropdownItem>
+                          <DropdownItem 
+                          key="save" 
+                          startContent={<PostAddOutlinedIcon />}
+                          onPress={()=>{
+                            onSaveTempOpen();
+                          }}
+                          >Save as Template</DropdownItem>
+                          <DropdownItem 
+                          key="delete" 
+                          startContent={<DeleteForeverOutlinedIcon />} 
+                          onPress={()=>{
+                            onDeleteConfirmOpen();
+                          }}
+                          >
+                            Delete
+                          </DropdownItem>
+                        </DropdownMenu>}
+                      </Dropdown>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </>
+    );
 }

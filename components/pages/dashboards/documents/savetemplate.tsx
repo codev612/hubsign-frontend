@@ -9,14 +9,29 @@ import {
     Button,
     Checkbox,
   } from "@heroui/react";
-  import Cookies from "js-cookie";
-import Recipients from "../../adddoc/recipients";
+import Cookies from "js-cookie";
+import Recipients from "../template/recipients";
 import { useUser } from "@/context/user";
 
 interface Activity {
   username: string;
   action: string;
 }
+
+const roles = [
+  {
+    name: 'sender',
+    email: 'sender'
+  },
+  {
+    name: 'signer',
+    email: 'signer'
+  },
+  {
+    name: 'client',
+    email: 'client'
+  },
+]
 
 interface DocData {
     uid: string;
@@ -48,12 +63,22 @@ const SaveTempModal: React.FC<ModalProps> = ({
     const [tempName, setTempName] = useState<string>("");
     const [recipients, setRecipients] = useState<Recipient[]>([]);
     const [customSigningOrder, setCustomSigningOrder] = useState<boolean>(false);
-    // const [contacts, setContacts] = useState<Recipient[]>(userContextValues.contacts);
+    const [contacts, setContacts] = useState<Recipient[]>(userContextValues.contacts);
+    const [rec2Roles, setRec2Roles] = useState<Recipient[]>([]);
+
     useEffect(() => {
         setTempName(selectedItemData.name)
         setRecipients(selectedItemData.recipients);
         setCustomSigningOrder(selectedItemData.signingOrder);
     }, [selectedItemData])
+
+    useEffect(() => {
+      const roles = recipients.map( item => {
+        return {name:'signer', email:'singer'}
+      });
+      setRec2Roles(roles);
+    }, [recipients])
+
     return (
       <>
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
@@ -86,9 +111,9 @@ const SaveTempModal: React.FC<ModalProps> = ({
                             <Recipients
                             customSigningOrder={customSigningOrder}
                             user={{name:`${userContextValues.userData.firstname} ${userContextValues.userData.lastname}`, email: userContextValues.userData.email}}
-                            contacts={userContextValues.contacts}
-                            recipients={recipients}
-                            setRecipient={setRecipients}
+                            contacts={roles}
+                            recipients={rec2Roles}
+                            setRecipient={setRec2Roles}
                             />
                         </div>
                     </div>
@@ -97,7 +122,7 @@ const SaveTempModal: React.FC<ModalProps> = ({
                   <Button variant="bordered" onPress={onClose}>
                     Close
                   </Button>
-                  <Button color="primary" className="text-forecolor" onPress={()=>action(recipients, tempName, customSigningOrder)}>
+                  <Button color="primary" className="text-forecolor" onPress={()=>action(rec2Roles, tempName, customSigningOrder)}>
                     Save Template
                   </Button>
                 </ModalFooter>

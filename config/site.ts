@@ -62,12 +62,12 @@ export const siteConfig = {
   pagemenu: {
     document: [
       {
-        label: "Completed",
-        link: "/dashboard/documents/completed",
-      },
-      {
         label: "Pending",
         link: "/dashboard/documents/pending",
+      },
+      {
+        label: "Completed",
+        link: "/dashboard/documents/completed",
       },
     ],
   },

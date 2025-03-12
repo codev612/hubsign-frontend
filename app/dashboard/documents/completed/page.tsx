@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 
 import PageMenu from "@/components/layouts/common/pagemenu";
 import { siteConfig } from "@/config/site";
-const DataTable = dynamic(() => import("@/components/ui/datatable"), {
+const DataTable = dynamic(() => import("@/components/pages/dashboards/documents/completed/datatable"), {
   ssr: false,
 });
 // import DataTable from "@/components/common/datatable";
