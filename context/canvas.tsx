@@ -35,6 +35,7 @@ import {
   CheckboxObject,
   DropDownBoxObject,
   DateboxObject,
+  InitialboxObject,
 } from "@/interface/interface";
 import { pageWidth, pageHeight, canvasObject } from "@/constants/canvas";
 import { DOC_STATUS, INPROGRESS } from "@/constants/document";
@@ -755,6 +756,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
               setShowInitialsboxSettingForm,
               controlSVGFile,
               removeCanvasObject,
+              item as InitialboxObject,
             ); // Initialize with 1 checkboxes
         
             setCanvasObjects((prevObjects) => [
@@ -762,7 +764,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
               { uid: item.uid, object: initialboxGroup }
             ]);
         
-            initialboxGroup.addToCanvas();
+            initialboxGroup.restoreToCanvas();
             break;
           default:
             break;

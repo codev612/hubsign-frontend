@@ -1,3 +1,5 @@
+export const canvasControlDefaultWidth = 200;
+export const canvasControlDefaultHeight = 56;
 export const canvasControlMinWidth = 120;
 export const canvasControlMinHeight = 40;
 export const canvasControlRadious = 10;

@@ -284,7 +284,19 @@ export interface DateboxObject extends BaseCanvasObject {
   formatedDate: string;
 }
 
-export type CanvasObject = TextboxObject | CheckboxObject | RadioboxObject | DropDownBoxObject | DateboxObject
+export interface InitialboxObject extends BaseCanvasObject {
+  border: object;
+  textbox: object;
+  svgGroup: object;
+  svgGearGroup: object;
+  signedboxGroup: object;
+  iconBorder: object;
+  iconText: object;
+  signImage: object;
+  initialImage: string;
+}
+
+export type CanvasObject = TextboxObject | CheckboxObject | RadioboxObject | DropDownBoxObject | DateboxObject | InitialboxObject
 
 //document data
 export interface DocData {
