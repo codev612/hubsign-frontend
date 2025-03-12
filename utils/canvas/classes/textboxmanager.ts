@@ -84,7 +84,6 @@ class TextboxManager {
     this.jsonData = jsonData;
 
     if(this.jsonData) {
-      console.log(jsonData)
       this.textvalue = this.jsonData.textvalue;
       this.recipient = this.jsonData.recipient;
       this.required = this.jsonData.required;
@@ -544,8 +543,6 @@ class TextboxManager {
 
         this.iconBorder = new fabric.Rect(this.jsonData?.iconBorder);
 
-        console.log(this.jsonData?.iconBorder);
-  
         this.iconText = new fabric.Text("Text", {
           fontSize: 18,
           fontFamily: "Gothic",

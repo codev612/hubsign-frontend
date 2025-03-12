@@ -33,6 +33,7 @@ import {
   AdvancedData,
   TextboxObject,
   CheckboxObject,
+  DropDownBoxObject,
 } from "@/interface/interface";
 import { pageWidth, pageHeight, canvasObject } from "@/constants/canvas";
 import { DOC_STATUS, INPROGRESS } from "@/constants/document";
@@ -187,9 +188,8 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   };
   const [canvasObjects, setCanvasObjects] = useState<CanvasObjects[]>([]);
 
-  const removeCanvasObject = (uid:string) => {
-    const newObjects:CanvasObjects[] = canvasObjects.filter((item) => item.uid !== uid);
-    setCanvasObjects(newObjects);
+  const removeCanvasObject = (uid: string) => {
+    setCanvasObjects((prevObjects) => prevObjects.filter((item) => item.uid !== uid));
   };
 
   const userContextValues = useUser();
@@ -475,6 +475,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       1,
       activeRecipient,
       signMode,
+      onlyMyself,
       setShowRadioboxSettingForm,
       controlSVGFile,
       removeCanvasObject,
@@ -492,7 +493,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     startTop: number,
   ) => {
     const uid = uuidv4();
-    const radioboxGroup = new DropdownboxManager(
+    const dropdownboxGroup = new DropdownboxManager(
       uid,
       canvi,
       startLeft,
@@ -506,9 +507,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       removeCanvasObject,
     ); // Initialize with 1 checkboxes
 
-    setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);
+    setCanvasObjects([...canvasObjects, { uid, object: dropdownboxGroup }]);
 
-    radioboxGroup.addToCanvas(); // Add the group to the canvas
+    dropdownboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
   //add datebox
@@ -518,7 +519,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     startTop: number,
   ) => {
     const uid = uuidv4();
-    const radioboxGroup = new DateboxManager(
+    const dateboxGroup = new DateboxManager(
       uid,
       canvi,
       startLeft,
@@ -532,9 +533,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       removeCanvasObject,
     ); // Initialize with 1 checkboxes
 
-    setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);
+    setCanvasObjects([...canvasObjects, { uid, object: dateboxGroup }]);
 
-    radioboxGroup.addToCanvas(); // Add the group to the canvas
+    dateboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
   //add initialsbox
@@ -544,7 +545,7 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
     startTop: number,
   ) => {
     const uid = uuidv4();
-    const radioboxGroup = new InitialsboxManager(
+    const initialboxGroup = new InitialsboxManager(
       uid,
       canvi,
       startLeft,
@@ -556,9 +557,9 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
       removeCanvasObject,
     ); // Initialize with 1 checkboxes
 
-    setCanvasObjects([...canvasObjects, { uid, object: radioboxGroup }]);
+    setCanvasObjects([...canvasObjects, { uid, object: initialboxGroup }]);
 
-    radioboxGroup.addToCanvas(); // Add the group to the canvas
+    initialboxGroup.addToCanvas(); // Add the group to the canvas
   };
 
   const toggleDraw = (canvi: fabric.Canvas) => {
@@ -625,7 +626,6 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
   // restore document from database to canvas
   const handleRestoreDoc = () => {
     if(!canvas) return;
-    console.log(docData.canvas);
     if(docData.canvas.length > 0) {
       docData.canvas.forEach( item => {
         switch (item.controlType) {
@@ -674,6 +674,93 @@ export const CanvasProvider: React.FC<CanvasProviderProps> = ({ children }) => {
             ]);
         
             checkboxGroup.addToCanvas(); // Add the group to the canvas
+            break;
+          case canvasObject.radiobox:
+            const radioboxGroup = new RadioboxManager(
+              item.uid,
+              canvas,
+              item.containerLeft,
+              item.containerTop,
+              1,
+              activeRecipient,
+              signMode,
+              onlyMyself,
+              setShowRadioboxSettingForm,
+              controlSVGFile,
+              removeCanvasObject,
+              item as CheckboxObject,
+            ); // Initialize with 1 checkboxes
+        
+            setCanvasObjects((prevObjects) => [
+              ...prevObjects,
+              { uid: item.uid, object: radioboxGroup }
+            ]);
+        
+            radioboxGroup.addToCanvas(); // Add the group to the canvas
+            break;
+          case canvasObject.dropdownbox:
+            const dropdownboxGroup = new DropdownboxManager(
+              item.uid,
+              canvas,
+              item.containerLeft,
+              item.containerTop,
+              activeRecipient,
+              signMode,
+              onlyMyself,
+              setShowDropdownboxSettingForm,
+              setShowDropdownboxListForm,
+              controlSVGFile,
+              removeCanvasObject,
+              item as DropDownBoxObject
+            );
+
+            setCanvasObjects((prevObjects) => [
+              ...prevObjects,
+              { uid: item.uid, object: dropdownboxGroup }
+            ]);
+            dropdownboxGroup.restoreToCanvas();
+            break;
+          case canvasObject.datebox:
+            const dateboxGroup = new DateboxManager(
+              item.uid,
+              canvas,
+              item.containerLeft,
+              item.containerTop,
+              activeRecipient,
+              signMode,
+              onlyMyself,
+              setShowDateboxSettingForm,
+              setShowDateboxCalendarForm,
+              controlSVGFile,
+              removeCanvasObject,
+            ); // Initialize with 1 checkboxes
+        
+            setCanvasObjects((prevObjects) => [
+              ...prevObjects,
+              { uid: item.uid, object: dateboxGroup }
+            ]);
+        
+            dateboxGroup.addToCanvas();
+            break;
+          case canvasObject.initialbox:
+            const initialboxGroup = new InitialsboxManager(
+              item.uid,
+              canvas,
+              item.containerLeft,
+              item.containerTop,
+              activeRecipient,
+              signMode,
+              setShowInitialsboxSettingForm,
+              controlSVGFile,
+              removeCanvasObject,
+            ); // Initialize with 1 checkboxes
+        
+            setCanvasObjects((prevObjects) => [
+              ...prevObjects,
+              { uid: item.uid, object: initialboxGroup }
+            ]);
+        
+            initialboxGroup.addToCanvas();
             break;
           default:
             break;

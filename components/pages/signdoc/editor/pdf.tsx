@@ -332,7 +332,6 @@ const PDFBoard: React.FC = () => {
       return;
     }
     const canvasJSON = canvas.toJSON();
-    console.log(canvasJSON);
   }
 
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(

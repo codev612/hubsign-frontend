@@ -6,7 +6,7 @@ import {
   updateSvgColors,
 } from "../utils";
 
-import { ControlSVGFile } from "@/interface/interface";
+import { ControlSVGFile, DropDownBoxObject } from "@/interface/interface";
 import {
   canvasControlMinHeight,
   canvasControlMinWidth,
@@ -47,6 +47,7 @@ class DropdownboxManager {
   private arrowBottom: fabric.Object;
   private leftPadding: number = 10;
   private removeCanvasObject: (uid:string)=>void
+  private jsonData?: DropDownBoxObject;
 
   constructor(
     uid: string,
@@ -60,6 +61,7 @@ class DropdownboxManager {
     setShowListForm: React.Dispatch<React.SetStateAction<any>>,
     controlSVGFile: ControlSVGFile,
     removeCanvasObject: (uid:string)=>void,
+    jsonData?: DropDownBoxObject,
   ) {
     this.uid = uid;
     this.canvi = canvi;
@@ -83,6 +85,19 @@ class DropdownboxManager {
     this.border = new fabric.Rect();
     this.svgGroup = new fabric.Object();
     this.arrowBottom = new fabric.Object();
+
+    this.jsonData = jsonData;
+
+    if(this.jsonData) {
+      this.textvalue = this.jsonData.textvalue;
+      this.recipient = this.jsonData.recipient;
+      this.required = this.jsonData.required;
+      this.placeholder = this.jsonData.placeholder;
+      this.customPlaceholder = this.jsonData.customPlaceholder;
+
+      this.selectedItem = this.jsonData.selectedItem;
+      this.dropdownItems = this.jsonData.dropdownItems;
+    }
 
     this.tracktextboxGroup();
     this.setupDeleteKeyHandler();
@@ -240,6 +255,172 @@ class DropdownboxManager {
           this.svgGearGroup.set({
             left: this.textbox.left! + 200 + 15,
             top: this.textbox.top! + (32 - 24) / 2,
+            selectable: false,
+            evented: true,
+          });
+
+          this.svgGearGroup.scaleToWidth(20);
+          this.svgGearGroup.scaleToHeight(20);
+
+          this.svgGearGroup.on("mousedown", () => {
+            this.showShowSettingForm();
+          });
+
+          this.canvi.add(this.svgGearGroup);
+        });
+      }
+
+      this.tracktextboxGroup();
+
+      this.canvi.add(this.border, this.textbox);
+    }
+
+    this.canvi.renderAll();
+  }
+
+  public restoreToCanvas() {
+    this.containerTop = this.currentTop;
+
+    if (!this.signMode && !this.onlyMyself) {
+      const svgString = this.controlSVGFile.dropdown;
+      const updatedSvgString = updateSvgColors(
+        svgString,
+        hexToRgba(this.color, 0.1),
+        hexToRgba(this.color, 1),
+      );
+
+      // Load SVG into Fabric.js
+      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+        if (this.svgGroup) {
+          this.canvi.remove(this.svgGroup); // Remove existing SVG before adding a new one
+        }
+
+        this.iconBorder = new fabric.Rect({...this.jsonData?.iconBorder,
+          cornerStyle: "circle",
+          transparentCorners: false,
+        });
+
+        this.svgGroup = fabric.util.groupSVGElements(objects, options);
+        (this.svgGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        
+        this.svgGroup.set({
+          left: this.containerLeft + (this.iconBorder.getScaledWidth() - 100) / 2,
+          top: this.containerTop + (this.iconBorder.getScaledHeight() - 24) / 2,
+          selectable: false,
+        });
+
+        this.iconText = new fabric.Text("Dropdown", {
+          fontSize: 18,
+          fontFamily: "Gothic",
+          left: this.iconBorder.left! + (this.iconBorder.getScaledWidth() - 100) / 2 + 24 + 8,
+          top: this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 18) / 2,
+          selectable: false,
+        });
+
+        this.trackIconGroup();
+        this.canvi.add(this.svgGroup, this.iconBorder, this.iconText);
+      });
+
+      const svgGearString = this.controlSVGFile.gear;
+      const updatedSvgGearString = updateSvgColors(
+        svgGearString,
+        hexToRgba(this.color, 1),
+        hexToRgba(this.color, 1),
+      );
+
+      fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+        if (this.svgGearGroup) {
+          this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
+        }
+
+        this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+        (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg = true;
+
+        this.svgGearGroup.set({
+          left: this.iconBorder.left! + this.iconBorder.getScaledWidth() + 8,
+          top: this.iconBorder.top! + (this.iconBorder.getScaledHeight() - 24) / 2,
+          selectable: false,
+          evented: true,
+        });
+
+        this.svgGearGroup.scaleToWidth(20);
+        this.svgGearGroup.scaleToHeight(20);
+
+        this.svgGearGroup.on("mousedown", () => {
+          this.showShowSettingForm();
+        });
+
+        this.canvi.add(this.svgGearGroup);
+      });
+
+    } else {
+      
+      const svgString = this.controlSVGFile.arrow_bottom;
+      const updatedSvgString = updateSvgColors(
+        svgString,
+        hexToRgba(this.color, 0.05),
+        hexToRgba("#8D8D8D", 1),
+      );
+
+      this.border = new fabric.Rect({
+        ...this.jsonData?.border,
+        evented: true,
+        selectable: false,
+      });
+
+      this.textbox = new fabric.Textbox(
+        this.selectedItem === "" ? this.placeholder : this.selectedItem,
+        {
+          ...this.jsonData?.textbox, 
+          padding: this.leftPadding,
+          evented: true,
+          cornerStyle: "circle",
+          transparentCorners: false,
+        }
+      );
+
+      // Load SVG into Fabric.js
+      fabric.loadSVGFromString(updatedSvgString, (objects, options) => {
+        this.arrowBottom = fabric.util.groupSVGElements(objects, options);
+        (this.arrowBottom as fabric.Object & { isSvg?: boolean }).isSvg = true;
+        
+        this.arrowBottom.set({
+          left: this.textbox.left! +
+          this.textbox.width! * this.textbox.scaleX! -
+          this.leftPadding,
+          top: this.textbox.top! + (this.textbox.height! / 2) * this.textbox.scaleY!,
+          selectable: false,
+        });
+
+        this.canvi.add(this.arrowBottom);
+      });
+
+      if (this.onlyMyself) {
+        const svgGearString = this.controlSVGFile.gear;
+        const updatedSvgGearString = updateSvgColors(
+          svgGearString,
+          hexToRgba(this.color, 1),
+          hexToRgba(this.color, 1),
+        );
+
+        fabric.loadSVGFromString(updatedSvgGearString, (objects, options) => {
+          if (this.svgGearGroup) {
+            this.canvi.remove(this.svgGearGroup); // Remove existing SVG before adding a new one
+          }
+
+          this.svgGearGroup = fabric.util.groupSVGElements(objects, options);
+          (this.svgGearGroup as fabric.Object & { isSvg?: boolean }).isSvg =
+            true;
+          // this.svgGearGroup.set({
+          //   left: this.textbox.left! + 200 + 15,
+          //   top: this.textbox.top! + (32 - 24) / 2,
+          //   selectable: false,
+          //   evented: true,
+          // });
+
+          this.svgGearGroup.set({
+            left: this.containerLeft + this.textbox.getScaledWidth() + 15,
+            top: this.containerTop + (this.textbox.getScaledHeight() - 24) / 2,
             selectable: false,
             evented: true,
           });
@@ -860,45 +1041,6 @@ class DropdownboxManager {
       this.canvi.renderAll();
     }
   };
-
-  //for store on database
-  // Serialize the object state
-  public serialize(): string {
-    const serializableState = {
-      uid: this.uid,
-      containerLeft: this.containerLeft,
-      containerTop: this.containerTop,
-      scaleX: this.scaleX,
-      scaleY: this.scaleY,
-      currentTop: this.currentTop,
-      recipient: this.recipient,
-      signMode: this.signMode,
-      color: this.color,
-      // checkedBydefault: this.checkedBydefault,
-      // defaultTick: this.defaultTick,
-      required: this.required,
-      textboxesState: this.textboxesState,
-    };
-
-    return JSON.stringify(serializableState);
-  }
 }
 
 export default DropdownboxManager;
-
-// const manager = new textboxManager(...); // Create the manager
-// const serializedManager = manager.serialize();
-
-// // Store serializedManager in your database
-// Retrieve the serialized object from the database
-// const storedJson = /* Fetch from DB */;
-
-// const restoredManager = textboxManager.deserialize(
-//   storedJson,
-//   fabricCanvas, // Pass the fabric.Canvas instance
-//   settextboxItems, // React state setter
-//   setShowSettingForm // React state setter
-// );
-
-// // Add the restored manager to the canvas
-// restoredManager.addToCanvas();

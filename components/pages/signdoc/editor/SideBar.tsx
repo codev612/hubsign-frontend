@@ -102,7 +102,6 @@ const SideBar: React.FC<SideBarProps> = ({ docData }) => {
           )}
         </div>
         <h1>Fields</h1>
-        <Tooltip title="TextBox">
           <div className="flex flex-row items-center justify-center gap-1">
             {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
             {/* <img src='/assets/img/controls/textbox.svg' className='cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!,100, 100, 4)}/>
@@ -129,8 +128,6 @@ const SideBar: React.FC<SideBarProps> = ({ docData }) => {
             </Button>
             <p className="text-text text-sm">Textbox</p>
           </div>
-        </Tooltip>
-        <Tooltip title="Checkbox">
           <div className="flex flex-row items-center justify-center gap-1">
             {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
             {/* <img src='/assets/img/controls/checkbox.svg' className='cursor-pointer' onClick={() => contextValues.addCheckbox(contextValues.canvas!, 100, 100, 4)}/> */}
@@ -156,8 +153,6 @@ const SideBar: React.FC<SideBarProps> = ({ docData }) => {
             </Button>
             <p className="text-text text-sm">Checkbox</p>
           </div>
-        </Tooltip>
-        <Tooltip title="Radiobox">
           <div className="flex flex-row items-center justify-center gap-1">
             {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
             {/* <img src='/assets/img/controls/radiobox.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/> */}
@@ -183,8 +178,6 @@ const SideBar: React.FC<SideBarProps> = ({ docData }) => {
             </Button>
             <p className="text-text text-sm">Radiobox</p>
           </div>
-        </Tooltip>
-        <Tooltip title="Dropdown">
           <div className="flex flex-row items-center justify-center gap-1">
             {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
             {/* <img src='/assets/img/controls/dropdown.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/> */}
@@ -210,8 +203,6 @@ const SideBar: React.FC<SideBarProps> = ({ docData }) => {
             </Button>
             <p className="text-text text-sm">Dropdown</p>
           </div>
-        </Tooltip>
-        <Tooltip title="Date">
           <div className="flex flex-row items-center justify-center gap-1">
             {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
             {/* <img src='/assets/img/controls/dropdown.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/> */}
@@ -237,8 +228,6 @@ const SideBar: React.FC<SideBarProps> = ({ docData }) => {
             </Button>
             <p className="text-text text-sm">Date</p>
           </div>
-        </Tooltip>
-        <Tooltip title="Initials">
           <div className="flex flex-row items-center justify-center gap-1">
             {/* <CgFormatText className='md:text-[1.8rem] text-[1.5rem] cursor-pointer' onClick={() => contextValues.addText(contextValues.canvas!)} /> */}
             {/* <img src='/assets/img/controls/dropdown.svg' className='cursor-pointer' onClick={() => contextValues.addRadiobox(contextValues.canvas!, 100, 100, 4)}/> */}
@@ -264,7 +253,6 @@ const SideBar: React.FC<SideBarProps> = ({ docData }) => {
             </Button>
             <p className="text-text text-sm">Initials</p>
           </div>
-        </Tooltip>
       </div>
     </div>
   );

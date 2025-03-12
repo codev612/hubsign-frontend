@@ -246,7 +246,31 @@ export interface CheckboxObject extends BaseCanvasObject {
   checkedBydefault: boolean;
 }
 
-export type CanvasObject = TextboxObject | CheckboxObject
+export interface RadioboxObject extends BaseCanvasObject {
+  scaleX: number;
+  scaleY: number;
+  checkboxesState: boolean[];
+  numCheckboxes: number;
+  radioboxElements: object[];
+}
+
+export interface DropDownBoxObject extends BaseCanvasObject {
+  textbox: object;
+  iconBorder: object;
+  iconText: Object;
+  border: object;
+  placeholder: string;
+  textValue: string;
+  selectedItem: string;
+  dropdownItems: string[];
+  customPlaceholder: boolean;
+  controlSVGFile: object;
+  svgGroup: object;
+  svgGearGroup: object;
+  arrowBottom: object;
+}
+
+export type CanvasObject = TextboxObject | CheckboxObject | RadioboxObject | DropDownBoxObject
 
 //document data
 export interface DocData {

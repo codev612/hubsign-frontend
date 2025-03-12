@@ -90,7 +90,6 @@ class CheckboxManager {
 
     this.tickPattern = this.createPattern()["tick"];
     this.crossPattern = this.createPattern()["cross"];
-    console.log(this.tickPattern.source)
 
     for (let i = 0; i < this.numCheckboxes; i++) {
       const checkbox = new fabric.Rect({
@@ -294,7 +293,6 @@ class CheckboxManager {
     crossCtx.stroke();
   
     const crossPatternDataURL = crossPatternCanvas.toDataURL("image/png"); // ✅ PNG ensures transparency
-    console.log(crossPatternDataURL)
     const crossPattern = new fabric.Pattern({
       source: crossPatternDataURL,
       repeat: "no-repeat",
