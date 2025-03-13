@@ -666,7 +666,7 @@ export default function DataTable() {
                 button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 
                 />
                 }
-                items={filteredItems}
+                items={items}
             >
               {(item) => (
                 <TableRow key={item.uid}>

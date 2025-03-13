@@ -230,6 +230,7 @@ export default function DataTable() {
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = React.useMemo(() => {
+    console.log(page, rowsPerPage)
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
@@ -669,7 +670,7 @@ export default function DataTable() {
           button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 
           />
         }
-        items={filteredItems}
+        items={items}
         >
           {(item) => (
             <TableRow key={item.uid}>

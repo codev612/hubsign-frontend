@@ -47,6 +47,9 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import { RenameIcon } from "@/components/icons";
 import RenameModal from "./rename";
+import Link from "next/link";
+import { useModal } from "@/context/modal";
+import CreateTempModal from "./createtemplate";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -72,23 +75,11 @@ export const statusOptions = [
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "recipients", "createdAt", "actions"];
 
-const statusColorMap = (status: string) => {
-  switch (status) {
-    case DOC_STATUS.inprogress:
-      return "#1A92F9";
-    case DOC_STATUS.draft:
-      return "#525252"; // Changed from "info" to "warning" (since "info" is not in the allowed list)
-    case DOC_STATUS.completed:
-      return "#23A15D";
-    case DOC_STATUS.declined:
-      return "#DA1E27";
-    default:
-      return "#1A92F9"; // Ensure a valid fallback
-  }
-};
-
 export default function DataTable() {
   const router = useRouter();
+
+  const modalContext = useModal();
+
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set([]),
@@ -508,6 +499,7 @@ export default function DataTable() {
   };
 
   const handleManyDelete = async () => {
+    console.log('many delete')
     if(selectedIDs.length > 0) {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/template/delete`, {
@@ -649,6 +641,10 @@ export default function DataTable() {
     }
   }, [newName])
 
+  const handleCreateTemplate = (recepients: Recipient[], name: string, signingOrder:boolean=false) => {
+    console.log(recepients, name, signingOrder)
+  }
+
   return (
     <>
       <ConfirmModal 
@@ -678,6 +674,12 @@ export default function DataTable() {
       title="Rename Template"
       description=""
       currentName={selectedItemData.name}
+      />
+      <CreateTempModal
+      isOpen={modalContext.isCreateTemplateOpen}
+      onOpenChange={modalContext.onCreateTemplateOpenChange}
+      action={handleCreateTemplate}
+
       />
       <Table
         // isHeaderSticky
@@ -717,7 +719,7 @@ export default function DataTable() {
           icon={<TextSnippetOutlinedIcon color="primary" fontSize="large" />} 
           title="Start here - sign your first template" 
           description="Create your first template" 
-          button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>router.push('/adddoc')}>New Template</Button>} 
+          button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>modalContext.onCreateTemplateOpenChange()}>New Template</Button>} 
           />:
           <EmptyItems 
           icon={<SearchOutlinedIcon color="primary" fontSize="large" />} 
@@ -726,7 +728,7 @@ export default function DataTable() {
           button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 
           />
         }
-        items={filteredItems}
+        items={items}
         >
           {(item) => (
             <TableRow key={item.uid}>
@@ -765,53 +767,47 @@ export default function DataTable() {
                       </button>
                     </DropdownTrigger>
                     <DropdownMenu>
-                        <DropdownItem 
+                        {/* <DropdownItem 
                             key="use" 
                             startContent={<PostAddOutlinedIcon />}
                             onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
                         >Use Template
                         </DropdownItem>
-                      {/* <DropdownItem 
+                        <DropdownItem 
                         key="edit" 
-                        startContent={<EditOutlinedIcon />}
-                        onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
-                      >Edit Template
-                      </DropdownItem> */}
-                      <DropdownItem 
-                      key="edit" 
-                      startContent={<BorderColorOutlinedIcon />}
-                      onPress={()=>{
-                        onSaveTempOpen();
-                      }}
-                      >
-                        Edit Template
-                      </DropdownItem>
-                      <DropdownItem 
-                      key="copy" 
-                      startContent={<ContentCopyOutlinedIcon />}
-                      onPress={()=>setCopyItems([item.uid])}
-                      >
-                        Copy
-                      </DropdownItem>
-                      <DropdownItem 
-                      key="rename" 
-                      startContent={<RenameIcon />} 
-                      onPress={()=>{
-                        onRenameOpen();
-                      }}
-                      >
-                        Rename
-                      </DropdownItem>
-                      <DropdownItem 
-                      key="delete" 
-                      startContent={<DeleteForeverOutlinedIcon />} 
-                      onPress={()=>{
-                        onDeleteConfirmOpen();
-                      }}
-                      color="danger"
-                      >
-                        Delete
-                      </DropdownItem>
+                        startContent={<BorderColorOutlinedIcon />}
+                        onPress={()=>{
+                            onSaveTempOpen();
+                        }}
+                        >
+                            Edit Template
+                        </DropdownItem> */}
+                        <DropdownItem 
+                        key="copy" 
+                        startContent={<ContentCopyOutlinedIcon />}
+                        onPress={()=>setCopyItems([item.uid])}
+                        >
+                            Copy
+                        </DropdownItem>
+                        <DropdownItem 
+                        key="rename" 
+                        startContent={<RenameIcon />} 
+                        onPress={()=>{
+                            onRenameOpen();
+                        }}
+                        >
+                            Rename
+                        </DropdownItem>
+                        <DropdownItem 
+                        key="delete" 
+                        startContent={<DeleteForeverOutlinedIcon />} 
+                        onPress={()=>{
+                            onDeleteConfirmOpen();
+                        }}
+                        color="danger"
+                        >
+                            Delete
+                        </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
                 </div>

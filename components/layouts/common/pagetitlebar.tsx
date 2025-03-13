@@ -5,6 +5,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { useRouter } from "next/navigation";
 
 import { PageTitleBarProps } from "@/interface/interface";
+import { useModal } from "@/context/modal";
 
 const PageTitleBar: React.FC<PageTitleBarProps> = ({
   pageTitle,
@@ -13,6 +14,7 @@ const PageTitleBar: React.FC<PageTitleBarProps> = ({
   description = "",
 }) => {
   const router = useRouter();
+  const modalContext = useModal();
 
   const handleClick = () => {
     router.push(buttonLink);
@@ -27,7 +29,7 @@ const PageTitleBar: React.FC<PageTitleBarProps> = ({
           className="text-white w-151"
           color="primary"
           size="md"
-          onPress={handleClick}
+          onPress={()=>modalContext.openCreateTemplate()}
         >
           <AddOutlinedIcon /> {buttonTitle}
         </Button>
