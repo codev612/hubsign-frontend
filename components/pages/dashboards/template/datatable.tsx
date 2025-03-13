@@ -641,8 +641,38 @@ export default function DataTable() {
     }
   }, [newName])
 
-  const handleCreateTemplate = (recepients: Recipient[], name: string, signingOrder:boolean=false) => {
-    console.log(recepients, name, signingOrder)
+  const handleCreateTemplate = async (recipients: Recipient[], name: string, signingOrder:boolean=false) => {
+    
+    if(name !== "" && recipients.length > 0) {
+      console.log(recipients, name, signingOrder)
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/template/add`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("session") || ""}`,
+          },
+          body: JSON.stringify({
+            name,
+            recipients,
+            signingOrder
+          })
+        })
+
+        if(!response.ok) {
+          return;
+        }
+
+        const newTemplate = await response.json();
+        setDocData((prevDocData) => [...prevDocData, newTemplate]);
+        
+        modalContext.closeCreateTemplate();
+        
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    }
   }
 
   return (

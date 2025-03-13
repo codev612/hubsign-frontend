@@ -71,9 +71,16 @@ const CreateTempModal: React.FC<ModalProps> = ({
       setRec2Roles(roles);
     }, [recipients])
 
+    const handleReset = () => {
+        setTempName("");
+        setRecipients([]);
+        setCustomSigningOrder(false);
+        setRec2Roles([]);
+    }
+
     return (
       <>
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl" onClose={()=>handleReset()}>
           <ModalContent>
             {(onClose) => (
               <>
@@ -114,7 +121,11 @@ const CreateTempModal: React.FC<ModalProps> = ({
                   <Button variant="bordered" onPress={onClose}>
                     Close
                   </Button>
-                  <Button color="primary" className="text-forecolor" onPress={()=>action(rec2Roles, tempName, customSigningOrder)}>
+                  <Button 
+                  color="primary" 
+                  className="text-forecolor" 
+                  onPress={()=>action(rec2Roles, tempName, customSigningOrder)}
+                  >
                     Save Template
                   </Button>
                 </ModalFooter>

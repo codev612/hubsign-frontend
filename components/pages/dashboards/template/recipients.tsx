@@ -214,7 +214,6 @@ const Recipients: React.FC<RecipientProps> = ({
     field: keyof Recipient,
     value: string
   ) => {
-    console.log(value)
     setRecipient((prevRecipients) =>
       prevRecipients.map((recipient, i) =>
         i === index ? { ...recipient, [field]: value } : recipient
