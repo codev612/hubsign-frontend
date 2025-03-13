@@ -36,10 +36,10 @@ import Avatar from "@/components/ui/avatar";
 import { formatDateTime, generateColorForRecipient } from "@/utils/canvas/utils";
 import { Recipient } from "@/interface/interface";
 import { DOC_STATUS } from "@/constants/document";
-import ConfirmModal from "./deleteconfirm";
+import ConfirmModal from "../../deleteconfirm";
 import SaveTempModal from "../savetemplate";
 import { useRouter } from "next/navigation";
-import ManyConfirmModal from "./deletemanyconfirm";
+import ManyConfirmModal from "../../deletemanyconfirm";
 import EmptyItems from "../../emptyitems";
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -604,12 +604,16 @@ export default function DataTable() {
       isOpen={isDeleteConfirmOpen}
       onOpenChange={onDeleteConfirmOpenChange}
       action={setDeleteConfirm}
+      title="Document"
+      description=""
       />
 
       <ManyConfirmModal 
       isOpen={isDeleteManyConfirmOpen}
       onOpenChange={onDeleteManyConfirmOpenChange}
       action={setDeleteManyConfirm}
+      title="Documents"
+      description=""
       />
 
       <SaveTempModal 

@@ -13,12 +13,16 @@ import {
     // onOpen: () => void;
     onOpenChange: (isOpen: boolean) => void;
     action: React.Dispatch<React.SetStateAction<boolean>>;
+    title: string;
+    description: string;
   }
   
   const ConfirmModal: React.FC<ConfirmModalProps> = ({
     isOpen,
     onOpenChange,
     action,
+    title,
+    description,
   }) => {
   
     return (
@@ -27,15 +31,16 @@ import {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">Delete Document</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1">Delete {title}</ModalHeader>
                 <ModalBody>
+                    <p>{description}</p>
                 </ModalBody>
                 <ModalFooter>
                   <Button variant="bordered" onPress={onClose}>
                     Close
                   </Button>
                   <Button color="danger" onPress={()=>action(true)}>
-                    Delete Document
+                    Delete {title}
                   </Button>
                 </ModalFooter>
               </>
