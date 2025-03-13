@@ -656,14 +656,14 @@ export default function DataTable() {
       onOpenChange={onDeleteConfirmOpenChange}
       action={setDeleteConfirm}
       title="Template"
-      description="This action will delete the template “[Template Name].” The template record will be permanently removed. Do you wish to proceed?"
+      description={`This action will delete the template “${selectedItemData.name}”. The template record will be permanently removed. Do you wish to proceed?`}
       />
       <ManyConfirmModal 
       isOpen={isDeleteManyConfirmOpen}
       onOpenChange={onDeleteManyConfirmOpenChange}
       action={setDeleteManyConfirm}
       title="Templates"
-      description="This action will delete the template “[Template Name].” The template record will be permanently removed. Do you wish to proceed?"
+      description={`This action will delete ${selectedIDs.length} templates. The template record will be permanently removed. Do you wish to proceed?`}
       />
       <SaveTempModal 
       isOpen={isSaveTempOpen}
