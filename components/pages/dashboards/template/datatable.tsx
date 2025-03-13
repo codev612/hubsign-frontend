@@ -44,6 +44,9 @@ import EmptyItems from "../emptyitems";
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
+import { RenameIcon } from "@/components/icons";
+import RenameModal from "./rename";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -55,10 +58,8 @@ export function capitalize(s: string) {
 
 export const columns = [
   { name: "Name", uid: "name", sortable: true },
-  { name: "Status", uid: "status"},
   { name: "Recipients", uid: "recipients" },
-  { name: "Send Date", uid: "sendDate"},
-  { name: "Last Action", uid: "lastaction" },
+  { name: "Date Created", uid: "createdAt" },
   { name: "", uid: "actions"}
 ];
 
@@ -69,7 +70,7 @@ export const statusOptions = [
   { name: "Declined", uid: "Declined" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "status", "recipients", "sendDate", "lastaction", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "recipients", "createdAt", "actions"];
 
 const statusColorMap = (status: string) => {
   switch (status) {
@@ -121,9 +122,12 @@ export default function DataTable() {
     createdAt: "",
     updatedAt: "",
   });
-
+  //for copy and paste single or multiple templates
   const [copyItems, setCopyItems] = useState<string[]>([]);
   const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
+
+  //for renaming template name
+  const [newName, setNewName] = useState<string>("");
 
   interface Activity {
     username: string;
@@ -167,13 +171,20 @@ export default function DataTable() {
     onOpenChange: onSaveTempChange,
   } = useDisclosure();// for save as template modal
 
+  const {
+    isOpen: isRenameOpen,
+    onClose: onCloseRename,
+    onOpen: onRenameOpen,
+    onOpenChange: onRenameOpenChange,
+  } = useDisclosure();// for delete confirm modal
+
   const users = docData;
 
-  //fetch documents from database initially
+  //fetch templates from database initially
   useEffect(() => {
     const fetchData = async() => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/pending`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/template`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -262,7 +273,7 @@ export default function DataTable() {
     console.log(copyItems);
     if(copyItems.length > 0) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/copy`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/template/copy`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -467,7 +478,7 @@ export default function DataTable() {
   const handleDelete = async () => {
     try {
       if(deleteConfirm && selectedItem) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/${selectedItem}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/template/${selectedItem}`, {
           method:"DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -499,7 +510,7 @@ export default function DataTable() {
   const handleManyDelete = async () => {
     if(selectedIDs.length > 0) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/document/delete`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/template/delete`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -581,6 +592,7 @@ export default function DataTable() {
     }
   },[deleteManyConfirm])
 
+  //display category
   useEffect(() => {
     if (selectedKeys === "all") {
       const selectedIds = docData.map((item) => item.uid);
@@ -598,6 +610,45 @@ export default function DataTable() {
     }
   }, [selectedKeys, docData])
 
+  //handle rename template
+  const handleRename = async () => {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/template/rename`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Cookies.get("session") || ""}`,
+            },
+            body: JSON.stringify({
+                uid: selectedItem,
+                name: newName
+            })
+        })
+
+        if(!response.ok) {
+            return;
+        }
+
+        setDocData((prevDocData) =>
+            prevDocData.map((item) =>
+                item.uid === selectedItem ? { ...item, name: newName } : item
+            )
+        );
+
+        setNewName("");
+        onCloseRename();
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+  }
+
+  useEffect(() => {
+    if(newName && selectedItemData.name !== newName) {
+        handleRename();
+    }
+  }, [newName])
+
   return (
     <>
       <ConfirmModal 
@@ -607,7 +658,6 @@ export default function DataTable() {
       title="Template"
       description="This action will delete the template “[Template Name].” The template record will be permanently removed. Do you wish to proceed?"
       />
-
       <ManyConfirmModal 
       isOpen={isDeleteManyConfirmOpen}
       onOpenChange={onDeleteManyConfirmOpenChange}
@@ -615,12 +665,19 @@ export default function DataTable() {
       title="Templates"
       description="This action will delete the template “[Template Name].” The template record will be permanently removed. Do you wish to proceed?"
       />
-
       <SaveTempModal 
       isOpen={isSaveTempOpen}
       onOpenChange={onSaveTempChange}
       action={handleSaveTemp}
       selectedItemData={selectedItemData}
+      />
+      <RenameModal
+      isOpen={isRenameOpen}
+      onOpenChange={onRenameOpenChange}
+      action={setNewName}
+      title="Rename Template"
+      description=""
+      currentName={selectedItemData.name}
       />
       <Table
         // isHeaderSticky
@@ -658,13 +715,13 @@ export default function DataTable() {
         emptyContent={
         filterValue==="" ? <EmptyItems 
           icon={<TextSnippetOutlinedIcon color="primary" fontSize="large" />} 
-          title="Start here - sign your first document" 
-          description="Create your first document" 
-          button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>router.push('/adddoc')}>New Document</Button>} 
+          title="Start here - sign your first template" 
+          description="Create your first template" 
+          button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>router.push('/adddoc')}>New Template</Button>} 
           />:
           <EmptyItems 
           icon={<SearchOutlinedIcon color="primary" fontSize="large" />} 
-          title="No documents found" 
+          title="No templates found" 
           description="Try editing your search term or filters" 
           button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 
           />
@@ -676,13 +733,6 @@ export default function DataTable() {
               <TableCell>
                 <div className="flex flex-col">
                   <p className="text-text text-medium">{item.name}</p>
-                  <p className="text-placeholder text-small">{`Created by ${item.owner}`}</p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-row gap-1" >
-                  <Dot color={`${statusColorMap(item.status)}`} size="7px" />
-                  <span style={{color:`${statusColorMap(item.status)}`}}>{item.status}</span>
                 </div>
               </TableCell>
               <TableCell>
@@ -699,13 +749,9 @@ export default function DataTable() {
               </TableCell>
               <TableCell>
                 <div className="flex flex-col">
-                  <p className="text-text text-medium">{formatDateTime(item.sentAt).formattedDate}</p>
-                  <p className="text-placeholder">{formatDateTime(item.sentAt).formattedTime}</p>
+                  <p className="text-text text-medium">{formatDateTime(item.createdAt).formattedDate}</p>
+                  <p className="text-placeholder">{formatDateTime(item.createdAt).formattedTime}</p>
                 </div>
-              </TableCell>
-              <TableCell>
-                <p className="text-text text-medium">{item.activity.length > 0 && `${item.activity[item.activity.length-1].action!} by ${item.activity[item.activity.length-1].username!}`}</p>
-                <p className="text-placeholder text-small">{`${formatDateTime(item.createdAt).formattedDate} ${formatDateTime(item.createdAt).formattedTime}`}</p>
               </TableCell>
               <TableCell>
                 <div className="relative flex justify-end items-center text-text gap-2">
@@ -718,12 +764,28 @@ export default function DataTable() {
                         <HorizontalDotsIcon className="text-default-300"/>
                       </button>
                     </DropdownTrigger>
-                    {item.status===DOC_STATUS.draft && <DropdownMenu>
-                      <DropdownItem 
+                    <DropdownMenu>
+                        <DropdownItem 
+                            key="use" 
+                            startContent={<PostAddOutlinedIcon />}
+                            onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
+                        >Use Template
+                        </DropdownItem>
+                      {/* <DropdownItem 
                         key="edit" 
                         startContent={<EditOutlinedIcon />}
                         onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
-                      >Edit</DropdownItem>
+                      >Edit Template
+                      </DropdownItem> */}
+                      <DropdownItem 
+                      key="edit" 
+                      startContent={<BorderColorOutlinedIcon />}
+                      onPress={()=>{
+                        onSaveTempOpen();
+                      }}
+                      >
+                        Edit Template
+                      </DropdownItem>
                       <DropdownItem 
                       key="copy" 
                       startContent={<ContentCopyOutlinedIcon />}
@@ -732,13 +794,13 @@ export default function DataTable() {
                         Copy
                       </DropdownItem>
                       <DropdownItem 
-                      key="save" 
-                      startContent={<PostAddOutlinedIcon />}
+                      key="rename" 
+                      startContent={<RenameIcon />} 
                       onPress={()=>{
-                        onSaveTempOpen();
+                        onRenameOpen();
                       }}
                       >
-                        Save as Template
+                        Rename
                       </DropdownItem>
                       <DropdownItem 
                       key="delete" 
@@ -746,37 +808,11 @@ export default function DataTable() {
                       onPress={()=>{
                         onDeleteConfirmOpen();
                       }}
+                      color="danger"
                       >
                         Delete
                       </DropdownItem>
-                    </DropdownMenu>}
-                    {item.status!==DOC_STATUS.draft && <DropdownMenu>
-                      <DropdownItem key="reminder" startContent={<EmailOutlinedIcon />}>Send Reminder</DropdownItem>
-                      <DropdownItem key="history" startContent={<AccessTimeOutlinedIcon />}>Actions history</DropdownItem>
-                      <DropdownItem 
-                      key="copy" 
-                      startContent={<ContentCopyOutlinedIcon />}
-                      onPress={()=>setCopyItems([item.uid])}
-                      >
-                        Copy
-                      </DropdownItem>
-                      <DropdownItem 
-                      key="save" 
-                      startContent={<PostAddOutlinedIcon />}
-                      onPress={()=>{
-                        onSaveTempOpen();
-                      }}
-                      >Save as Template</DropdownItem>
-                      <DropdownItem 
-                      key="delete" 
-                      startContent={<DeleteForeverOutlinedIcon />} 
-                      onPress={()=>{
-                        onDeleteConfirmOpen();
-                      }}
-                      >
-                        Delete
-                      </DropdownItem>
-                    </DropdownMenu>}
+                    </DropdownMenu>
                   </Dropdown>
                 </div>
               </TableCell>

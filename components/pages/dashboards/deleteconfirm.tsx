@@ -8,7 +8,7 @@ import {
   } from "@heroui/react";
   import Cookies from "js-cookie";
   
-  interface ConfirmModalProps {
+  interface ModalProps {
     isOpen: boolean;
     // onOpen: () => void;
     onOpenChange: (isOpen: boolean) => void;
@@ -17,7 +17,7 @@ import {
     description: string;
   }
   
-  const ConfirmModal: React.FC<ConfirmModalProps> = ({
+  const ConfirmModal: React.FC<ModalProps> = ({
     isOpen,
     onOpenChange,
     action,

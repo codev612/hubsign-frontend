@@ -7,23 +7,32 @@ import {
     Button,
   } from "@heroui/react";
   import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
   
   interface ModalProps {
     isOpen: boolean;
     // onOpen: () => void;
     onOpenChange: (isOpen: boolean) => void;
-    action: React.Dispatch<React.SetStateAction<boolean>>;
+    action: React.Dispatch<React.SetStateAction<string>>;
     title: string;
     description: string;
+    currentName: string;
   }
   
-  const ManyConfirmModal: React.FC<ModalProps> = ({
+  const RenameModal: React.FC<ModalProps> = ({
     isOpen,
     onOpenChange,
     action,
     title,
     description,
+    currentName,
   }) => {
+
+    const [name, setName] = useState<string>("");
+
+    useEffect(() => {
+        setName(currentName)
+    }, [currentName])
   
     return (
       <>
@@ -31,16 +40,19 @@ import {
           <ModalContent>
             {(onClose) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">Delete {title}</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
                 <ModalBody>
-                    {description}
+                    <div className="flex flex-col">
+                        <p className="text-text">Template Name</p>
+                        <input value={name} onChange={(e)=>setName(e.target.value)} className="border-1 rounded-lg p-2" />
+                    </div>
                 </ModalBody>
                 <ModalFooter>
                   <Button variant="bordered" onPress={onClose}>
                     Close
                   </Button>
-                  <Button color="danger" onPress={()=>action(true)}>
-                    Delete {title}
+                  <Button color="primary" onPress={()=>action(name)} className="text-forecolor">
+                    Save
                   </Button>
                 </ModalFooter>
               </>
@@ -51,4 +63,4 @@ import {
     );
   };
   
-  export default ManyConfirmModal;  
+  export default RenameModal;  
