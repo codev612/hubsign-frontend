@@ -8,7 +8,7 @@ export default async function TemplatesLayout({
   return (
     <>
       <PageTitleBar
-        buttonLink="/adddoc"
+        buttonLink="template"
         buttonTitle="New Template"
         pageTitle="Templates"
       />

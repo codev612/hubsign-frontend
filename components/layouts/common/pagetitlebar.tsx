@@ -20,6 +20,20 @@ const PageTitleBar: React.FC<PageTitleBarProps> = ({
     router.push(buttonLink);
   };
 
+  const handleButtonClick = (buttonType:string) => {
+    switch (buttonType) {
+      case "contact":
+        modalContext.openCreateContact();
+        break;
+      case "template":
+        modalContext.openCreateTemplate();
+        break;
+      default:
+        router.push(buttonType);
+        break;
+    }
+  }
+
   return (
     <section>
       <div className="flex flex-row justify-between">
@@ -29,7 +43,7 @@ const PageTitleBar: React.FC<PageTitleBarProps> = ({
           className="text-white w-151"
           color="primary"
           size="md"
-          onPress={()=>modalContext.openCreateTemplate()}
+          onPress={()=>handleButtonClick(buttonLink)}
         >
           <AddOutlinedIcon /> {buttonTitle}
         </Button>

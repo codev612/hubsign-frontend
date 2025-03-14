@@ -4,11 +4,16 @@ import React, { createContext, useContext } from "react";
 import { useDisclosure } from "@heroui/react";
 
 type ModalContextProps = {
-  // Modal states and handlers
+  // for create template modal
   isCreateTemplateOpen: boolean;
   openCreateTemplate: () => void;
   closeCreateTemplate: () => void;
   onCreateTemplateOpenChange: () => void;
+  // for create contact modal
+  isCreateContactOpen: boolean;
+  openCreateContact: () => void;
+  closeCreateContact: () => void;
+  onCreateContactOpenChange: () => void;
 };
 
 // Create Context
@@ -26,6 +31,7 @@ export const useModal = () => {
 // Global Modal Provider
 export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const createTemplateModal = useDisclosure();
+  const createContactModal = useDisclosure();
 
   return (
     <ModalContext.Provider
@@ -34,6 +40,11 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         openCreateTemplate: createTemplateModal.onOpen,
         closeCreateTemplate: createTemplateModal.onClose,
         onCreateTemplateOpenChange: createTemplateModal.onOpenChange,
+
+        isCreateContactOpen: createContactModal.isOpen,
+        openCreateContact: createContactModal.onOpen,
+        closeCreateContact: createContactModal.onClose,
+        onCreateContactOpenChange: createContactModal.onOpenChange,
       }}
     >
       {children}
