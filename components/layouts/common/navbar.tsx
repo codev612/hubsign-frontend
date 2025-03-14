@@ -1,18 +1,17 @@
 "use client";
-
+import { useState, useRef, useEffect } from "react";
 import {
   Navbar as NextUINavbar,
   NavbarContent,
   NavbarBrand,
 } from "@heroui/navbar";
 import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
-import { Input } from "@heroui/input";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-
-import { SearchIcon, Logo } from "@/components/icons";
-import UserAvatar from "@/components/ui/user";
+import {  Logo } from "@/components/icons";
+import Avatar from "@/components/ui/avatar";
+import { generateColorForRecipient } from "@/utils/canvas/utils";
+import Cookies from "js-cookie";
 
 interface NavbarProps {
   user?: any;
@@ -20,30 +19,57 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
   const router = useRouter();
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
-  );
 
-  const handleClick = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleSignup = () => {
     router.push("/signupfree");
   };
+
+  const handleLogout = () => {
+    Cookies.remove("session");
+    router.push("/signin");
+  };
+
+  const DropdownMenu = () => {
+    return (
+      <div className="absolute w-[300] right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 pl-[20] pr-[20] pb-[14] pt-[20]">
+        <div className="text-sm border-b pb-[16]">
+          <p className="title-small">{user.firstname} {user.lastname}</p>
+          <p className="text-gray-500">{user.email}</p>
+        </div>
+        <ul className="text-sm pt-[10]">
+          <li>
+            <button className="w-full text-left hover:bg-gray-100 pt-[6] pb-[6]" onClick={() => window.location.href = "/dashboard/documents/pending"}>
+              Go to Dashboard
+            </button>
+          </li>
+          <li>
+            <button className="w-full text-left text-red-500 hover:bg-gray-100 pt-[6] pb-[6]" 
+            onClick={()=>handleLogout()}
+            >
+              Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+    )
+  }
 
   return (
     <NextUINavbar className="bg-forecolor" maxWidth="xl" position="sticky">
@@ -54,22 +80,28 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
           </NextLink>
         </NavbarBrand>
       </NavbarContent>
-
       <NavbarContent
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
         {user ? (
-          <UserAvatar
-            email={user.email}
-            username={`${user.firstname} ${user.lastname}`}
-          />
+          <div className="relative" ref={dropdownRef}>
+            <button onClick={()=>setIsOpen(!isOpen)}>
+              <Avatar 
+              name={`${user.firstname} ${user.lastname}`}
+              color={generateColorForRecipient(user.email)}
+              signed={false}
+              size={40}
+              />
+            </button>
+            {isOpen && <DropdownMenu />}
+          </div>
         ) : (
           <Button
             className="text-text border-1 bg-forecolor"
             href="/signupfree"
             radius="md"
-            onPress={handleClick}
+            onPress={handleSignup}
           >
             {"Don't have an account? Signup"}
           </Button>
@@ -78,16 +110,20 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         {user ? (
-          <UserAvatar
-            email={user.email}
-            username={`${user.firstname} ${user.lastname}`}
-          />
+          <button>
+            <Avatar 
+            name={`${user.firstname} ${user.lastname}`}
+            color={generateColorForRecipient(user.email)}
+            signed={false}
+            size={40}
+            />
+          </button>
         ) : (
           <Button
             className="text-text border-1 bg-forecolor"
             href="/signupfree"
             radius="md"
-            onPress={handleClick}
+            onPress={handleSignup}
           >
             {"Don't have an account? Signup"}
           </Button>

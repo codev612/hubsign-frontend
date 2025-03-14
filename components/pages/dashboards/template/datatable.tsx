@@ -797,29 +797,14 @@ export default function DataTable() {
                       </button>
                     </DropdownTrigger>
                     <DropdownMenu>
-                        {/* <DropdownItem 
-                            key="use" 
-                            startContent={<PostAddOutlinedIcon />}
-                            onPress={()=>router.push(`/signdoc/draft/${item.uid}`)}
-                        >Use Template
-                        </DropdownItem>
-                        <DropdownItem 
-                        key="edit" 
-                        startContent={<BorderColorOutlinedIcon />}
-                        onPress={()=>{
-                            onSaveTempOpen();
-                        }}
-                        >
-                            Edit Template
-                        </DropdownItem> */}
-                        <DropdownItem 
+                      <DropdownItem 
                         key="copy" 
                         startContent={<ContentCopyOutlinedIcon />}
                         onPress={()=>setCopyItems([item.uid])}
                         >
                             Copy
-                        </DropdownItem>
-                        <DropdownItem 
+                      </DropdownItem>
+                      <DropdownItem 
                         key="rename" 
                         startContent={<RenameIcon />} 
                         onPress={()=>{
@@ -827,8 +812,8 @@ export default function DataTable() {
                         }}
                         >
                             Rename
-                        </DropdownItem>
-                        <DropdownItem 
+                      </DropdownItem>
+                      <DropdownItem 
                         key="delete" 
                         startContent={<DeleteForeverOutlinedIcon />} 
                         onPress={()=>{
@@ -837,7 +822,7 @@ export default function DataTable() {
                         color="danger"
                         >
                             Delete
-                        </DropdownItem>
+                      </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
                 </div>

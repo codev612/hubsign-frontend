@@ -1,27 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-// import { decrypt } from '@/app/lib/session'
 import { cookies } from "next/headers";
 
 // 1. Specify protected and public routes
-const protectedRoutes = ["/dashboard", "/plan", "/newdoc"];
+const protectedRoutes = ["/dashboard", "/plan", "/adddoc", "/signdoc"];
 const publicRoutes = ["/signin"];
 
 export default async function middleware(req: NextRequest) {
-  // 2. Check if the current route is protected or public
+  // 2. Get the current request path
   const path = req.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.includes(path);
+
+  // 3. Check if the path includes any of the protected routes
+  const isProtectedRoute = protectedRoutes.some((route) => path.startsWith(route));
   const isPublicRoute = publicRoutes.includes(path);
 
-  // 3. Decrypt the session from the cookie
+  // 4. Get session cookie
   const session = (await cookies()).get("session")?.value;
 
-  // 4. Redirect to /login if the user is not authenticated
+  console.log("Requested Path:", path);
+  console.log("Protected Route:", isProtectedRoute);
+  console.log("User Session:", session ? "Exists" : "Not Found");
+
+  // 5. Redirect to /signin if trying to access a protected route without authentication
   if (isProtectedRoute && !session) {
     return NextResponse.redirect(new URL("/signin", req.nextUrl));
   }
 
-  // 5. Redirect to /dashboard if the user is authenticated
-  if (isPublicRoute && session && !req.nextUrl.pathname.startsWith("/plan")) {
+  // 6. Redirect authenticated users away from public routes (except `/plan`)
+  if (isPublicRoute && session && !path.startsWith("/plan")) {
     return NextResponse.redirect(new URL("/plan", req.nextUrl));
   }
 

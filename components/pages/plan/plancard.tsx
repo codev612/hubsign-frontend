@@ -18,7 +18,7 @@ const PlanCard: React.FC<PlanCardProps> = (props) => {
   const { id, name, summary, price, items, buttonTitle, buttonLink } = props;
 
   return (
-    <Card className="w-[384px] p-6 m-0 bg-forecolor">
+    <Card className="w-[384] h-[412] p-6 m-0 bg-forecolor">
       <CardHeader className="flex gap-3">
         <div className="flex flex-col gap-1">
           <h1 className="title title-medium">{name}</h1>
@@ -30,7 +30,7 @@ const PlanCard: React.FC<PlanCardProps> = (props) => {
         <Divider />
       </CardBody>
       <CardFooter className="pt-0">
-        <div className="flex flex-col gap-2 text-item">
+        <div className="flex flex-col gap-2 text-item text-smal">
           {items.map(
             (
               item:
