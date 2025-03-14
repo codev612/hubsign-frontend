@@ -78,6 +78,20 @@ const CreateTempModal: React.FC<ModalProps> = ({
         setRec2Roles([]);
     }
 
+    const handleSave = () => {
+      const hasEmptyName = rec2Roles.some((role) => role.name.trim() === "");
+
+      if (hasEmptyName) {
+        console.log("One or more recipients have an empty name.");
+        return;
+      }
+
+      if (rec2Roles.length > 0 && tempName.trim() !== "") {
+        action(rec2Roles, tempName, customSigningOrder);
+        handleReset();
+      }
+    }
+
     return (
       <>
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl" onClose={()=>handleReset()}>
@@ -124,7 +138,7 @@ const CreateTempModal: React.FC<ModalProps> = ({
                   <Button 
                   color="primary" 
                   className="text-forecolor" 
-                  onPress={()=>action(rec2Roles, tempName, customSigningOrder)}
+                  onPress={handleSave}
                   >
                     Save Template
                   </Button>

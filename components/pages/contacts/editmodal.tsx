@@ -52,38 +52,27 @@ const EditModal: React.FC<ModalProps> = ({
     if (state.state === "success") {
       actionState({ state: true, data: state.data });
       onOpenChange(false);
+      handleReset();
     } else {
       actionState({ state: false, data: {} });
     }
   }, [state]);
 
-  const handleAction = async () => {
-    // if (item.id==="") {
-    //   try {
-    //     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/contacts`, {
-    //       method: "DELETE",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${Cookies.get("session") || ""}`,
-    //       },
-    //       body: JSON.stringify({ ids: id }),
-    //     });
-    //     console.log(id);
-    //     if (!response.ok) {
-    //       actionState(false);
-    //     } else {
-    //       onOpenChange(false);
-    //       actionState(true);
-    //     }
-    //   } catch (error) {
-    //     throw new Error("Server error");
-    //   }
-    // }
-  };
+  const handleReset = () => {
+    setEmail("");
+    setName("");
+    setId("");
+    setIsLoading(false);
+  }
 
   return (
     <>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal 
+      isOpen={isOpen} 
+      onOpenChange={onOpenChange} 
+      onClose={()=>handleReset()}
+      onLoadStart={()=>console.log('load start')}
+      >
         <form action={formAction} onSubmit={() => setIsLoading(true)}>
           <ModalContent>
             {(onClose) => (

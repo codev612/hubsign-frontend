@@ -16,10 +16,6 @@ const PageTitleBar: React.FC<PageTitleBarProps> = ({
   const router = useRouter();
   const modalContext = useModal();
 
-  const handleClick = () => {
-    router.push(buttonLink);
-  };
-
   const handleButtonClick = (buttonType:string) => {
     switch (buttonType) {
       case "contact":

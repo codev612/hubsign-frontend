@@ -24,7 +24,9 @@ import {
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useRouter } from "next/navigation";
 
 import ConfirmModal from "./deleteconfirm";
@@ -34,6 +36,8 @@ import { Contact } from "@/interface/interface";
 import { formatDateTime } from "@/utils/canvas/utils";
 import { HorizontalDotsIcon, SearchIcon } from "@/constants/table";
 import { useModal } from "@/context/modal";
+import EmptyItems from "../dashboards/emptyitems";
+import { ContactUserIcon, ZoomIcon } from "@/components/icons";
 
 type Data = Contact;
 
@@ -205,13 +209,30 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
   //showing contacts after add or edit
   useEffect(() => {
     if (editActionState.state) {
-      const newData = data.map((item) =>
-        item._id === editActionState.data._id
-          ? { ...item, name: editActionState.data.name }
-          : item,
-      );
-
-      setData(newData);
+      setData((prevData) => {
+        const existingIndex = prevData.findIndex((item) => item._id === editActionState.data._id);
+  
+        if (existingIndex !== -1) {
+          // ✅ Edit existing item
+          return prevData.map((item) =>
+            item._id === editActionState.data._id
+              ? { ...item, name: editActionState.data.name }
+              : item
+          );
+        } else {
+          // ✅ Add new item (ensure it matches `Contact` type)
+          return [
+            ...prevData,
+            {
+              ...editActionState.data,
+              createdAt: new Date().toISOString(), // Default timestamps
+              updatedAt: new Date().toISOString(),
+            },
+          ];
+        }
+      });
+  
+      // ✅ Reset `editActionState`
       setEditActionState({
         state: false,
         data: {
@@ -447,6 +468,7 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
         topContentPlacement="outside"
         onSelectionChange={setSelectedKeys}
         onSortChange={setSortDescriptor}
+        hideHeader={initialData.length > 0 ? false : true}
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
@@ -459,7 +481,22 @@ export default function DataTable({ initialData }: { initialData: Data[] }) {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={"No items found"} items={sortedItems}>
+        <TableBody 
+        emptyContent={
+          filterValue==="" ? <EmptyItems 
+          icon={<ContactUserIcon />} 
+          title="Start here - add your first contact" 
+          description="Create your first document" 
+          button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>modalContext.openCreateContact()}>New Contact</Button>} 
+          />:
+          <EmptyItems 
+          icon={<ZoomIcon />} 
+          title="No contacts found" 
+          description="Try editing your search term or filters" 
+          button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 
+          />
+        }
+        items={sortedItems}>
           {(item) => (
             <TableRow key={item._id}>
               {(columnKey) => (

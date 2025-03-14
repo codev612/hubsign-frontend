@@ -45,7 +45,7 @@ import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
-import { RenameIcon } from "@/components/icons";
+import { RenameIcon, TemplateIcon, ZoomIcon } from "@/components/icons";
 import RenameModal from "./rename";
 import Link from "next/link";
 import { useModal } from "@/context/modal";
@@ -746,13 +746,13 @@ export default function DataTable() {
         <TableBody 
         emptyContent={
         filterValue==="" ? <EmptyItems 
-          icon={<TextSnippetOutlinedIcon color="primary" fontSize="large" />} 
+          icon={<TemplateIcon />} 
           title="Start here - sign your first template" 
           description="Create your first template" 
           button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>modalContext.onCreateTemplateOpenChange()}>New Template</Button>} 
           />:
           <EmptyItems 
-          icon={<SearchOutlinedIcon color="primary" fontSize="large" />} 
+          icon={<ZoomIcon />} 
           title="No templates found" 
           description="Try editing your search term or filters" 
           button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 

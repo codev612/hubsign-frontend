@@ -41,6 +41,7 @@ import ManyConfirmModal from "../../deletemanyconfirm";
 import EmptyItems from "../../emptyitems";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { DocumentIcon } from "@/components/icons";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -654,7 +655,7 @@ export default function DataTable() {
             <TableBody 
                 emptyContent={
                 filterValue==="" ? <EmptyItems 
-                icon={<TextSnippetOutlinedIcon color="primary" fontSize="large" />} 
+                icon={<DocumentIcon />} 
                 title="Start here - sign your first document" 
                 description="Create your first document" 
                 button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>router.push('/adddoc')}>New Document</Button>} 

@@ -141,7 +141,6 @@ const RecipientItem: React.FC<{
           value={recipient.name}
           variant="bordered"
           onChange={(e) => {
-            console.log(e.target.value)
             setSearchText(e.target.value);
             handleInputChange(index, "name", e.target.value);
             handleInputChange(index, "email", e.target.value);
