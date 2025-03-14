@@ -162,7 +162,6 @@ const ExportPopup: React.FC<ExportPopupProps> = (props) => {
                         {contextValues.selectedFile && (
                           <div className="w-full py-4">
                             <div
-                              ref={contextValues.exportPage}
                               id="toExport"
                               style={{
                                 opacity: currPage <= numPages! ? "1" : "0",

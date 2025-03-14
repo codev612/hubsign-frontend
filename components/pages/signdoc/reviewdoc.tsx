@@ -18,6 +18,8 @@ import { getFutureDate } from "@/utils/canvas/utils";
 import { DOC_STATUS } from "@/constants/document";
 import { AdvancedData } from "@/interface/interface";
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import { CheckIcon } from "@/components/icons";
+import { useRouter } from "next/navigation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -34,6 +36,8 @@ const ReviewModal: React.FC<ModalProps> = ({
 }) => {
 
     const canvasContextValues = useCanvas();
+
+    const router = useRouter();
 
     const [isCC, setIsCC] = useState<boolean>(false);
     const [ccRecepients, setCCRecepients] = useState<string[]>([]);// cc recepients
@@ -165,11 +169,11 @@ const ReviewModal: React.FC<ModalProps> = ({
                             </div>
                         </div>}
                         {docSaved && <div className="flex flex-col gap-2 items-center">
-                            <CheckCircleOutlineOutlinedIcon fontSize="large" color="success" />
+                            <CheckIcon />
                             <p className="title-medium">Document sent for signing</p>
                             <p className="text-text mb-2">Your document has been sent to signees. Track this progress in your dashboard.</p>
-                            <Button className="text-forecolor" color="primary" fullWidth>Go to Documents</Button>
-                            <Button fullWidth>Sign Another Document</Button>
+                            <Button className="text-forecolor" color="primary" fullWidth onPress={()=>router.push("/dashboard/documents/pending")}>Go to Documents</Button>
+                            <Button fullWidth onPress={()=>router.push("/adddoc")}>Sign Another Document</Button>
                         </div>}
                     </ModalBody>
                     {!docSaved && <ModalFooter>

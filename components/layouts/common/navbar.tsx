@@ -24,18 +24,18 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setTimeout(() => setIsOpen(false), 100); // Delay closing dropdown
-      }
-    }
+  // useEffect(() => {
+  //   function handleClickOutside(event: MouseEvent) {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+  //       setTimeout(() => setIsOpen(false), 100); // Delay closing dropdown
+  //     }
+  //   }
   
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
   const handleSignup = () => {
     router.push("/signupfree");

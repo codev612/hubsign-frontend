@@ -270,3 +270,12 @@ export const EmailIcon: React.FC<IconSvgProps> = (props) => {
     </svg>
   )
 }
+
+export const CheckIcon: React.FC<IconSvgProps> = (props) => {
+  const { width, height = 60 } = props;
+  return (
+    <svg width={width} height={height} viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M40 25L27.0908 36.7356C26.6141 37.169 25.8859 37.169 25.4092 36.7356L20 31.8182M55 30C55 43.8071 43.8071 55 30 55C16.1929 55 5 43.8071 5 30C5 16.1929 16.1929 5 30 5C43.8071 5 55 16.1929 55 30Z" stroke="#23A15D" strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  )
+}

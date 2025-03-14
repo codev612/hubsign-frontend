@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Recipient } from "@/interface/interface";
 import {
     Modal,
     ModalContent,
@@ -7,7 +6,6 @@ import {
     ModalBody,
     ModalFooter,
     Button,
-    Checkbox,
   } from "@heroui/react";
 
 interface ModalProps {

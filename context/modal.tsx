@@ -19,6 +19,11 @@ type ModalContextProps = {
   openContactUs: () => void;
   closeContactUs: () => void;
   onContactUsOpenChange: () => void;
+  // for contactus confirm modal
+  isContactConfirmOpen: boolean;
+  openContactUsConfirm: () => void;
+  closeContactUsConfirm: () => void;
+  onContactUsConfirmOpenChange: () => void;
 };
 
 // Create Context
@@ -38,6 +43,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const createTemplateModal = useDisclosure();
   const createContactModal = useDisclosure();
   const contactUsModal = useDisclosure();
+  const contactUsConfirmModal = useDisclosure();
 
   return (
     <ModalContext.Provider
@@ -56,6 +62,11 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         openContactUs: contactUsModal.onOpen,
         closeContactUs: contactUsModal.onClose,
         onContactUsOpenChange: contactUsModal.onOpenChange,
+
+        isContactConfirmOpen: contactUsConfirmModal.isOpen,
+        openContactUsConfirm: contactUsConfirmModal.onOpen,
+        closeContactUsConfirm: contactUsConfirmModal.onClose,
+        onContactUsConfirmOpenChange: contactUsConfirmModal.onOpenChange,
       }}
     >
       {children}

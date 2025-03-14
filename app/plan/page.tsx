@@ -10,6 +10,7 @@ import { EmailIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import ContactUsModal from "@/components/pages/plan/contactus";
 import { useModal } from "@/context/modal";
+import ContactUsConfirmModal from "@/components/pages/plan/contactconfirm";
 
 const faqsR = [
   {
@@ -66,6 +67,8 @@ export default function Plan() {
   
   const handleSendRequest = (name:string, email: string) => {
     console.log(name, email);
+    modalContext.closeContactUs();
+    modalContext.openContactUsConfirm();
   }
 
   return (
@@ -74,6 +77,10 @@ export default function Plan() {
         isOpen={modalContext.isContactUsOpen}
         onOpenChange={modalContext.onContactUsOpenChange}
         action={handleSendRequest}
+      />
+      <ContactUsConfirmModal
+      isOpen={modalContext.isContactConfirmOpen}
+      onOpenChange={modalContext.onContactUsConfirmOpenChange}
       />
       <section className="flex flex-col items-center sm:items-start justify-center gap-4 py-12 my-3">
         <p className="title title-large">Update your plan</p>
