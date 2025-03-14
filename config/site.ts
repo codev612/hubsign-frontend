@@ -3,6 +3,7 @@ export type SiteConfig = typeof siteConfig;
 export const siteConfig = {
   name: "hubSign",
   description: "Make beautiful websites regardless of your design experience.",
+  supportEmail: "support@mail.com",
   navItems: [
     {
       label: "Home",

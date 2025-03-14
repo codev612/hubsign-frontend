@@ -1,21 +1,32 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider } from "@heroui/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Button } from "@heroui/react";
 import React from "react";
 import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
+import { PlanCard as PlanCardProps } from "@/interface/interface";
+import { useModal } from "@/context/modal";
+import { useRouter } from "next/navigation";
 
-import LoadingButton from "@/components/ui/loadingbutton";
-
-interface PlanCardProps {
-  id: string;
-  name: string;
-  summary: string;
-  price: string;
-  items: any;
-  buttonTitle: string;
-  buttonLink: string;
-}
+// interface PlanCardProps {
+//   id: string;
+//   name: string;
+//   summary: string;
+//   price: string;
+//   items: any;
+//   buttonTitle: string;
+//   buttonAction: ()=>void;
+// }
 
 const PlanCard: React.FC<PlanCardProps> = (props) => {
-  const { id, name, summary, price, items, buttonTitle, buttonLink } = props;
+  const { id, name, summary, price, items, buttonTitle, buttonAction } = props;
+  const router = useRouter();
+  const modalContext = useModal();
+
+  const handleClick = () => {
+    if (typeof buttonAction === "string") {
+      router.push(buttonAction); // Navigate to URL
+    } else if (typeof buttonAction === "function") {
+      buttonAction(modalContext); // Execute modal function
+    }
+  };
 
   return (
     <Card className="w-[384] h-[412] p-6 m-0 bg-forecolor">
@@ -29,8 +40,8 @@ const PlanCard: React.FC<PlanCardProps> = (props) => {
         <h1 className="mb-3 title title-small">{price}</h1>
         <Divider />
       </CardBody>
-      <CardFooter className="pt-0">
-        <div className="flex flex-col gap-2 text-item text-smal">
+      <CardFooter className="pt-0 flex flex-col items-start flex-grow">
+        <div className="flex flex-col gap-2 text-item text-small">
           {items.map(
             (
               item:
@@ -58,7 +69,14 @@ const PlanCard: React.FC<PlanCardProps> = (props) => {
         </div>
       </CardFooter>
       <div className="p-3">
-        <LoadingButton title={buttonTitle} />
+        <Button
+        color="primary"
+        className="text-forecolor"
+        fullWidth
+        onPress={handleClick}
+        >
+          {buttonTitle}
+        </Button>
       </div>
     </Card>
   );

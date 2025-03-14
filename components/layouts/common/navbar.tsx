@@ -27,10 +27,10 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        setTimeout(() => setIsOpen(false), 100); // Delay closing dropdown
       }
     }
-
+  
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -48,14 +48,15 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
 
   const DropdownMenu = () => {
     return (
-      <div className="absolute w-[300] right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 pl-[20] pr-[20] pb-[14] pt-[20]">
-        <div className="text-sm border-b pb-[16]">
+      <div className="absolute w-[300] right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 pl-[20] pr-[20] pb-[14] pt-[20]" ref={dropdownRef}>
+        <div className="text-sm border-b pb-[16] gap-1 flex flex-col">
           <p className="title-small">{user.firstname} {user.lastname}</p>
           <p className="text-gray-500">{user.email}</p>
         </div>
         <ul className="text-sm pt-[10]">
           <li>
-            <button className="w-full text-left hover:bg-gray-100 pt-[6] pb-[6]" onClick={() => window.location.href = "/dashboard/documents/pending"}>
+            <button className="w-full text-left hover:bg-gray-100 pt-[6] pb-[6]" 
+            onClick={() => router.push("/dashboard/documents/pending")}>
               Go to Dashboard
             </button>
           </li>
@@ -85,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
         justify="end"
       >
         {user ? (
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative">
             <button onClick={()=>setIsOpen(!isOpen)}>
               <Avatar 
               name={`${user.firstname} ${user.lastname}`}

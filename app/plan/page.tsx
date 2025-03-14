@@ -6,6 +6,10 @@ import { Accordion, AccordionItem } from "@heroui/react";
 
 import PlanCard from "@/components/pages/plan/plancard";
 import { plans } from "@/constants/common";
+import { EmailIcon } from "@/components/icons";
+import { siteConfig } from "@/config/site";
+import ContactUsModal from "@/components/pages/plan/contactus";
+import { useModal } from "@/context/modal";
 
 const faqsR = [
   {
@@ -54,11 +58,23 @@ const faqL = [
 ];
 
 export default function Plan() {
+
+  const modalContext = useModal();
+
   const defaultContent =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+  
+  const handleSendRequest = (name:string, email: string) => {
+    console.log(name, email);
+  }
 
   return (
     <>
+      <ContactUsModal
+        isOpen={modalContext.isContactUsOpen}
+        onOpenChange={modalContext.onContactUsOpenChange}
+        action={handleSendRequest}
+      />
       <section className="flex flex-col items-center sm:items-start justify-center gap-4 py-12 my-3">
         <p className="title title-large">Update your plan</p>
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
@@ -102,6 +118,25 @@ export default function Plan() {
           </Accordion>
         </div>
       </section>
+      <section className="flex flex-col items-center sm:items-start gap-4 pb-12">
+        <div className="flex flex-col rounded-md bg-[#E6F3FE] w-full p-4 items-start">
+          <div className="flex flex-row justify-center items-center">
+            {/* Icon Container (Vertically Centered) */}
+            <div className="w-20 h-20 bg-[#CDE7FE] rounded-md flex items-center justify-center">
+              <EmailIcon />
+            </div>
+            <div className="flex flex-col items-start ml-4">
+              <p>Still have questions?</p>
+              <p>Contact our support team at{" "}
+                <a href="mailto:support@email.com" className="text-blue-500 underline">
+                  {siteConfig.supportEmail}
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </>
   );
 }

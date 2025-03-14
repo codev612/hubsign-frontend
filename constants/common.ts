@@ -1,4 +1,6 @@
-export const plans = [
+import { PlanCard } from "@/interface/interface";
+
+export const plans:PlanCard[] = [
   {
     id: "personal",
     name: "Personal",
@@ -12,7 +14,7 @@ export const plans = [
       "Email notifications",
     ],
     buttonTitle: "Buy Now",
-    buttonLink: "/",
+    buttonAction: "/",
   },
   {
     id: "standard",
@@ -27,7 +29,7 @@ export const plans = [
       "Multiple recipients",
     ],
     buttonTitle: "Buy Now",
-    buttonLink: "/",
+    buttonAction: "/",
   },
   {
     id: "busipro",
@@ -40,7 +42,7 @@ export const plans = [
       "Automated e-sign forms",
     ],
     buttonTitle: "Contact Us",
-    buttonLink: "/",
+    buttonAction: (modalContext) => modalContext.openContactUs(),
   },
 ];
 

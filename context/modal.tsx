@@ -14,6 +14,11 @@ type ModalContextProps = {
   openCreateContact: () => void;
   closeCreateContact: () => void;
   onCreateContactOpenChange: () => void;
+  // for contactus modal
+  isContactUsOpen: boolean;
+  openContactUs: () => void;
+  closeContactUs: () => void;
+  onContactUsOpenChange: () => void;
 };
 
 // Create Context
@@ -32,6 +37,7 @@ export const useModal = () => {
 export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const createTemplateModal = useDisclosure();
   const createContactModal = useDisclosure();
+  const contactUsModal = useDisclosure();
 
   return (
     <ModalContext.Provider
@@ -45,6 +51,11 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         openCreateContact: createContactModal.onOpen,
         closeCreateContact: createContactModal.onClose,
         onCreateContactOpenChange: createContactModal.onOpenChange,
+
+        isContactUsOpen: contactUsModal.isOpen,
+        openContactUs: contactUsModal.onOpen,
+        closeContactUs: contactUsModal.onClose,
+        onContactUsOpenChange: contactUsModal.onOpenChange,
       }}
     >
       {children}

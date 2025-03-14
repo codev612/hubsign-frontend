@@ -3,6 +3,16 @@ export interface credential {
   password: string;
 }
 
+export interface PlanCard {
+  id: string;
+  name: string;
+  summary: string;
+  price: string;
+  items: string[];
+  buttonTitle: string;
+  buttonAction: string | ((modalContext: any) => void);
+}
+
 export interface UserAvatarProps {
   username?: string;
   email?: string;
