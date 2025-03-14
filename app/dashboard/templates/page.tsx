@@ -3,7 +3,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
-const DataTable = dynamic(() => import("@/components/pages/dashboards/template/datatable"), {
+const DataTable = dynamic(() => import("@/components/pages/dashboard/template/datatable"), {
   ssr: false,
 });
 

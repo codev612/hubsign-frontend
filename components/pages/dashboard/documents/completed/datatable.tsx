@@ -41,7 +41,7 @@ import ManyConfirmModal from "../../deletemanyconfirm";
 import EmptyItems from "../../emptyitems";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { DocumentIcon } from "@/components/icons";
+import { DocumentIcon, ZoomIcon } from "@/components/icons";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -661,7 +661,7 @@ export default function DataTable() {
                 button={<Button color="primary" className="text-forecolor" startContent={<AddOutlinedIcon />} onPress={()=>router.push('/adddoc')}>New Document</Button>} 
                 />:
                 <EmptyItems 
-                icon={<SearchOutlinedIcon color="primary" fontSize="large" />} 
+                icon={<ZoomIcon />} 
                 title="No documents found" 
                 description="Try editing your search term or filters" 
                 button={<Button color="primary" className="text-forecolor" onPress={()=>onClear()}>Rest filters</Button>} 

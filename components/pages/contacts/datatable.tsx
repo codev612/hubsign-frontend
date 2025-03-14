@@ -36,7 +36,7 @@ import { Contact } from "@/interface/interface";
 import { formatDateTime } from "@/utils/canvas/utils";
 import { HorizontalDotsIcon, SearchIcon } from "@/constants/table";
 import { useModal } from "@/context/modal";
-import EmptyItems from "../dashboards/emptyitems";
+import EmptyItems from "../dashboard/emptyitems";
 import { ContactUserIcon, ZoomIcon } from "@/components/icons";
 
 type Data = Contact;

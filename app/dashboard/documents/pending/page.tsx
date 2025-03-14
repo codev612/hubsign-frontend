@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 
 import PageMenu from "@/components/layouts/common/pagemenu";
 import { siteConfig } from "@/config/site";
-const DataTable = dynamic(() => import("@/components/pages/dashboards/documents/pending/datatable"), {
+const DataTable = dynamic(() => import("@/components/pages/dashboard/documents/pending/datatable"), {
   ssr: false,
 });
 

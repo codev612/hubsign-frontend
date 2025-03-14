@@ -110,14 +110,17 @@ export const Navbar: React.FC<NavbarProps> = ({ user = null }) => {
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         {user ? (
-          <button>
-            <Avatar 
-            name={`${user.firstname} ${user.lastname}`}
-            color={generateColorForRecipient(user.email)}
-            signed={false}
-            size={40}
-            />
-          </button>
+          <div className="relative" ref={dropdownRef}>
+            <button onClick={()=>setIsOpen(!isOpen)}>
+              <Avatar 
+              name={`${user.firstname} ${user.lastname}`}
+              color={generateColorForRecipient(user.email)}
+              signed={false}
+              size={40}
+              />
+            </button>
+            {isOpen && <DropdownMenu />}
+          </div>
         ) : (
           <Button
             className="text-text border-1 bg-forecolor"

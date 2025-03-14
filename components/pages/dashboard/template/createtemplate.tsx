@@ -10,7 +10,7 @@ import {
     Checkbox,
   } from "@heroui/react";
 import Cookies from "js-cookie";
-import Recipients from "../template/recipients";
+import Recipients from "./recipients";
 import { useUser } from "@/context/user";
 
 interface Activity {
